@@ -1,14 +1,14 @@
 <?php
 class BrandController extends Controller {
 
-    // 1. Danh sách
+    // lấy ds brand
     public function index() {
         $brandModel = $this->model('BrandModel');
         $data = $brandModel->all();
         $this->view('brand/index', ['brands' => $data]);
     }
 
-    // 2. Form Thêm
+    // tạo brand
     public function create() {
         $this->view('brand/create');
     }
@@ -31,7 +31,7 @@ class BrandController extends Controller {
             }
         }
 
-        // Tạo slug chuẩn tiếng Việt (Áp dụng vn_to_str cho cả input slug)
+        // slug chuẩn tiếng Việt
         $slug = !empty($_POST['slug']) ? $this->vn_to_str($_POST['slug']) : $this->vn_to_str($_POST['name']);
 
         $data = [
@@ -76,7 +76,6 @@ class BrandController extends Controller {
             }
         }
 
-        // Tạo slug chuẩn tiếng Việt (Áp dụng vn_to_str cho cả input slug)
         $slug = !empty($_POST['slug']) ? $this->vn_to_str($_POST['slug']) : $this->vn_to_str($_POST['name']);
 
         $data = [
@@ -93,11 +92,10 @@ class BrandController extends Controller {
     public function delete($id) {
         $brandModel = $this->model('BrandModel');
         $brandModel->delete($id);
-        header("Location: /brand"); // Đã thêm header redirect
+        header("Location: /brand");
     }
 
-    // --- HÀM HỖ TRỢ (PRIVATE) ---
-    // Chuyển đổi tiếng Việt có dấu thành không dấu (Slug)
+    // chuyển slug có dấu => ko dấu
     private function vn_to_str($str) {
         $unicode = array(
             'a'=>'á|à|ả|ã|ạ|ă|ắ|ằ|ẳ|ẵ|ặ|â|ấ|ầ|ẩ|ẫ|ậ',
@@ -116,17 +114,17 @@ class BrandController extends Controller {
             'Y'=>'Ý|Ỳ|Ỷ|Ỹ|Ỵ',
         );
         
-        // 1. Cắt khoảng trắng đầu cuối trước khi xử lý
+        // loại bỏ khoảng trắnhg
         $str = trim($str);
 
         foreach($unicode as $nonUnicode=>$uni){
             $str = preg_replace("/($uni)/i", $nonUnicode, $str);
         }
         
-        // Thay khoảng trắng thành dấu gạch ngang
+        // thay khoảng trắng bằng -
         $str = str_replace(' ','-',$str);
         
-        // Xóa các ký tự đặc biệt
+        // delete ktđb
         $str = preg_replace('/[^a-zA-Z0-9\-\_]/', '', $str);
         
         return strtolower($str);

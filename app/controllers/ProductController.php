@@ -28,7 +28,7 @@ class ProductController extends Controller {
             ]);
             return;
         }
-        // validate số lượng giá bán
+        // vld số lượng giá bán
         if (!is_numeric($_POST['price']) || $_POST['price'] < 0) {
             $mess = "Giá bán không hợp lệ!";
             $categories = $this->model('CategoryModel')->all();
@@ -68,7 +68,7 @@ class ProductController extends Controller {
                 mkdir($targetDir, 0777, true);
             }
 
-            // Tạo tên file
+            // tạo tên file img tránh trùng lăp
             $fileName = time() . '_' . basename($_FILES['image']['name']);
             $targetFilePath = $targetDir . $fileName;
             
@@ -94,7 +94,6 @@ class ProductController extends Controller {
         header("Location: /product");
     }
 
-    // 4. Form Sửa
     public function edit($id) {
         $product = $this->model('ProductModel')->find($id);
         $categories = $this->model('CategoryModel')->all();
@@ -106,7 +105,6 @@ class ProductController extends Controller {
         ]);
     }
 
-    // 5. Xử lý Cập nhật
     public function update($id) {
         $productModel = $this->model('ProductModel');
         

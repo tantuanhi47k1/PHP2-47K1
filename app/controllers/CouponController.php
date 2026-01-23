@@ -27,8 +27,7 @@ class CouponController extends Controller
         $max_usage = $_POST['max_usage'] ?? '';
         $start_date = $_POST['start_date'] ?? '';
         $end_date = $_POST['end_date'] ?? '';
-        
-        // SỬA LỖI Ở ĐÂY: Lấy đúng giá trị từ select option thay vì kiểm tra isset
+
         $status = (int)($_POST['status'] ?? 0);
 
         $errors = [];
