@@ -16,7 +16,7 @@ class CategoryModel extends Model {
         $stmt->execute([':id' => $id]);
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }
-//	id	name description status
+
     public function create($data) {
         $sql = "INSERT INTO $this->table (name, description, status) VALUES (:name, :description, :status)";
         $conn = $this->connect($sql);

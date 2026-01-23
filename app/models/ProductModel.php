@@ -18,7 +18,7 @@ class ProductModel extends Model
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
-    // 2. Tìm chi tiết 1 sản phẩm
+    // tìm chi tiết
     public function find($id)
     {
         $sql = "SELECT * FROM $this->table WHERE id = :id AND deleted_at IS NULL";
@@ -28,7 +28,6 @@ class ProductModel extends Model
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }
 
-    // 3. Thêm mới
     public function create($data)
     {
         $sql = "INSERT INTO $this->table 
@@ -41,7 +40,6 @@ class ProductModel extends Model
         $stmt->execute($data);
     }
 
-    // 4. Cập nhật
     public function update($id, $data)
     {
         $data['id'] = $id; 
