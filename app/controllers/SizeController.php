@@ -33,7 +33,7 @@ class SizeController extends Controller
 
         $sizeModel->create($data);
 
-        header("Location: /admin/product/size");
+        header("Location: /size");
     }
 
     public function edit($id)
@@ -64,7 +64,7 @@ class SizeController extends Controller
 
         $sizeModel->update($id, $data);
 
-        header("Location: /admin/product/size");
+        header("Location: /size");
     }
 
     public function delete($id)
@@ -72,6 +72,6 @@ class SizeController extends Controller
         $sizeModel = $this->model('SizeModel');
         $sizeModel->delete($id);
 
-        header("Location: /admin/product/size");
+        header("Location: /size");
     }
 }

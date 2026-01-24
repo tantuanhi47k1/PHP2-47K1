@@ -1,6 +1,6 @@
-@extends('layout.adminLayout')
 
-@section('content')
+
+<?php $__env->startSection('content'); ?>
 <div class="container py-5">
     <div class="row justify-content-center">
         <div class="col-md-6">
@@ -10,9 +10,9 @@
                 </div>
                 <div class="card-body p-4">
                     
-                    @if(isset($mess))
-                        <div class="alert alert-danger">{{ $mess }}</div>
-                    @endif
+                    <?php if(isset($mess)): ?>
+                        <div class="alert alert-danger"><?php echo e($mess); ?></div>
+                    <?php endif; ?>
 
                     <form action="/size/store" method="POST">
                         <div class="mb-3">
@@ -43,4 +43,5 @@
         </div>
     </div>
 </div>
-@endsection
+<?php $__env->stopSection(); ?>
+<?php echo $__env->make('layout.adminLayout', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?><?php /**PATH D:\laragon\www\php2_tantuan47k1\app\views/admin/product/size/create.blade.php ENDPATH**/ ?>
