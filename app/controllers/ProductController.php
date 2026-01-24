@@ -8,13 +8,6 @@ class ProductController extends Controller {
         $this->view('admin/product/index', ['products' => $products]);
     }
 
-    // admin quản lý sản phẩm
-    public function manage() {
-        $productModel = $this->model('ProductModel');
-        $data = $productModel->all();
-        $this->view('admin/product/index', ['products' => $data]);
-    }
-
     public function create() {
         $categories = $this->model('CategoryModel')->all();
         $brands = $this->model('BrandModel')->all();
@@ -100,7 +93,7 @@ class ProductController extends Controller {
         ];
 
         $this->model('ProductModel')->create($data);
-        header("Location: /product/manage");
+        header("Location: /product");
     }
 
     public function edit($id) {
@@ -152,11 +145,11 @@ class ProductController extends Controller {
         ];
 
         $productModel->update($id, $data);
-        header("Location: /product/manage");
+        header("Location: /product");
     }
 
     public function delete($id) {
         $this->model('ProductModel')->delete($id);
-        header("Location: /product/manage");
+        header("Location: /product");
     }
 }

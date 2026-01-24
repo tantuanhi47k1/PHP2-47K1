@@ -47,7 +47,7 @@
                         <tr>
                             <td class="ps-4">
                                 <div class="d-flex align-items-center">
-                                    <img src="/public/image/product/<?= $p['image'] ?>" class="img-thumb me-3" onerror="this.src='https://placehold.co/60x60?text=No+Img'">
+                                    <img src="/<?= $p['image'] ?>" class="img-thumb me-3" onerror="this.src='https://placehold.co/60x60?text=No+Img'">
                                     <div>
                                         <div class="fw-bold text-dark"><?= htmlspecialchars($p['name']) ?></div>
                                         <small class="text-muted">ID: #<?= $p['id'] ?></small>
@@ -60,10 +60,10 @@
                                 </span>
                             </td>
                             <td>
-                                <div class="fw-bold text-danger"><?= number_format($p['price'], 0, ',', '.') ?> đ</div>
-                                <?php if($p['sale_price'] > 0): ?>
+                                <div class="fw-bold text-danger"><?= number_format($p['sale_price'], 0, ',', '.') ?> đ</div>
+                                <?php if($p['price'] > 0): ?>
                                 <small class="text-decoration-line-through text-muted">
-                                    <?= number_format($p['sale_price'], 0, ',', '.') ?> đ
+                                    <?= number_format($p['price'], 0, ',', '.') ?> đ
                                 </small>
                                 <?php endif; ?>
                             </td>

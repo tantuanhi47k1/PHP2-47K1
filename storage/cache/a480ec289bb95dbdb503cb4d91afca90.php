@@ -7,12 +7,12 @@
     <!-- Menu Links -->
     <ul class="sidebar-menu p-0">
         <li class="nav-item">
-            <a class="nav-link active" href="/">
+            <a class="nav-link active" href="/home">
                 <i class="bi bi-speedometer2"></i> Dashboard
             </a>
         </li>
         <li class="nav-item">
-            <a class="nav-link" href="/product/manage">
+            <a class="nav-link" href="/product">
                 <i class="bi bi-box-seam"></i> Sản phẩm
             </a>
         </li>
@@ -34,6 +34,16 @@
         <li class="nav-item">
             <a class="nav-link" href="/coupon">
                 <i class="bi bi-ticket"></i> Mã giảm giá
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="/color">
+                <i class="bi bi-palette"></i> Màu sắc
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="/size">
+                <i class="bi bi-rulers"></i> Kích cỡ
             </a>
         </li>
 

@@ -12,7 +12,7 @@
             </a>
         </li>
         <li class="nav-item">
-            <a class="nav-link" href="/product/manage">
+            <a class="nav-link" href="/product">
                 <i class="bi bi-box-seam"></i> Sản phẩm
             </a>
         </li>

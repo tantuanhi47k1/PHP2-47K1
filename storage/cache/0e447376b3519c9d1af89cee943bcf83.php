@@ -1,6 +1,5 @@
 
 <?php $__env->startSection('content'); ?>
-    
     <style>
         :root {
             --primary-color: #009981;
@@ -39,7 +38,7 @@
             <div class="col-lg-8">
                 <div class="d-flex justify-content-between align-items-center mb-4">
                     <h4 class="fw-bold text-brand m-0">Thêm Sản phẩm mới</h4>
-                    <a href="/product/manage" class="btn btn-outline-secondary btn-sm">
+                    <a href="/product" class="btn btn-outline-secondary btn-sm">
                         <i class="bi bi-arrow-left"></i> Quay lại
                     </a>
                 </div>
@@ -59,7 +58,7 @@
                                 <div class="mb-3">
                                     <label class="form-label">Tên sản phẩm <span class="text-danger">*</span></label>
                                     <input type="text" name="name" class="form-control"
-                                        placeholder="Nhập tên Figure...">
+                                        placeholder="Nhập tên iPhone 17...">
                                 </div>
 
                                 <div class="row">

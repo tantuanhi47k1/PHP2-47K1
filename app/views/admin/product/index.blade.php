@@ -60,10 +60,10 @@
                                 </span>
                             </td>
                             <td>
-                                <div class="fw-bold text-danger"><?= number_format($p['price'], 0, ',', '.') ?> đ</div>
-                                <?php if($p['sale_price'] > 0): ?>
+                                <div class="fw-bold text-danger"><?= number_format($p['sale_price'], 0, ',', '.') ?> đ</div>
+                                <?php if($p['price'] > 0): ?>
                                 <small class="text-decoration-line-through text-muted">
-                                    <?= number_format($p['sale_price'], 0, ',', '.') ?> đ
+                                    <?= number_format($p['price'], 0, ',', '.') ?> đ
                                 </small>
                                 <?php endif; ?>
                             </td>

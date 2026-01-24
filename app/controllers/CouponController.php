@@ -5,12 +5,12 @@ class CouponController extends Controller
     {
         $couponModel = $this->model('CouponModel');
         $coupons = $couponModel->all();
-        $this->view('coupon/index', ['coupons' => $coupons]);
+        $this->view('/admin/coupon/index', ['coupons' => $coupons]);
     }
 
     public function create()
     {
-        $this->view('coupon/create');
+        $this->view('/admin/coupon/create');
     }
 
     public function store()
@@ -115,7 +115,7 @@ class CouponController extends Controller
             exit;
         }
 
-        $this->view('coupon/edit', ['coupon' => $coupon]);
+        $this->view('admin/coupon/edit', ['coupon' => $coupon]);
     }
 
     public function update($id)

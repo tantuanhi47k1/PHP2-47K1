@@ -5,12 +5,12 @@ class BrandController extends Controller {
     public function index() {
         $brandModel = $this->model('BrandModel');
         $data = $brandModel->all();
-        $this->view('brand/index', ['brands' => $data]);
+        $this->view('/admin/brand/index', ['brands' => $data]);
     }
 
     // tạo brand
     public function create() {
-        $this->view('brand/create');
+        $this->view('admin/brand/create');
     }
 
     public function store() {
@@ -47,7 +47,7 @@ class BrandController extends Controller {
 
     public function edit($id) {
         $brand = $this->model('BrandModel')->find($id);
-        $this->view('brand/edit', ['brand' => $brand]);
+        $this->view('admin/brand/edit', ['brand' => $brand]);
     }
 
     public function update($id) {

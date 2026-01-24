@@ -4,7 +4,7 @@ class UserController extends Controller {
     public function index() {
         $userModel = $this->model('UserModel');
         $data = $userModel->all();
-        $this->view('user/index', ['users' => $data]);
+        $this->view('/admin/user/index', ['users' => $data]);
     }
 
     public function create() {
@@ -33,7 +33,7 @@ class UserController extends Controller {
 
     public function edit($id) {
         $user = $this->model('UserModel')->find($id);
-        $this->view('user/edit', ['user' => $user]);
+        $this->view('/admin/user/edit', ['user' => $user]);
     }
 
     public function update($id) {

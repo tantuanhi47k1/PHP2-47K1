@@ -7,12 +7,18 @@ class CategoryController extends Controller
         $categoryModel = $this->model('CategoryModel');
         $data = $categoryModel->all();
         $title = "Quản lý danh mục";
-        $this->view('category/index', ['title' => $title, 'categories' => $data]);
+        $this->view('admin/category/index', ['title' => $title, 'categories' => $data]);
+    }
+
+        public function manage() {
+        $categoryModel = $this->model('CategoryModel');
+        $data = $categoryModel->all();
+        $this->view('admin/category/index', ['categories' => $data]);
     }
 
     public function create()
     {
-        $this->view('category/create');
+        $this->view('admin/category/create');
     }
 
     public function store()
@@ -42,7 +48,7 @@ class CategoryController extends Controller
         $categoryModel = $this->model('CategoryModel');
         $category = $categoryModel->find($id);
 
-        $this->view('category/edit', ['category' => $category]);
+        $this->view('admin/category/edit', ['category' => $category]);
     }
 
     public function update($id)
