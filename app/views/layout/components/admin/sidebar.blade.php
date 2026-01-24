@@ -36,6 +36,16 @@
                 <i class="bi bi-ticket"></i> Mã giảm giá
             </a>
         </li>
+        <li class="nav-item">
+            <a class="nav-link" href="/color">
+                <i class="bi bi-palette"></i> Màu sắc
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="/size">
+                <i class="bi bi-rulers"></i> Kích cỡ
+            </a>
+        </li>
 
         <li class="nav-item mt-4 pt-4 border-top border-secondary">
             <a class="nav-link text-danger" href="/logout">

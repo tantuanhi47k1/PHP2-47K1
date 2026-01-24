@@ -1,0 +1,1 @@
+<?php /**PATH G:\laragon\www\PHP2-47K1\app\views/admin/product/size/index.blade.php ENDPATH**/ ?>
