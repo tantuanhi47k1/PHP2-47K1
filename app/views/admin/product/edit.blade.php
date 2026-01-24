@@ -86,7 +86,7 @@
                                     <label class="form-label">Ảnh hiện tại</label>
                                     <div class="mb-2">
                                         <?php if(!empty($product['image'])): ?>
-                                        <img src="/uploads/<?= $product['image'] ?>" class="img-thumbnail"
+                                        <img src="/public/image/product/<?= $product['image'] ?>" class="img-thumbnail"
                                             style="max-height: 150px;">
                                         <?php else: ?>
                                         <div class="text-muted small fst-italic">Chưa có ảnh</div>

@@ -86,7 +86,7 @@ class ProductController extends Controller {
         }
 
         if (isset($_FILES['image']) && $_FILES['image']['error'] == 0) {
-            $targetDir = 'image/product/';
+            $targetDir = 'public/image/product/';
             if (!file_exists($targetDir)) {
                 mkdir($targetDir, 0777, true);
             }
@@ -135,7 +135,7 @@ class ProductController extends Controller {
         $imagePath = $currentProduct['image']; 
 
         if (isset($_FILES['image']) && $_FILES['image']['error'] == 0) {
-            $targetDir = 'image/product/';
+            $targetDir = 'public/image/product/';
             if (!file_exists($targetDir)) {
                 mkdir($targetDir, 0777, true);
             }

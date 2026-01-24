@@ -47,7 +47,7 @@
                         <tr>
                             <td class="ps-4">
                                 <div class="d-flex align-items-center">
-                                    <img src="<?= $p['image'] ?>" class="img-thumb me-3" onerror="this.src='https://placehold.co/60x60?text=No+Img'">
+                                    <img src="/public/image/product/<?= $p['image'] ?>" class="img-thumb me-3" onerror="this.src='https://placehold.co/60x60?text=No+Img'">
                                     <div>
                                         <div class="fw-bold text-dark"><?= htmlspecialchars($p['name']) ?></div>
                                         <small class="text-muted">ID: #<?= $p['id'] ?></small>

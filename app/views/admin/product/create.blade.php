@@ -1,6 +1,5 @@
 @extends('layout.adminLayout')
 @section('content')
-    {{-- 2. Phần CSS riêng cho trang này (nếu cần), nhưng tốt nhất nên để chung vào file CSS global --}}
     <style>
         :root {
             --primary-color: #009981;
@@ -59,7 +58,7 @@
                                 <div class="mb-3">
                                     <label class="form-label">Tên sản phẩm <span class="text-danger">*</span></label>
                                     <input type="text" name="name" class="form-control"
-                                        placeholder="Nhập tên Figure...">
+                                        placeholder="Nhập tên iPhone 17...">
                                 </div>
 
                                 <div class="row">

@@ -37,7 +37,7 @@
             <div class="col-lg-8">
                 <div class="d-flex justify-content-between align-items-center mb-4">
                     <h4 class="fw-bold text-brand m-0">Cập nhật Sản phẩm #<?= $product['id'] ?></h4>
-                    <a href="/admin/product" class="btn btn-outline-secondary btn-sm"><i class="bi bi-arrow-left"></i> Quay
+                    <a href="/product" class="btn btn-outline-secondary btn-sm"><i class="bi bi-arrow-left"></i> Quay
                         lại</a>
                 </div>
                 <?php if(isset($mess)): ?>
@@ -86,7 +86,7 @@
                                     <label class="form-label">Ảnh hiện tại</label>
                                     <div class="mb-2">
                                         <?php if(!empty($product['image'])): ?>
-                                        <img src="/uploads/<?= $product['image'] ?>" class="img-thumbnail"
+                                        <img src="/public/image/product/<?= $product['image'] ?>" class="img-thumbnail"
                                             style="max-height: 150px;">
                                         <?php else: ?>
                                         <div class="text-muted small fst-italic">Chưa có ảnh</div>
