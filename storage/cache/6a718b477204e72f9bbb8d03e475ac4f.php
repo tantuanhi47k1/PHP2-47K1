@@ -43,4 +43,4 @@
             </a>
         </li>
     </ul>
-</aside>
+</aside><?php /**PATH G:\laragon\www\PHP2-47K1\app\views/layout/components/admin/sidebar.blade.php ENDPATH**/ ?>

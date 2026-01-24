@@ -1,24 +1,11 @@
 <?php
 class ProductController extends Controller {
 
-    // user xem sản phẩm
     public function index() {
         $productModel = $this->model('ProductModel');
         $products = $productModel->all(); 
 
-        $this->view('client/product/index', ['products' => $products]);
-    }
-
-    public function detail($id) {
-        $productModel = $this->model('ProductModel');
-        $product = $productModel->find($id);
-
-        if (!$product) {
-            echo "Sản phẩm không tồn tại";
-            return;
-        }
-
-        $this->view('client/product/detail', ['product' => $product]);
+        $this->view('admin/product/index', ['products' => $products]);
     }
 
     // admin quản lý sản phẩm
@@ -86,7 +73,7 @@ class ProductController extends Controller {
         }
 
         if (isset($_FILES['image']) && $_FILES['image']['error'] == 0) {
-            $targetDir = 'public/image/product/';
+            $targetDir = 'image/product/';
             if (!file_exists($targetDir)) {
                 mkdir($targetDir, 0777, true);
             }
@@ -135,7 +122,7 @@ class ProductController extends Controller {
         $imagePath = $currentProduct['image']; 
 
         if (isset($_FILES['image']) && $_FILES['image']['error'] == 0) {
-            $targetDir = 'public/image/product/';
+            $targetDir = 'image/product/';
             if (!file_exists($targetDir)) {
                 mkdir($targetDir, 0777, true);
             }

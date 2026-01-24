@@ -10,6 +10,6 @@ class HomeController extends Controller {
             'products' => $products
         ];
 
-        $this->view('client/home/index', $dataView);
+        $this->view('admin/home/index', $dataView);
     }
 }

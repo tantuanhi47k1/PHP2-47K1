@@ -1,5 +1,5 @@
-@extends('layout.adminLayout')
-@section('content')
+
+<?php $__env->startSection('content'); ?>
     <style>
         :root {
             --primary-color: #009981;
@@ -40,12 +40,12 @@
                     <a href="/product" class="btn btn-outline-secondary btn-sm"><i class="bi bi-arrow-left"></i> Quay
                         lại</a>
                 </div>
-                @if (isset($mess))
+                <?php if(isset($mess)): ?>
                     <div class="alert alert-success d-flex align-items-center" role="alert">
                         <i class="bi bi-check-circle-fill me-2"></i>
                         <div><?= $mess ?></div>
                     </div>
-                @endif
+                <?php endif; ?>
                 <form action="/product/update/<?= $product['id'] ?>" method="POST" enctype="multipart/form-data">
                     <div class="card p-4">
                         <div class="row g-3">
@@ -112,14 +112,15 @@
                                     <label class="form-label">Thương hiệu</label>
                                     <select name="brand_id" class="form-select">
                                         <option value="">-- Chọn thương hiệu --</option>
-                                        @if (isset($brands))
-                                            @foreach ($brands as $b)
-                                                <option value="{{ $b['id'] }}"
-                                                    {{ $product['brand_id'] == $b['id'] ? 'selected' : '' }}>
-                                                    {{ $b['name'] }}
+                                        <?php if(isset($brands)): ?>
+                                            <?php $__currentLoopData = $brands; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $b): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                                <option value="<?php echo e($b['id']); ?>"
+                                                    <?php echo e($product['brand_id'] == $b['id'] ? 'selected' : ''); ?>>
+                                                    <?php echo e($b['name']); ?>
+
                                                 </option>
-                                            @endforeach
-                                        @endif
+                                            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                                        <?php endif; ?>
                                     </select>
                                 </div>
 
@@ -149,4 +150,6 @@
             </div>
         </div>
     </div>
-@endsection
+<?php $__env->stopSection(); ?>
+
+<?php echo $__env->make('layout.adminLayout', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?><?php /**PATH G:\laragon\www\PHP2-47K1\app\views/admin/product/edit.blade.php ENDPATH**/ ?>

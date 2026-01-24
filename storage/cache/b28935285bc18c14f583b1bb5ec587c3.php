@@ -1,6 +1,6 @@
-@extends('layout.adminLayout')
 
-@section('content')
+
+<?php $__env->startSection('content'); ?>
 
     <style>
         .text-brand { color: #009981 !important; }
@@ -97,4 +97,5 @@
         </div>
     </div>
 
-@endsection
+<?php $__env->stopSection(); ?>
+<?php echo $__env->make('layout.adminLayout', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?><?php /**PATH G:\laragon\www\PHP2-47K1\app\views/admin/product/index.blade.php ENDPATH**/ ?>
