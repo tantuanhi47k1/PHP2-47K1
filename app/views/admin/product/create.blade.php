@@ -39,7 +39,9 @@
             <div class="col-lg-8">
                 <div class="d-flex justify-content-between align-items-center mb-4">
                     <h4 class="fw-bold text-brand m-0">Thêm Sản phẩm mới</h4>
-                    <a href="/product" class="btn btn-outline-secondary btn-sm"><i class="bi bi-arrow-left"></i> Quay lại</a>
+                    <a href="/product/manage" class="btn btn-outline-secondary btn-sm">
+                        <i class="bi bi-arrow-left"></i> Quay lại
+                    </a>
                 </div>
                 {{-- tìm kiếm --}}
 

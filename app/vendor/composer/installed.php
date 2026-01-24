@@ -1,9 +1,9 @@
 <?php return array(
     'root' => array(
         'name' => 'hieu2/app',
-        'pretty_version' => '1.0.0+no-version-set',
-        'version' => '1.0.0.0',
-        'reference' => null,
+        'pretty_version' => 'dev-main',
+        'version' => 'dev-main',
+        'reference' => '2fa1616c3fce147adbbc526d4ed0ff32ad90f49c',
         'type' => 'library',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
@@ -38,9 +38,9 @@
             'dev_requirement' => false,
         ),
         'hieu2/app' => array(
-            'pretty_version' => '1.0.0+no-version-set',
-            'version' => '1.0.0.0',
-            'reference' => null,
+            'pretty_version' => 'dev-main',
+            'version' => 'dev-main',
+            'reference' => '2fa1616c3fce147adbbc526d4ed0ff32ad90f49c',
             'type' => 'library',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),

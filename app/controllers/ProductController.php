@@ -1,74 +1,96 @@
 <?php
 class ProductController extends Controller {
 
+    // user xem sản phẩm
     public function index() {
         $productModel = $this->model('ProductModel');
+        $products = $productModel->all(); 
+
+        $this->view('client/product/index', ['products' => $products]);
+    }
+
+    public function detail($id) {
+        $productModel = $this->model('ProductModel');
+        $product = $productModel->find($id);
+
+        if (!$product) {
+            echo "Sản phẩm không tồn tại";
+            return;
+        }
+
+        $this->view('client/product/detail', ['product' => $product]);
+    }
+
+    // admin quản lý sản phẩm
+    public function manage() {
+        $productModel = $this->model('ProductModel');
         $data = $productModel->all();
-        $this->view('product/index', ['products' => $data]);
+        $this->view('admin/product/index', ['products' => $data]);
     }
 
     public function create() {
         $categories = $this->model('CategoryModel')->all();
+        $brands = $this->model('BrandModel')->all();
 
-        $this->view('product/create', [
+        $this->view('admin/product/create', [
             'categories' => $categories,
-            'brands' => [] 
+            'brands' => $brands
         ]);
     }
 
     public function store() {
-        $imagePath = ''; 
+        $imagePath = '';
+        
+        $categories = $this->model('CategoryModel')->all();
+        $brands = $this->model('BrandModel')->all();
+
         if (empty($_POST['name']) || strlen($_POST['name']) < 3 || strlen($_POST['name']) > 255) {
-            $mess = "Tên sản phẩm không được để trống, khống ít hơn 3 hoặc nhiều hơn 255 ký tự";
-            $categories = $this->model('CategoryModel')->all();
-            $this->view('product/create', [
+            $mess = "Tên sản phẩm không được để trống, không ít hơn 3 hoặc nhiều hơn 255 ký tự";
+            $this->view('admin/product/create', [
                 'mess' => $mess,
                 'categories' => $categories,
-                'brands' => [] 
+                'brands' => $brands
             ]);
             return;
         }
-        // vld số lượng giá bán
+        
+        // Validate giá bán
         if (!is_numeric($_POST['price']) || $_POST['price'] < 0) {
             $mess = "Giá bán không hợp lệ!";
-            $categories = $this->model('CategoryModel')->all();
-            $this->view('product/create', [
+            $this->view('admin/product/create', [
                 'mess' => $mess,
                 'categories' => $categories,
-                'brands' => [] 
+                'brands' => $brands
             ]);
             return;
         }
+
         if ($_POST['price'] > 999999999) {
-            $mess = "Giá bán không hợp lệ!";
-            $categories = $this->model('CategoryModel')->all();
-            $this->view('product/create', [
+            $mess = "Giá bán quá lớn!";
+            $this->view('admin/product/create', [
                 'mess' => $mess,
                 'categories' => $categories,
-                'brands' => [] 
+                'brands' => $brands
             ]);
             return;
         }
+
         if (!empty($_POST['sale_price']) && $_POST['sale_price'] > $_POST['price']) {
-            $mess = "Giá bán không được lớn hơn giá gốc!";
-            $categories = $this->model('CategoryModel')->all();
-            $this->view('product/create', [
+            $mess = "Giá khuyến mãi không được lớn hơn giá gốc!";
+            $this->view('admin/product/create', [
                 'mess' => $mess,
                 'categories' => $categories,
-                'brands' => [] 
+                'brands' => $brands
             ]);
             return;
         }
 
         if (isset($_FILES['image']) && $_FILES['image']['error'] == 0) {
-            
             $targetDir = 'image/product/';
-            
             if (!file_exists($targetDir)) {
                 mkdir($targetDir, 0777, true);
             }
 
-            // tạo tên file img tránh trùng lăp
             $fileName = time() . '_' . basename($_FILES['image']['name']);
             $targetFilePath = $targetDir . $fileName;
             
@@ -91,17 +113,18 @@ class ProductController extends Controller {
         ];
 
         $this->model('ProductModel')->create($data);
-        header("Location: /product");
+        header("Location: /product/manage");
     }
 
     public function edit($id) {
         $product = $this->model('ProductModel')->find($id);
         $categories = $this->model('CategoryModel')->all();
+        $brands = $this->model('BrandModel')->all();
 
-        $this->view('product/edit', [
+        $this->view('admin/product/edit', [
             'product' => $product,
             'categories' => $categories,
-            'brands' => [] 
+            'brands' => $brands
         ]);
     }
 
@@ -113,7 +136,6 @@ class ProductController extends Controller {
 
         if (isset($_FILES['image']) && $_FILES['image']['error'] == 0) {
             $targetDir = 'image/product/';
-            
             if (!file_exists($targetDir)) {
                 mkdir($targetDir, 0777, true);
             }
@@ -125,7 +147,6 @@ class ProductController extends Controller {
                 if (!empty($imagePath) && file_exists($imagePath)) {
                     unlink($imagePath);
                 }
-                
                 $imagePath = $targetFilePath;
             }
         }
@@ -144,11 +165,11 @@ class ProductController extends Controller {
         ];
 
         $productModel->update($id, $data);
-        header("Location: /product");
+        header("Location: /product/manage");
     }
 
     public function delete($id) {
         $this->model('ProductModel')->delete($id);
-        header("Location: /product");
+        header("Location: /product/manage");
     }
 }

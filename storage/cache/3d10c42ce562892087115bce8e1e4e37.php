@@ -1,7 +1,5 @@
-{{-- 1. Kế thừa từ layout cha (đã có sẵn html, head, sidebar, css...) --}}
-@extends('layout.adminLayout')
-@section('content')
-    {{-- 2. Phần CSS riêng cho trang này (nếu cần), nhưng tốt nhất nên để chung vào file CSS global --}}
+
+<?php $__env->startSection('content'); ?>
     <style>
         :root {
             --primary-color: #009981;
@@ -39,15 +37,15 @@
             <div class="col-lg-8">
                 <div class="d-flex justify-content-between align-items-center mb-4">
                     <h4 class="fw-bold text-brand m-0">Cập nhật Sản phẩm #<?= $product['id'] ?></h4>
-                    <a href="/product" class="btn btn-outline-secondary btn-sm"><i class="bi bi-arrow-left"></i> Quay
+                    <a href="/admin/product" class="btn btn-outline-secondary btn-sm"><i class="bi bi-arrow-left"></i> Quay
                         lại</a>
                 </div>
-                @if (isset($mess))
+                <?php if(isset($mess)): ?>
                     <div class="alert alert-success d-flex align-items-center" role="alert">
                         <i class="bi bi-check-circle-fill me-2"></i>
                         <div><?= $mess ?></div>
                     </div>
-                @endif;
+                <?php endif; ?>
                 <form action="/product/update/<?= $product['id'] ?>" method="POST" enctype="multipart/form-data">
                     <div class="card p-4">
                         <div class="row g-3">
@@ -111,6 +109,22 @@
                                 </div>
 
                                 <div class="mb-3">
+                                    <label class="form-label">Thương hiệu</label>
+                                    <select name="brand_id" class="form-select">
+                                        <option value="">-- Chọn thương hiệu --</option>
+                                        <?php if(isset($brands)): ?>
+                                            <?php $__currentLoopData = $brands; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $b): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                                <option value="<?php echo e($b['id']); ?>"
+                                                    <?php echo e($product['brand_id'] == $b['id'] ? 'selected' : ''); ?>>
+                                                    <?php echo e($b['name']); ?>
+
+                                                </option>
+                                            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                                        <?php endif; ?>
+                                    </select>
+                                </div>
+
+                                <div class="mb-3">
                                     <label class="form-label">Số lượng kho</label>
                                     <input type="number" name="quantity" class="form-control"
                                         value="<?= $product['quantity'] ?>">
@@ -136,4 +150,6 @@
             </div>
         </div>
     </div>
-@endsection
+<?php $__env->stopSection(); ?>
+
+<?php echo $__env->make('layout.adminLayout', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?><?php /**PATH D:\laragon\www\php2_tantuan47k1\app\views/admin/product/edit.blade.php ENDPATH**/ ?>

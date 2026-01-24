@@ -1,9 +1,15 @@
 <?php 
 class HomeController extends Controller {
+    
     public function index() {
-        $product = $this->model('ProductModel');
-        $data = $product->all();
-        $title = "Trang chủ";
-        $this->view('home/index', ['title' => $title, 'products' => $data]);
+        $productModel = $this->model('ProductModel');
+        $products = $productModel->all();
+        
+        $dataView = [
+            'title' => 'Trang Chủ - MY SHOP',
+            'products' => $products
+        ];
+
+        $this->view('client/home/index', $dataView);
     }
 }

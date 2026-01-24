@@ -149,37 +149,24 @@
 
 <body>
 
-    <!-- Overlay cho Mobile -->
     <div class="sidebar-overlay" id="sidebarOverlay"></div>
 
-    <!-- ======================================================= -->
-    <!-- 1. GỌI SIDEBAR VÀO ĐÂY -->
-    <!-- ======================================================= -->
-    @include('layout.components.admin.sidebar')
+    <?php echo $__env->make('layout.components.admin.sidebar', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?>
 
     
-    <!-- Wrapper chứa Header và Nội dung chính -->
     <div class="main-wrapper">
 
-        <!-- ======================================================= -->
-        <!-- 2. GỌI HEADER VÀO ĐÂY -->
-        <!-- ======================================================= -->
-        @include('layout.components.admin.header')
+        <?php echo $__env->make('layout.components.admin.header', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?>
 
-        <!-- ======================================================= -->
-        <!-- 3. NƠI CÁC TRANG CON ĐỔ NỘI DUNG VÀO -->
-        <!-- ======================================================= -->
         <main class="p-4">
-            @yield('content')
+            <?php echo $__env->yieldContent('content'); ?>
         </main>
 
     </div>
 
 
-    <!-- Bootstrap 5 JS Bundle -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
-    <!-- Script xử lý đóng mở Sidebar (JS CỦA BẠN Ở ĐÂY) -->
     <script>
         const sidebar = document.getElementById('sidebar');
         const sidebarToggle = document.getElementById('sidebarToggle');
@@ -199,4 +186,4 @@
         }
     </script>
 </body>
-</html>
+</html><?php /**PATH D:\laragon\www\php2_tantuan47k1\app\views/layout/adminLayout.blade.php ENDPATH**/ ?>

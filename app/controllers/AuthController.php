@@ -10,14 +10,14 @@ class AuthController extends Controller {
     public function index() {
         $authModel = $this->model('UserModel');
         $data = $authModel->all();
-        $this->view('auth/index', ['users' => $data]);
         header("Location: /auth/login");
     }
 
     public function register() {
-        $this->view('auth/register'); 
+        $this->view('admin/auth/register'); 
     }
 
+    // xly đk
     public function storeRegister() {
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
             header("Location: /auth/register");
@@ -52,8 +52,8 @@ class AuthController extends Controller {
         if ($password !== $confirmPassword) {
             $errors['confirm_password'] = 'Mật khẩu xác nhận không khớp!';
         }
-        if (empty($_POST['terms'])) {
-            $errors['terms'] = 'Bạn phải đồng ý với các điều khoản dịch vụ!';
+        
+        if (!isset($_POST['terms'])) {
         }
 
         if (!empty($errors)) {
@@ -78,7 +78,7 @@ class AuthController extends Controller {
             'password' => password_hash($password, PASSWORD_DEFAULT),
             'phone' => $phone,           
             'address' => $address,         
-            'role' => 0,    
+            'role' => 0,
             'status' => 1            
         ];
 
@@ -95,9 +95,10 @@ class AuthController extends Controller {
     }
 
     public function login() {
-        $this->view('auth/login');
+        $this->view('admin/auth/login');
     }
     
+    // xly đn
     public function handleLogin()
     {
         $email = $_POST['email'] ?? '';
@@ -108,8 +109,15 @@ class AuthController extends Controller {
 
         if ($user && password_verify($password, $user['password'])) {
             $_SESSION['user_id'] = $user['id'];
+            $_SESSION['user_name'] = $user['name'];
             $_SESSION['user_role'] = $user['role'];
-            header("Location: /");
+
+            if ($user['role'] == 1) {
+                header("Location: /product/manage");
+            } else {
+                header("Location: /");
+            }
+            exit;
         } else {
             $_SESSION['error'] = 'Email hoặc mật khẩu không đúng!';
             header("Location: /auth/login");
@@ -119,6 +127,6 @@ class AuthController extends Controller {
     public function logout()
     {
         session_destroy();
-        header("Location: /auth/login");
+        header("Location: /auth/login"); 
     }
 }
