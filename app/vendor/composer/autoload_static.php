@@ -16,16 +16,25 @@ class ComposerStaticInit6a1604aa1086df634019b27a5a23aace
         'a1105708a18b76903365ca1c4aa61b02' => __DIR__ . '/..' . '/symfony/translation/Resources/functions.php',
         'f625ee536139dfb962a398b200bdb2bd' => __DIR__ . '/..' . '/illuminate/support/functions.php',
         '72579e7bd17821bb1321b87411366eae' => __DIR__ . '/..' . '/illuminate/support/helpers.php',
+        '7b11c4dc42b3b3023073cb14e519683c' => __DIR__ . '/..' . '/ralouphie/getallheaders/src/getallheaders.php',
+        '37a3dc5111fe8f707ab4c132ef1dbc62' => __DIR__ . '/..' . '/guzzlehttp/guzzle/src/functions_include.php',
         'ef65a1626449d89d0811cf9befce46f0' => __DIR__ . '/..' . '/illuminate/events/functions.php',
         '06a34129a50df3d9257ee706cf3c875b' => __DIR__ . '/..' . '/illuminate/filesystem/functions.php',
+        '1f87db08236948d07391152dccb70f04' => __DIR__ . '/..' . '/google/apiclient-services/autoload.php',
+        'decc78cc4436b1292c6c0d151b19445c' => __DIR__ . '/..' . '/phpseclib/phpseclib/phpseclib/bootstrap.php',
         '320cde22f66dd4f5d3fd621d3e88b98f' => __DIR__ . '/..' . '/symfony/polyfill-ctype/bootstrap.php',
         'a4a119a56e50fbb293281d9a48007e0e' => __DIR__ . '/..' . '/symfony/polyfill-php80/bootstrap.php',
+        'a8d3953fd9959404dd22d3dfcd0a79f0' => __DIR__ . '/..' . '/google/apiclient/src/aliases.php',
     );
 
     public static $prefixLengthsPsr4 = array (
         'v' => 
         array (
             'voku\\' => 5,
+        ),
+        'p' => 
+        array (
+            'phpseclib3\\' => 11,
         ),
         'S' => 
         array (
@@ -41,9 +50,19 @@ class ComposerStaticInit6a1604aa1086df634019b27a5a23aace
         'P' => 
         array (
             'Psr\\SimpleCache\\' => 16,
+            'Psr\\Log\\' => 8,
+            'Psr\\Http\\Message\\' => 17,
+            'Psr\\Http\\Client\\' => 16,
             'Psr\\Container\\' => 14,
             'Psr\\Clock\\' => 10,
+            'Psr\\Cache\\' => 10,
             'PhpOption\\' => 10,
+            'ParagonIE\\ConstantTime\\' => 23,
+            'PHPMailer\\PHPMailer\\' => 20,
+        ),
+        'M' => 
+        array (
+            'Monolog\\' => 8,
         ),
         'J' => 
         array (
@@ -63,7 +82,17 @@ class ComposerStaticInit6a1604aa1086df634019b27a5a23aace
         ),
         'G' => 
         array (
+            'GuzzleHttp\\Psr7\\' => 16,
+            'GuzzleHttp\\Promise\\' => 19,
+            'GuzzleHttp\\' => 11,
             'GrahamCampbell\\ResultType\\' => 26,
+            'Google\\Service\\' => 15,
+            'Google\\Auth\\' => 12,
+            'Google\\' => 7,
+        ),
+        'F' => 
+        array (
+            'Firebase\\JWT\\' => 13,
         ),
         'D' => 
         array (
@@ -81,6 +110,10 @@ class ComposerStaticInit6a1604aa1086df634019b27a5a23aace
         'voku\\' => 
         array (
             0 => __DIR__ . '/..' . '/voku/portable-ascii/src/voku',
+        ),
+        'phpseclib3\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/phpseclib/phpseclib/phpseclib',
         ),
         'Symfony\\Polyfill\\Php83\\' => 
         array (
@@ -118,6 +151,19 @@ class ComposerStaticInit6a1604aa1086df634019b27a5a23aace
         array (
             0 => __DIR__ . '/..' . '/psr/simple-cache/src',
         ),
+        'Psr\\Log\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/psr/log/src',
+        ),
+        'Psr\\Http\\Message\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/psr/http-message/src',
+            1 => __DIR__ . '/..' . '/psr/http-factory/src',
+        ),
+        'Psr\\Http\\Client\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/psr/http-client/src',
+        ),
         'Psr\\Container\\' => 
         array (
             0 => __DIR__ . '/..' . '/psr/container/src',
@@ -126,9 +172,25 @@ class ComposerStaticInit6a1604aa1086df634019b27a5a23aace
         array (
             0 => __DIR__ . '/..' . '/psr/clock/src',
         ),
+        'Psr\\Cache\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/psr/cache/src',
+        ),
         'PhpOption\\' => 
         array (
             0 => __DIR__ . '/..' . '/phpoption/phpoption/src/PhpOption',
+        ),
+        'ParagonIE\\ConstantTime\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/paragonie/constant_time_encoding/src',
+        ),
+        'PHPMailer\\PHPMailer\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/phpmailer/phpmailer/src',
+        ),
+        'Monolog\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/monolog/monolog/src/Monolog',
         ),
         'Jenssegers\\Blade\\' => 
         array (
@@ -173,9 +235,37 @@ class ComposerStaticInit6a1604aa1086df634019b27a5a23aace
         array (
             0 => __DIR__ . '/..' . '/illuminate/bus',
         ),
+        'GuzzleHttp\\Psr7\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/guzzlehttp/psr7/src',
+        ),
+        'GuzzleHttp\\Promise\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/guzzlehttp/promises/src',
+        ),
+        'GuzzleHttp\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/guzzlehttp/guzzle/src',
+        ),
         'GrahamCampbell\\ResultType\\' => 
         array (
             0 => __DIR__ . '/..' . '/graham-campbell/result-type/src',
+        ),
+        'Google\\Service\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/google/apiclient-services/src',
+        ),
+        'Google\\Auth\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/google/auth/src',
+        ),
+        'Google\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/google/apiclient/src',
+        ),
+        'Firebase\\JWT\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/firebase/php-jwt/src',
         ),
         'Dotenv\\' => 
         array (
@@ -207,6 +297,26 @@ class ComposerStaticInit6a1604aa1086df634019b27a5a23aace
         'DateMalformedStringException' => __DIR__ . '/..' . '/symfony/polyfill-php83/Resources/stubs/DateMalformedStringException.php',
         'DateObjectError' => __DIR__ . '/..' . '/symfony/polyfill-php83/Resources/stubs/DateObjectError.php',
         'DateRangeError' => __DIR__ . '/..' . '/symfony/polyfill-php83/Resources/stubs/DateRangeError.php',
+        'Google_AccessToken_Revoke' => __DIR__ . '/..' . '/google/apiclient/src/aliases.php',
+        'Google_AccessToken_Verify' => __DIR__ . '/..' . '/google/apiclient/src/aliases.php',
+        'Google_AuthHandler_AuthHandlerFactory' => __DIR__ . '/..' . '/google/apiclient/src/aliases.php',
+        'Google_AuthHandler_Guzzle6AuthHandler' => __DIR__ . '/..' . '/google/apiclient/src/aliases.php',
+        'Google_AuthHandler_Guzzle7AuthHandler' => __DIR__ . '/..' . '/google/apiclient/src/aliases.php',
+        'Google_Client' => __DIR__ . '/..' . '/google/apiclient/src/aliases.php',
+        'Google_Collection' => __DIR__ . '/..' . '/google/apiclient/src/aliases.php',
+        'Google_Exception' => __DIR__ . '/..' . '/google/apiclient/src/aliases.php',
+        'Google_Http_Batch' => __DIR__ . '/..' . '/google/apiclient/src/aliases.php',
+        'Google_Http_MediaFileUpload' => __DIR__ . '/..' . '/google/apiclient/src/aliases.php',
+        'Google_Http_REST' => __DIR__ . '/..' . '/google/apiclient/src/aliases.php',
+        'Google_Model' => __DIR__ . '/..' . '/google/apiclient/src/aliases.php',
+        'Google_Service' => __DIR__ . '/..' . '/google/apiclient/src/aliases.php',
+        'Google_Service_Exception' => __DIR__ . '/..' . '/google/apiclient/src/aliases.php',
+        'Google_Service_Resource' => __DIR__ . '/..' . '/google/apiclient/src/aliases.php',
+        'Google_Task_Composer' => __DIR__ . '/..' . '/google/apiclient/src/aliases.php',
+        'Google_Task_Exception' => __DIR__ . '/..' . '/google/apiclient/src/aliases.php',
+        'Google_Task_Retryable' => __DIR__ . '/..' . '/google/apiclient/src/aliases.php',
+        'Google_Task_Runner' => __DIR__ . '/..' . '/google/apiclient/src/aliases.php',
+        'Google_Utils_UriTemplate' => __DIR__ . '/..' . '/google/apiclient/src/aliases.php',
         'Override' => __DIR__ . '/..' . '/symfony/polyfill-php83/Resources/stubs/Override.php',
         'PhpToken' => __DIR__ . '/..' . '/symfony/polyfill-php80/Resources/stubs/PhpToken.php',
         'SQLite3Exception' => __DIR__ . '/..' . '/symfony/polyfill-php83/Resources/stubs/SQLite3Exception.php',
