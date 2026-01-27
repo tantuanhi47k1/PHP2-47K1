@@ -2,18 +2,16 @@
 class BrandModel extends Model {
     private $table = 'brands';
 
-    // lấy ds brand
     public function all() {
-        $sql = "SELECT * FROM $this->table WHERE deleted_at IS NULL ORDER BY id DESC";
+        $sql = "SELECT * FROM $this->table ORDER BY id DESC";
         $conn = $this->connect($sql);
         $stmt = $conn->prepare($sql);
         $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
-    // tìm kiếm
     public function find($id) {
-        $sql = "SELECT * FROM $this->table WHERE id = :id AND deleted_at IS NULL";
+        $sql = "SELECT * FROM $this->table WHERE id = :id";
         $conn = $this->connect($sql);
         $stmt = $conn->prepare($sql);
         $stmt->execute([':id' => $id]);
@@ -21,7 +19,7 @@ class BrandModel extends Model {
     }
 
     public function create($data) {
-        $sql = "INSERT INTO $this->table (name, slug, image, status) VALUES (:name, :slug, :image, :status)";
+        $sql = "INSERT INTO $this->table (name, logo, description) VALUES (:name, :logo, :description)";
         $conn = $this->connect($sql);
         $stmt = $conn->prepare($sql);
         $stmt->execute($data);
@@ -29,14 +27,14 @@ class BrandModel extends Model {
 
     public function update($id, $data) {
         $data['id'] = $id;
-        $sql = "UPDATE $this->table SET name = :name, slug = :slug, image = :image, status = :status WHERE id = :id";
+        $sql = "UPDATE $this->table SET name = :name, logo = :logo, description = :description WHERE id = :id";
         $conn = $this->connect($sql);
         $stmt = $conn->prepare($sql);
         $stmt->execute($data);
     }
 
     public function delete($id) {
-        $sql = "UPDATE $this->table SET deleted_at = NOW() WHERE id = :id";
+        $sql = "DELETE FROM $this->table WHERE id = :id";
         $conn = $this->connect($sql);
         $stmt = $conn->prepare($sql);
         $stmt->execute([':id' => $id]);

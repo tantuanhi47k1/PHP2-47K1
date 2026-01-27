@@ -13,11 +13,16 @@
         .btn-brand {
             background-color: var(--primary-color);
             color: white;
+            border-radius: 8px;
+            font-weight: 500;
+            transition: all 0.3s;
         }
 
         .btn-brand:hover {
             background-color: #007a67;
             color: white;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 8px rgba(0, 153, 129, 0.2);
         }
 
         .img-logo {
@@ -29,61 +34,84 @@
             background: #fff;
             border-radius: 4px;
         }
+        
+        .table thead th {
+            background-color: #f8f9fa;
+            text-transform: uppercase;
+            font-size: 0.8rem;
+            letter-spacing: 0.5px;
+            color: #666;
+            border-bottom: 2px solid #eee;
+        }
     </style>
 
-    <div class="container py-5">
+    <div class="container-fluid py-4">
         <div class="card border-0 shadow-sm">
             <div class="card-header bg-white py-3 d-flex justify-content-between align-items-center">
-                <h4 class="mb-0 fw-bold text-brand"><i class="bi bi-star me-2"></i>Thương hiệu</h4>
-                <a href="/brand/create" class="btn btn-brand btn-sm shadow-sm"><i class="bi bi-plus-lg me-1"></i> Thêm mới</a>
+                <h4 class="mb-0 fw-bold text-brand">
+                    <i class="bi bi-patch-check-fill me-2"></i>QUẢN LÝ THƯƠNG HIỆU
+                </h4>
+                <a href="/brand/create" class="btn btn-brand btn-sm px-3 shadow-sm">
+                    <i class="bi bi-plus-lg me-1"></i> Thêm mới
+                </a>
             </div>
-            <?php if (isset($mess)): ?>
-            <div class="alert alert-success d-flex align-items-center" role="alert">
-                <i class="bi bi-check-circle-fill me-2"></i>
-                <div><?= $mess ?></div>
-            </div>
+
+            <?php if (isset($_SESSION['success'])): ?>
+                <div class="alert alert-success alert-dismissible fade show m-3 border-0 shadow-sm" role="alert" style="background-color: #e6f6f4; color: #00816d;">
+                    <i class="bi bi-check-circle-fill me-2"></i>
+                    <strong>Thành công!</strong> <?= $_SESSION['success']; ?>
+                    <?php unset($_SESSION['success']); ?>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
             <?php endif; ?>
+
             <div class="table-responsive">
                 <table class="table table-hover align-middle mb-0">
-                    <thead class="bg-light">
+                    <thead>
                         <tr>
-                            <th class="ps-4" style="width: 80px;">Logo</th>
-                            <th>Tên thương hiệu</th>
-                            <th>Slug (URL)</th>
-                            <th class="text-center">Trạng thái</th>
-                            <th class="text-center pe-4">Hành động</th>
+                            <th class="ps-4" style="width: 100px;">Logo</th>
+                            <th>Thông tin thương hiệu</th>
+                            <th>Mô tả chi tiết</th>
+                            <th class="text-center pe-4" style="width: 160px;">Hành động</th>
                         </tr>
                     </thead>
                     <tbody>
                         <?php if(empty($brands)): ?>
                         <tr>
-                            <td colspan="5" class="text-center py-5 text-muted">Chưa có thương hiệu nào.</td>
+                            <td colspan="4" class="text-center py-5 text-muted">
+                                <i class="bi bi-inbox fs-1 d-block mb-2"></i>
+                                Hiện chưa có thương hiệu nào trong hệ thống.
+                            </td>
                         </tr>
                         <?php else: ?>
                         <?php foreach($brands as $brand): ?>
                         <tr>
                             <td class="ps-4">
-                                <img src="<?= $brand['image'] ?>" class="img-logo">
+                                <img src="<?= !empty($brand['logo']) ? '/' . $brand['logo'] : 'https://placehold.co/50x50?text=Brand' ?>" 
+                                     class="img-logo" 
+                                     onerror="this.src='https://placehold.co/50x50?text=Error'">
                             </td>
                             <td>
                                 <div class="fw-bold text-dark"><?= htmlspecialchars($brand['name']) ?></div>
-                                <small class="text-muted">ID: #<?= $brand['id'] ?></small>
+                                <small class="text-muted text-uppercase" style="font-size: 0.7rem;">Mã ID: #<?= $brand['id'] ?></small>
                             </td>
-                            <td><code class="text-muted"><?= htmlspecialchars($brand['slug']) ?></code></td>
-                            <td class="text-center">
-                                <?php if($brand['status'] == 1): ?>
-                                <span class="badge bg-success bg-opacity-10 text-success rounded-pill px-3">Hoạt động</span>
-                                <?php else: ?>
-                                <span class="badge bg-secondary bg-opacity-10 text-secondary rounded-pill px-3">Ẩn</span>
-                                <?php endif; ?>
+                            <td>
+                                <div class="text-muted small text-truncate" style="max-width: 350px;" title="<?= htmlspecialchars($brand['description'] ?? '') ?>">
+                                    <?= htmlspecialchars($brand['description'] ?? 'Không có mô tả cho thương hiệu này.') ?>
+                                </div>
                             </td>
                             <td class="text-center pe-4">
-                                <a href="/brand/edit/<?= $brand['id'] ?>" class="btn btn-sm btn-light border text-primary"
-                                    title="Sửa"><i class="bi bi-pencil"></i></a>
-                                <a href="/brand/delete/<?= $brand['id'] ?>"
-                                    class="btn btn-sm btn-light border text-danger ms-1"
-                                    onclick="return confirm('Xóa thương hiệu này?');" title="Xóa"><i
-                                        class="bi bi-trash"></i></a>
+                                <div class="btn-group">
+                                    <a href="/brand/edit/<?= $brand['id'] ?>" class="btn btn-outline-primary btn-sm" title="Chỉnh sửa">
+                                        <i class="bi bi-pencil-square"></i>
+                                    </a>
+                                    <a href="/brand/delete/<?= $brand['id'] ?>" 
+                                       class="btn btn-outline-danger btn-sm ms-1"
+                                       onclick="return confirm('Bạn có chắc chắn muốn xóa thương hiệu này không?');"
+                                       title="Xóa">
+                                        <i class="bi bi-trash"></i>
+                                    </a>
+                                </div>
                             </td>
                         </tr>
                         <?php endforeach; ?>

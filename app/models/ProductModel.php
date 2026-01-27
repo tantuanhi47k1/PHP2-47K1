@@ -5,11 +5,14 @@ class ProductModel extends Model
 
     public function all()
     {
-        $sql = "SELECT p.*, c.name as category_name, b.name as brand_name 
+        $sql = "SELECT p.*, 
+                c.name as category_name, 
+                b.name as brand_name,
+                (SELECT image_path FROM product_images WHERE product_id = p.id AND is_thumbnail = 1 LIMIT 1) as thumbnail_path,
+                (SELECT COUNT(*) FROM variants WHERE product_id = p.id) as variant_count
                 FROM $this->table p
                 LEFT JOIN categories c ON p.category_id = c.id
                 LEFT JOIN brands b ON p.brand_id = b.id
-                WHERE p.deleted_at IS NULL
                 ORDER BY p.created_at DESC";
 
         $conn = $this->connect($sql);
@@ -18,10 +21,10 @@ class ProductModel extends Model
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
-    // tìm chi tiết
     public function find($id)
     {
-        $sql = "SELECT * FROM $this->table WHERE id = :id AND deleted_at IS NULL";
+        // Bỏ deleted_at
+        $sql = "SELECT * FROM $this->table WHERE id = :id";
         $conn = $this->connect($sql);
         $stmt = $conn->prepare($sql);
         $stmt->execute([':id' => $id]);
@@ -31,13 +34,15 @@ class ProductModel extends Model
     public function create($data)
     {
         $sql = "INSERT INTO $this->table 
-                (name, price, sale_price, quantity, image, description, short_description, category_id, brand_id, status) 
+                (name, description, base_price, category_id, brand_id) 
                 VALUES 
-                (:name, :price, :sale_price, :quantity, :image, :description, :short_description, :category_id, :brand_id, :status)";
+                (:name, :description, :base_price, :category_id, :brand_id)";
 
         $conn = $this->connect($sql);
         $stmt = $conn->prepare($sql);
         $stmt->execute($data);
+        
+        return $conn->lastInsertId();
     }
 
     public function update($id, $data)
@@ -45,15 +50,10 @@ class ProductModel extends Model
         $data['id'] = $id; 
         $sql = "UPDATE $this->table SET 
                 name = :name, 
-                price = :price, 
-                sale_price = :sale_price, 
-                quantity = :quantity, 
-                image = :image, 
                 description = :description, 
-                short_description = :short_description, 
+                base_price = :base_price, 
                 category_id = :category_id, 
-                brand_id = :brand_id, 
-                status = :status 
+                brand_id = :brand_id
                 WHERE id = :id";
 
         $conn = $this->connect($sql);
@@ -63,7 +63,7 @@ class ProductModel extends Model
 
     public function delete($id)
     {
-        $sql = "UPDATE $this->table SET deleted_at = NOW() WHERE id = :id";
+        $sql = "DELETE FROM $this->table WHERE id = :id";
         $conn = $this->connect($sql);
         $stmt = $conn->prepare($sql);
         $stmt->execute([':id' => $id]);

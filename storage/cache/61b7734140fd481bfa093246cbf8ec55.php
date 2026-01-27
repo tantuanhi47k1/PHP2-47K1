@@ -1,6 +1,6 @@
-@extends('layout.adminLayout')
 
-@section('content')
+
+<?php $__env->startSection('content'); ?>
     <style>
         :root {
             --primary-color: #009981;
@@ -89,4 +89,5 @@
             </div>
         </div>
     </div>
-@endsection
+<?php $__env->stopSection(); ?>
+<?php echo $__env->make('layout.adminLayout', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?><?php /**PATH D:\laragon\www\php2_tantuan47k1\app\views/admin/user/create.blade.php ENDPATH**/ ?>

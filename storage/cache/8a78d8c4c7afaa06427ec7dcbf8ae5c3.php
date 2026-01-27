@@ -1,91 +1,136 @@
 
 
 <?php $__env->startSection('content'); ?>
-    <!-- Main Content: Login Form -->
-    <main class="container py-5 flex-grow-1">
-        <div class="row justify-content-center">
-            <div class="col-12 col-md-8 col-lg-5">
-                <div class="card shadow-sm border-0">
-                    <div class="card-header bg-white text-center py-4 border-0">
-                        <h4 class="mb-1 fw-bold">Welcome Back</h4>
-                        <p class="text-muted small mb-0">Please login to your account</p>
-                    </div>
-                    <?php if(isset($_SESSION['success'])): ?>
-                        <div class="text-success text-center small mt-1">
-                            <?php echo e($_SESSION['success']); ?>
+<style>
+    body {
+        background: #f4f6f9;
+        height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-family: 'Inter', sans-serif;
+    }
+    .login-box {
+        width: 100%;
+        max-width: 420px;
+        padding: 15px;
+    }
+    .card {
+        border-radius: 20px;
+        border: none;
+        box-shadow: 0 15px 35px rgba(0, 153, 129, 0.1);
+        overflow: hidden;
+    }
+    .card-header {
+        background: white;
+        border: none;
+        padding-top: 30px;
+    }
+    .btn-brand {
+        background-color: #009981;
+        color: white;
+        font-weight: 600;
+        padding: 12px;
+        border-radius: 10px;
+        transition: all 0.3s ease;
+    }
+    .btn-brand:hover {
+        background-color: #007a67;
+        color: white;
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(0, 153, 129, 0.3);
+    }
+    .text-brand {
+        color: #009981;
+    }
+    .input-group-text {
+        background-color: #f8f9fa;
+        border-right: none;
+        color: #6c757d;
+    }
+    .form-control {
+        border-left: none;
+        padding: 12px 15px;
+        border-radius: 0 10px 10px 0;
+    }
+    .form-control:focus {
+        border-color: #dee2e6;
+        box-shadow: none;
+    }
+    .input-group:focus-within .input-group-text {
+        border-color: #009981;
+        color: #009981;
+    }
+    .input-group:focus-within .form-control {
+        border-color: #009981;
+    }
+    /* Style mới cho link đăng ký */
+    .register-link {
+        display: block;
+        text-align: center;
+        margin-top: 20px;
+        padding-top: 20px;
+        border-top: 1px solid #f1f1f1;
+        color: #6c757d;
+        text-decoration: none;
+        font-size: 0.9rem;
+        transition: 0.2s;
+    }
+    .register-link:hover {
+        color: #009981;
+    }
+    .register-link b {
+        color: #009981;
+    }
+</style>
 
-                        </div>
-                    <?php endif; ?>
-                    <div class="card-body p-4">
-                        <!-- Login Form -->
-                        <form action="#" method="POST">
+<div class="login-box">
+    <div class="text-center mb-4">
+        <div class="mb-3">
+            <i class="bi bi-shield-lock-fill text-brand" style="font-size: 3rem;"></i>
+        </div>
+        <h2 class="fw-bold text-dark mb-1">ADMIN TECHHUB</h2>
+        <p class="text-muted">Hệ thống quản lý cửa hàng</p>
+    </div>
 
-                            <!-- Email Input -->
-                            <div class="mb-3">
-                                <label for="email" class="form-label text-muted small fw-semibold">Email
-                                    Address</label>
-                                <input type="email" class="form-control" id="email" name="email"
-                                    placeholder="name@example.com" autofocus>
-                            </div>
+    <div class="card shadow">
+        <div class="card-body p-4 p-md-5">
+            <?php if (isset($_SESSION['error'])): ?>
+                <div class="alert alert-danger border-0 small d-flex align-items-center mb-4" style="background-color: #fff5f5; color: #e53e3e;">
+                    <i class="bi bi-exclamation-circle-fill me-2"></i>
+                    <div><?= $_SESSION['error']; unset($_SESSION['error']); ?></div>
+                </div>
+            <?php endif; ?>
 
-                            <!-- Password Input -->
-                            <div class="mb-3">
-                                <label for="password" class="form-label text-muted small fw-semibold">Password</label>
-                                <input type="password" class="form-control" id="password" name="password"
-                                    placeholder="Enter your password">
-                            </div>
-
-                            <!-- Remember Me & Forgot Password -->
-                            <div class="d-flex justify-content-between align-items-center mb-4">
-                                <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" id="remember" name="remember">
-                                    <label class="form-check-label small text-muted" for="remember">Remember me</label>
-                                </div>
-                                <a href="#" class="text-decoration-none small">Forgot password?</a>
-                            </div>
-
-                            <!-- Submit Button -->
-                            <button type="submit" class="btn btn-primary w-100 py-2 fw-semibold mb-3">
-                                Sign In
-                            </button>
-
-                            <!-- Divider -->
-                            <div class="position-relative my-4">
-                                <hr class="text-secondary opacity-25">
-                                <span
-                                    class="position-absolute top-50 start-50 translate-middle bg-white px-2 text-muted small text-uppercase">Or</span>
-                            </div>
-
-                            <!-- Google Login Button -->
-                            <a href="#"
-                                class="btn btn-outline-secondary w-100 py-2 d-flex align-items-center justify-content-center gap-2">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 48 48">
-                                    <path fill="#FFC107"
-                                        d="M43.611,20.083H42V20H24v8h11.303c-1.649,4.657-6.08,8-11.303,8c-6.627,0-12-5.373-12-12c0-6.627,5.373-12,12-12c3.059,0,5.842,1.154,7.961,3.039l5.657-5.657C34.046,6.053,29.268,4,24,4C12.955,4,4,12.955,4,24c0,11.045,8.955,20,20,20c11.045,0,20-8.955,20-20C44,22.659,43.862,21.35,43.611,20.083z" />
-                                    <path fill="#FF3D00"
-                                        d="M6.306,14.691l6.571,4.819C14.655,15.108,18.961,12,24,12c3.059,0,5.842,1.154,7.961,3.039l5.657-5.657C34.046,6.053,29.268,4,24,4C16.318,4,9.656,8.337,6.306,14.691z" />
-                                    <path fill="#4CAF50"
-                                        d="M24,44c5.166,0,9.86-1.977,13.409-5.192l-6.19-5.238C29.211,35.091,26.715,36,24,36c-5.202,0-9.619-3.317-11.283-7.946l-6.522,5.025C9.505,39.556,16.227,44,24,44z" />
-                                    <path fill="#1976D2"
-                                        d="M43.611,20.083H42V20H24v8h11.303c-0.792,2.237-2.231,4.166-4.087,5.571c0.001-0.001,0.002-0.001,0.003-0.002l6.19,5.238C36.971,39.205,44,34,44,24C44,22.659,43.862,21.35,43.611,20.083z" />
-                                </svg>
-                                <span class="fw-semibold text-secondary">Sign in with Google</span>
-                            </a>
-
-                        </form>
-                    </div>
-
-                    <div class="card-footer bg-light text-center py-3 border-0">
-                        <p class="small mb-0 text-muted">
-                            Don't have an account?
-                            <a href="/auth/register" class="text-decoration-none fw-semibold">Create Account</a>
-                        </p>
+            <form action="/auth/handleAdminLogin" method="POST">
+                <div class="mb-3">
+                    <label class="form-label small fw-bold text-secondary">EMAIL QUẢN TRỊ</label>
+                    <div class="input-group">
+                        <span class="input-group-text"><i class="bi bi-envelope"></i></span>
+                        <input type="email" name="email" class="form-control" placeholder="admin@example.com" required>
                     </div>
                 </div>
-            </div>
+
+                <div class="mb-4">
+                    <label class="form-label small fw-bold text-secondary">MẬT KHẨU</label>
+                    <div class="input-group">
+                        <span class="input-group-text"><i class="bi bi-key"></i></span>
+                        <input type="password" name="password" class="form-control" placeholder="••••••••" required>
+                    </div>
+                </div>
+
+                <div class="d-grid gap-2">
+                    <button type="submit" class="btn btn-brand">
+                        ĐĂNG NHẬP NGAY
+                    </button>
+                </div>
+                
+                <a href="/auth/adminRegister" class="register-link">
+                    Chưa có tài khoản? <b>Tạo Admin mới</b>
+                </a>
+            </form>
         </div>
-    </main>
-
+    </div>
+</div>
 <?php $__env->stopSection(); ?>
-
-<?php echo $__env->make('layout.adminLayout', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?><?php /**PATH D:\laragon\www\php2_tantuan47k1\app\views/admin/auth/login.blade.php ENDPATH**/ ?>
+<?php echo $__env->make('layout.authLayout', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?><?php /**PATH D:\laragon\www\php2_tantuan47k1\app\views/admin/auth/login.blade.php ENDPATH**/ ?>

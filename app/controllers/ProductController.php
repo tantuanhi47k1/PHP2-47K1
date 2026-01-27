@@ -19,80 +19,51 @@ class ProductController extends Controller {
     }
 
     public function store() {
-        $imagePath = '';
-        
-        $categories = $this->model('CategoryModel')->all();
-        $brands = $this->model('BrandModel')->all();
+        $productModel = $this->model('ProductModel');
+        $imageModel = $this->model('ProductImageModel');
 
-        if (empty($_POST['name']) || strlen($_POST['name']) < 3 || strlen($_POST['name']) > 255) {
-            $mess = "Tên sản phẩm không được để trống, không ít hơn 3 hoặc nhiều hơn 255 ký tự";
+        if (empty($_POST['name']) || !isset($_POST['base_price']) || $_POST['base_price'] < 0) {
+            $mess = "Dữ liệu không hợp lệ!";
             $this->view('admin/product/create', [
                 'mess' => $mess,
-                'categories' => $categories,
-                'brands' => $brands
-            ]);
-            return;
-        }
-        
-        // Validate giá bán
-        if (!is_numeric($_POST['price']) || $_POST['price'] < 0) {
-            $mess = "Giá bán không hợp lệ!";
-            $this->view('admin/product/create', [
-                'mess' => $mess,
-                'categories' => $categories,
-                'brands' => $brands
+                'categories' => $this->model('CategoryModel')->all(),
+                'brands' => $this->model('BrandModel')->all()
             ]);
             return;
         }
 
-        if ($_POST['price'] > 999999999) {
-            $mess = "Giá bán quá lớn!";
-            $this->view('admin/product/create', [
-                'mess' => $mess,
-                'categories' => $categories,
-                'brands' => $brands
-            ]);
-            return;
-        }
-
-        if (!empty($_POST['sale_price']) && $_POST['sale_price'] > $_POST['price']) {
-            $mess = "Giá khuyến mãi không được lớn hơn giá gốc!";
-            $this->view('admin/product/create', [
-                'mess' => $mess,
-                'categories' => $categories,
-                'brands' => $brands
-            ]);
-            return;
-        }
-
-        if (isset($_FILES['image']) && $_FILES['image']['error'] == 0) {
-            $targetDir = 'image/product/';
-            if (!file_exists($targetDir)) {
-                mkdir($targetDir, 0777, true);
-            }
-
-            $fileName = time() . '_' . basename($_FILES['image']['name']);
-            $targetFilePath = $targetDir . $fileName;
-            
-            if (move_uploaded_file($_FILES['image']['tmp_name'], $targetFilePath)) {
-                $imagePath = $targetFilePath; 
-            }
-        }
-
-        $data = [
-            'name' => $_POST['name'],
-            'price' => $_POST['price'],
-            'sale_price' => $_POST['sale_price'] ?? 0,
-            'quantity' => $_POST['quantity'] ?? 0,
-            'image' => $imagePath,
-            'description' => $_POST['description'],
-            'short_description' => $_POST['short_description'],
+        $productData = [
+            'name'        => $_POST['name'],
+            'base_price'  => $_POST['base_price'],
+            'description' => $_POST['description'] ?? '',
             'category_id' => $_POST['category_id'],
-            'brand_id' => !empty($_POST['brand_id']) ? $_POST['brand_id'] : null,
-            'status' => $_POST['status']
+            'brand_id'    => !empty($_POST['brand_id']) ? $_POST['brand_id'] : null,
         ];
+        
+        $productId = $productModel->create($productData);
 
-        $this->model('ProductModel')->create($data);
+        if (isset($_FILES['images']) && !empty($_FILES['images']['name'][0])) {
+            $files = $_FILES['images'];
+            $targetDir = 'image/product/';
+            if (!is_dir($targetDir)) mkdir($targetDir, 0777, true);
+
+            foreach ($files['name'] as $key => $name) {
+                if ($files['error'][$key] == 0) {
+                    $fileName = time() . '_' . basename($name);
+                    $targetPath = $targetDir . $fileName;
+                    
+                    if (move_uploaded_file($files['tmp_name'][$key], $targetPath)) {
+                        $imageModel->create([
+                            'product_id'   => $productId,
+                            'variant_id'   => null,
+                            'image_path'   => $targetPath,
+                            'is_thumbnail' => ($key == 0) ? 1 : 0 
+                        ]);
+                    }
+                }
+            }
+        }
+        
         header("Location: /product");
     }
 
@@ -100,51 +71,50 @@ class ProductController extends Controller {
         $product = $this->model('ProductModel')->find($id);
         $categories = $this->model('CategoryModel')->all();
         $brands = $this->model('BrandModel')->all();
+        $images = $this->model('ProductImageModel')->getImagesByProductId($id);
 
         $this->view('admin/product/edit', [
-            'product' => $product,
+            'product'    => $product,
             'categories' => $categories,
-            'brands' => $brands
+            'brands'     => $brands,
+            'images'     => $images
         ]);
     }
 
     public function update($id) {
         $productModel = $this->model('ProductModel');
-        
-        $currentProduct = $productModel->find($id);
-        $imagePath = $currentProduct['image']; 
+        $imageModel = $this->model('ProductImageModel');
 
-        if (isset($_FILES['image']) && $_FILES['image']['error'] == 0) {
+        $productData = [
+            'name'        => $_POST['name'],
+            'base_price'  => $_POST['base_price'],
+            'description' => $_POST['description'],
+            'category_id' => $_POST['category_id'],
+            'brand_id'    => !empty($_POST['brand_id']) ? $_POST['brand_id'] : null
+        ];
+        $productModel->update($id, $productData);
+
+        if (isset($_FILES['images']) && !empty($_FILES['images']['name'][0])) {
+            $files = $_FILES['images'];
             $targetDir = 'image/product/';
-            if (!file_exists($targetDir)) {
-                mkdir($targetDir, 0777, true);
-            }
 
-            $fileName = time() . '_' . basename($_FILES['image']['name']);
-            $targetFilePath = $targetDir . $fileName;
-            
-            if (move_uploaded_file($_FILES['image']['tmp_name'], $targetFilePath)) {
-                if (!empty($imagePath) && file_exists($imagePath)) {
-                    unlink($imagePath);
+            foreach ($files['name'] as $key => $name) {
+                if ($files['error'][$key] == 0) {
+                    $fileName = time() . '_' . $name;
+                    $targetPath = $targetDir . $fileName;
+                    
+                    if (move_uploaded_file($files['tmp_name'][$key], $targetPath)) {
+                        $imageModel->create([
+                            'product_id'   => $id,
+                            'variant_id'   => null,
+                            'image_path'   => $targetPath,
+                            'is_thumbnail' => 0 
+                        ]);
+                    }
                 }
-                $imagePath = $targetFilePath;
             }
         }
 
-        $data = [
-            'name' => $_POST['name'],
-            'price' => $_POST['price'],
-            'sale_price' => $_POST['sale_price'] ?? 0,
-            'quantity' => $_POST['quantity'] ?? 0,
-            'image' => $imagePath,
-            'description' => $_POST['description'],
-            'short_description' => $_POST['short_description'],
-            'category_id' => $_POST['category_id'],
-            'brand_id' => !empty($_POST['brand_id']) ? $_POST['brand_id'] : null,
-            'status' => $_POST['status']
-        ];
-
-        $productModel->update($id, $data);
         header("Location: /product");
     }
 

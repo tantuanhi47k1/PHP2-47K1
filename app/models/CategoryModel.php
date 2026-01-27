@@ -1,11 +1,12 @@
 <?php
 class CategoryModel extends Model {
     private $table = 'categories';
+
     public function all() {
-        $sql = "SELECT * FROM $this->table";
+        $sql = "SELECT * FROM $this->table ORDER BY id DESC";
         $conn = $this->connect($sql);
         $stmt = $conn->prepare($sql);
-        $stmt ->execute();
+        $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
@@ -18,25 +19,25 @@ class CategoryModel extends Model {
     }
 
     public function create($data) {
-        $sql = "INSERT INTO $this->table (name, description, status) VALUES (:name, :description, :status)";
+        $sql = "INSERT INTO $this->table (name, slug, parent_id) VALUES (:name, :slug, :parent_id)";
         $conn = $this->connect($sql);
         $stmt = $conn->prepare($sql);
         $stmt->execute([
-            ':name' => $data['name'],
-            ':description' => $data['description'],
-            ':status' => $data['status'],
+            ':name'      => $data['name'],
+            ':slug'      => $data['slug'],
+            ':parent_id' => $data['parent_id'],
         ]);
     }
 
     public function update($id, $data) {
-        $sql = "UPDATE $this->table SET name = :name, description = :description, status = :status WHERE id = :id";
+        $sql = "UPDATE $this->table SET name = :name, slug = :slug, parent_id = :parent_id WHERE id = :id";
         $conn = $this->connect($sql);
         $stmt = $conn->prepare($sql);
         $stmt->execute([
-            ':name' => $data['name'],
-            ':description' => $data['description'],
-            ':status' => $data['status'],
-            ':id' => $id
+            ':name'      => $data['name'],
+            ':slug'      => $data['slug'],
+            ':parent_id' => $data['parent_id'],
+            ':id'        => $id
         ]);
     }
 

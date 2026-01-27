@@ -3,7 +3,7 @@
         'name' => 'php2_tantuan47k1/app',
         'pretty_version' => 'dev-main',
         'version' => 'dev-main',
-        'reference' => 'c8a2110bc468bb9906c030eaa524ea200d4df437',
+        'reference' => 'c4746255de31dfaae95aade0a2aad19cb4a48983',
         'type' => 'library',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
@@ -256,7 +256,7 @@
         'php2_tantuan47k1/app' => array(
             'pretty_version' => 'dev-main',
             'version' => 'dev-main',
-            'reference' => 'c8a2110bc468bb9906c030eaa524ea200d4df437',
+            'reference' => 'c4746255de31dfaae95aade0a2aad19cb4a48983',
             'type' => 'library',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),

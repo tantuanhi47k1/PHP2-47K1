@@ -1,6 +1,6 @@
-@extends('layout.authLayout')
 
-@section('content')
+
+<?php $__env->startSection('content'); ?>
 <style>
     body { background: #f4f6f9; height: 100vh; display: flex; align-items: center; justify-content: center; }
     .register-box { width: 450px; }
@@ -18,9 +18,9 @@
 
     <div class="card p-4">
         <div class="card-body">
-            @if(isset($_SESSION['error']))
+            <?php if(isset($_SESSION['error'])): ?>
                 <div class="alert alert-danger small"><?= $_SESSION['error']; unset($_SESSION['error']); ?></div>
-            @endif
+            <?php endif; ?>
 
             <form action="/auth/storeAdmin" method="POST">
                 <div class="mb-3">
@@ -51,4 +51,5 @@
         <a href="/auth/adminLogin" class="text-decoration-none text-muted small">Quay lại Đăng nhập</a>
     </div>
 </div>
-@endsection
+<?php $__env->stopSection(); ?>
+<?php echo $__env->make('layout.authLayout', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?><?php /**PATH D:\laragon\www\php2_tantuan47k1\app\views/admin/auth/register.blade.php ENDPATH**/ ?>

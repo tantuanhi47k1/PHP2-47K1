@@ -19,7 +19,7 @@
             </div>
 
             <?php if (isset($mess)): ?>
-            <div class="alert alert-success d-flex align-items-center" role="alert">
+            <div class="alert alert-success d-flex align-items-center m-3" role="alert">
                 <i class="bi bi-check-circle-fill me-2"></i>
                 <div><?= $mess ?></div>
             </div>
@@ -31,8 +31,8 @@
                         <tr>
                             <th class="ps-4">Sản phẩm</th>
                             <th>Danh mục</th>
-                            <th>Giá bán</th>
-                            <th class="text-center">Kho</th>
+                            <th>Giá gốc</th>
+                            <th class="text-center">Biến thể</th>
                             <th class="text-center">Trạng thái</th>
                             <th class="text-center pe-4">Hành động</th>
                         </tr>
@@ -47,7 +47,7 @@
                         <tr>
                             <td class="ps-4">
                                 <div class="d-flex align-items-center">
-                                    <img src="/<?= $p['image'] ?>" class="img-thumb me-3" onerror="this.src='https://placehold.co/60x60?text=No+Img'">
+                                    <img src="/<?= $p['thumbnail_path'] ?? 'image/no-image.png' ?>" class="img-thumb me-3" onerror="this.src='https://placehold.co/60x60?text=No+Img'">
                                     <div>
                                         <div class="fw-bold text-dark"><?= htmlspecialchars($p['name']) ?></div>
                                         <small class="text-muted">ID: #<?= $p['id'] ?></small>
@@ -60,20 +60,15 @@
                                 </span>
                             </td>
                             <td>
-                                <div class="fw-bold text-danger"><?= number_format($p['sale_price'], 0, ',', '.') ?> đ</div>
-                                <?php if($p['price'] > 0): ?>
-                                <small class="text-decoration-line-through text-muted">
-                                    <?= number_format($p['price'], 0, ',', '.') ?> đ
-                                </small>
-                                <?php endif; ?>
+                                <div class="fw-bold text-dark"><?= number_format($p['base_price'], 0, ',', '.') ?> đ</div>
                             </td>
                             <td class="text-center">
-                                <span class="fw-bold <?= $p['quantity'] > 0 ? 'text-dark' : 'text-danger' ?>">
-                                    <?= $p['quantity'] ?>
+                                <span class="badge rounded-pill bg-info bg-opacity-10 text-info">
+                                    <?= $p['variant_count'] ?? 0 ?> biến thể
                                 </span>
                             </td>
                             <td class="text-center">
-                                <?php if($p['status'] == 1): ?>
+                                <?php if(isset($p['status']) && $p['status'] == 1): ?>
                                 <span class="badge bg-success bg-opacity-10 text-success rounded-pill px-3">Hoạt động</span>
                                 <?php else: ?>
                                 <span class="badge bg-secondary bg-opacity-10 text-secondary rounded-pill px-3">Ẩn</span>
@@ -84,7 +79,7 @@
                                     <i class="bi bi-pencil"></i>
                                 </a>
                                 <a href="/product/delete/<?= $p['id'] ?>" class="btn btn-sm btn-light border text-danger ms-1" 
-                                   onclick="return confirm('Xóa sản phẩm này?');" title="Xóa">
+                                   onclick="return confirm('Xóa sản phẩm này sẽ xóa toàn bộ biến thể và ảnh liên quan?');" title="Xóa">
                                     <i class="bi bi-trash"></i>
                                 </a>
                             </td>

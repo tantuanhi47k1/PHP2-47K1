@@ -1,132 +1,131 @@
 <?php
-class AuthController extends Controller {
-
+class AuthController extends Controller
+{
     public function __construct() {
         if (session_status() === PHP_SESSION_NONE) {
             session_start();
         }
     }
 
-    public function index() {
-        $authModel = $this->model('UserModel');
-        $data = $authModel->all();
-        header("Location: /auth/login");
+    // --- LOGIC CHO CLIENT (USERS) ---
+    public function login() {
+        $this->view('client/auth/login');
     }
 
     public function register() {
-        $this->view('admin/auth/register'); 
+        $this->view('client/auth/register');
     }
 
-    // xly đk
     public function storeRegister() {
-        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-            header("Location: /auth/register");
-            exit;
-        }
-
-        $name = trim($_POST['name'] ?? '');
-        $email = trim($_POST['email'] ?? '');
-        $phone = $_POST['phone'] ?? '';
-        $address = $_POST['address'] ?? '';
-        $password = trim($_POST['password']) ?? '';
-        $confirmPassword = trim($_POST['confirm_password']) ?? '';
-
-        $errors = [];
-
-        if (empty($name)) {
-            $errors['name'] = 'Vui lòng nhập họ tên đầy đủ!';
-        }
-
-        if (empty($email)) {
-            $errors['email'] = 'Vui lòng nhập email!';
-        } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-            $errors['email'] = 'Email không hợp lệ!';
-        }
-
-        if (empty($password)) {
-            $errors['password'] = 'Vui lòng nhập mật khẩu!';
-        } elseif (strlen($password) < 6) {
-            $errors['password'] = 'Mật khẩu phải có ít nhất 6 ký tự!';
-        }
-
-        if ($password !== $confirmPassword) {
-            $errors['confirm_password'] = 'Mật khẩu xác nhận không khớp!';
-        }
-        
-        if (!isset($_POST['terms'])) {
-        }
-
-        if (!empty($errors)) {
-            $_SESSION['errors'] = $errors;
-            $_SESSION['old'] = $_POST; 
-            header("Location: /auth/register");
-            exit;
-        }
-
         $userModel = $this->model('UserModel');
+        $email = trim($_POST['email'] ?? '');
 
         if ($userModel->findByEmail($email)) {
-            $_SESSION['errors']['email'] = 'Email này đã được sử dụng!';
-            $_SESSION['old'] = $_POST;
+            $_SESSION['error'] = 'Email này đã được khách hàng khác sử dụng!';
             header("Location: /auth/register");
             exit;
         }
 
         $data = [
-            'name' => $name,
-            'email' => $email,
-            'password' => password_hash($password, PASSWORD_DEFAULT),
-            'phone' => $phone,           
-            'address' => $address,         
-            'role' => 0,
-            'status' => 1            
+            'name'          => trim($_POST['name']),
+            'email'         => $email,
+            'password'      => password_hash($_POST['password'], PASSWORD_DEFAULT),
+            'phone'         => $_POST['phone'] ?? null,
+            'address'       => $_POST['address'] ?? null,
+            'avatar'        => 'image/avatar/default.png',
+            'google_id'     => null,
+            'auth_provider' => 'local'
         ];
 
         if ($userModel->create($data)) {
-            $_SESSION['success'] = 'Đăng ký thành công! Vui lòng đăng nhập.';
-            unset($_SESSION['errors']);
-            unset($_SESSION['old']);
+            unset($_SESSION['error']);
+            $_SESSION['success'] = 'Đăng ký thành công! Mời bạn đăng nhập.';
             header("Location: /auth/login");
-            $_POST = [];
         } else {
-            $_SESSION['error'] = 'Có lỗi xảy ra, vui lòng thử lại.';
+            $_SESSION['error'] = 'Lỗi hệ thống khi đăng ký khách hàng!';
             header("Location: /auth/register");
         }
     }
 
-    public function login() {
-        $this->view('admin/auth/login');
-    }
-    
-    // xly đn
-    public function handleLogin()
-    {
+    public function handleUserLogin() {
         $email = $_POST['email'] ?? '';
         $password = $_POST['password'] ?? '';
-
-        $userModel = $this->model('UserModel');
-        $user = $userModel->findByEmail($email);
+        $user = $this->model('UserModel')->findByEmail($email);
 
         if ($user && password_verify($password, $user['password'])) {
             $_SESSION['user_id'] = $user['id'];
-            $_SESSION['user_name'] = $user['name'];
-            $_SESSION['user_role'] = $user['role'];
-
-            if ($user['role'] == 1) {
-                header("Location: /product/manage");
-            } else {
-                header("Location: /");
-            }
+            $_SESSION['user_name'] = $user['full_name'];
+            
+            header("Location: /");
             exit;
         } else {
-            $_SESSION['error'] = 'Email hoặc mật khẩu không đúng!';
+            $_SESSION['error'] = 'Email hoặc mật khẩu khách hàng không đúng!';
             header("Location: /auth/login");
         }
     }
 
-    public function logout()
-    {
+    // --- LOGIC CHO ADMINS ---
+    public function adminLogin() {
+        $this->view('admin/auth/login');
+    }
+
+    public function handleAdminLogin() {
+        $email = $_POST['email'] ?? '';
+        $password = $_POST['password'] ?? '';
+        $admin = $this->model('AdminModel')->findByEmail($email);
+
+        if ($admin && password_verify($password, $admin['password'])) {
+            if ($admin['role'] == 2) {
+                $_SESSION['admin_id'] = $admin['id'];
+                $_SESSION['admin_name'] = $admin['username'];
+                $_SESSION['admin_role'] = $admin['role'];
+
+                header("Location: /admin/index"); 
+                exit;
+            } else {
+                $_SESSION['error'] = 'Tài khoản chưa được kích hoạt quyền Quản trị (Role 1).';
+                header("Location: /auth/adminLogin");
+                exit;
+            }
+        } else {
+            $_SESSION['error'] = 'Thông tin đăng nhập Admin không chính xác!';
+            header("Location: /auth/adminLogin");
+        }
+    }
+
+    public function adminRegister() {
+        $this->view('admin/auth/register');
+    }
+
+    public function storeAdmin() {
+        $email = trim($_POST['email'] ?? '');
+        $adminModel = $this->model('AdminModel');
+
+        if ($adminModel->findByEmail($email)) {
+            $_SESSION['error'] = 'Email quản trị này đã tồn tại trên hệ thống!';
+            header("Location: /auth/adminRegister");
+            exit;
+        }
+
+        $data = [
+            'username' => trim($_POST['name']),
+            'email'    => $email,
+            'password' => password_hash($_POST['password'], PASSWORD_DEFAULT)
+        ];
+
+        if ($adminModel->create($data)) {
+            unset($_SESSION['error']);
+            $_SESSION['success'] = 'Tạo tài khoản Admin thành công (Mặc định Role 1).';
+            header("Location: /auth/adminLogin");
+        } else {
+            $_SESSION['error'] = 'Không thể tạo Admin vào lúc này!';
+            header("Location: /auth/adminRegister");
+        }
+    }
+
+    public function logout() {
         session_destroy();
-        header("Location: /auth/login"); 
+        header("Location: /");
+        exit;
     }
 }
