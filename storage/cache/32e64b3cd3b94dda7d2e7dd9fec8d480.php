@@ -30,6 +30,11 @@
             box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
             border-radius: 0.5rem;
         }
+
+        .font-monospace {
+            font-family: 'Courier New', Courier, monospace;
+            letter-spacing: 1px;
+        }
     </style>
 
     <div class="container-fluid py-5">
@@ -37,26 +42,20 @@
             <div class="d-flex justify-content-between align-items-center mb-4">
                 <h4 class="fw-bold text-brand m-0"><i class="bi bi-ticket-perforated me-2"></i>Quản lý Mã giảm giá</h4>
                 <a href="/coupon/create" class="btn btn-brand btn-sm shadow-sm px-3 py-2">
-                    <i class="bi bi-plus-lg me-1"></i> Thêm mới
+                    <i class="bi bi-plus-lg me-1"></i> Thêm mã mới
                 </a>
             </div>
-
-            <?php if (isset($mess)): ?>
-            <div class="alert alert-success d-flex align-items-center mb-4" role="alert">
-                <i class="bi bi-check-circle-fill me-2"></i>
-                <div><?= $mess ?></div>
-            </div>
-            <?php endif; ?>
 
             <div class="table-responsive">
                 <table class="table table-hover align-middle mb-0">
                     <thead class="bg-light">
                         <tr>
                             <th class="ps-4">Mã Coupon</th>
-                            <th>Loại giảm</th>
-                            <th>Giá trị</th>
+                            <th>Chi tiết giảm</th>
+                            <th>Mức giảm tối đa</th>
                             <th>Đơn tối thiểu</th>
-                            <th>Thời gian hiệu lực</th>
+                            <th>Lượt dùng</th>
+                            <th>Thời hạn</th>
                             <th class="text-center">Trạng thái</th>
                             <th class="text-center pe-4">Hành động</th>
                         </tr>
@@ -64,7 +63,7 @@
                     <tbody>
                         <?php if(empty($coupons)): ?>
                         <tr>
-                            <td colspan="7" class="text-center py-5 text-muted">Chưa có mã giảm giá nào.</td>
+                            <td colspan="8" class="text-center py-5 text-muted">Chưa có mã giảm giá nào được tạo.</td>
                         </tr>
                         <?php else: ?>
                         <?php foreach($coupons as $c): ?>
@@ -75,45 +74,59 @@
                                 </span>
                             </td>
                             <td>
-                                <?php if($c['type'] == 'percent'): ?>
-                                    <span class="badge bg-info bg-opacity-10 text-info border border-info">Phần trăm (%)</span>
-                                <?php else: ?>
-                                    <span class="badge bg-warning bg-opacity-10 text-warning border border-warning">Tiền mặt</span>
-                                <?php endif; ?>
-                            </td>
-                            <td>
-                                <div class="fw-bold text-dark">
-                                    <?= $c['type'] == 'percent' ? $c['value'] . '%' : number_format($c['value'], 0, ',', '.') . ' đ' ?>
+                                <div class="d-flex flex-column">
+                                    <?php if($c['discount_type'] == 'percentage'): ?>
+                                        <span class="text-dark fw-bold"><?= (float)$c['discount_value'] ?>%</span>
+                                        <small class="text-info" style="font-size: 0.75rem;">Theo phần trăm</small>
+                                    <?php else: ?>
+                                        <span class="text-dark fw-bold"><?= number_format($c['discount_value'], 0, ',', '.') ?> đ</span>
+                                        <small class="text-warning" style="font-size: 0.75rem;">Tiền mặt cố định</small>
+                                    <?php endif; ?>
                                 </div>
                             </td>
                             <td>
-                                <small class="text-muted"><?= number_format($c['min_order_value'], 0, ',', '.') ?> đ</small>
+                                <?php if($c['max_discount_amount']): ?>
+                                    <span class="text-dark"><?= number_format($c['max_discount_amount'], 0, ',', '.') ?> đ</span>
+                                <?php else: ?>
+                                    <span class="text-muted">Không giới hạn</span>
+                                <?php endif; ?>
+                            </td>
+                            <td>
+                                <span class="text-muted"><?= number_format($c['min_order_value'], 0, ',', '.') ?> đ</span>
+                            </td>
+                            <td>
+                                <div class="d-flex flex-column">
+                                    <span class="text-dark small">Tối đa: <?= $c['usage_limit'] ?? '∞' ?></span>
+                                    <small class="text-muted" style="font-size: 0.7rem;">Đã dùng: 0</small>
+                                </div>
                             </td>
                             <td>
                                 <div class="d-flex flex-column" style="font-size: 0.85rem;">
-                                    <span class="text-success"><i class="bi bi-calendar-check me-1"></i><?= date('d/m/Y', strtotime($c['start_date'])) ?></span>
+                                    <small class="text-success"><i class="bi bi-play-circle me-1"></i><?= date('d/m/Y', strtotime($c['start_date'])) ?></small>
                                     <?php if($c['end_date']): ?>
-                                    <span class="text-danger mt-1"><i class="bi bi-calendar-x me-1"></i><?= date('d/m/Y', strtotime($c['end_date'])) ?></span>
+                                        <small class="text-danger mt-1"><i class="bi bi-stop-circle me-1"></i><?= date('d/m/Y', strtotime($c['end_date'])) ?></small>
                                     <?php else: ?>
-                                    <span class="text-muted mt-1"><i class="bi bi-infinity me-1"></i>Vĩnh viễn</span>
+                                        <small class="text-muted mt-1"><i class="bi bi-infinity me-1"></i>Vô thời hạn</small>
                                     <?php endif; ?>
                                 </div>
                             </td>
                             <td class="text-center">
                                 <?php if($c['status'] == 1): ?>
-                                <span class="badge bg-brand-light rounded-pill px-3">Hoạt động</span>
+                                    <span class="badge bg-brand-light rounded-pill px-3">Đang chạy</span>
                                 <?php else: ?>
-                                <span class="badge bg-secondary bg-opacity-10 text-secondary rounded-pill px-3">Tạm khóa</span>
+                                    <span class="badge bg-secondary bg-opacity-10 text-secondary rounded-pill px-3">Tạm dừng</span>
                                 <?php endif; ?>
                             </td>
                             <td class="text-center pe-4">
-                                <a href="/coupon/edit/<?= $c['id'] ?>" class="btn btn-sm btn-light border text-primary" title="Sửa">
-                                    <i class="bi bi-pencil"></i>
-                                </a>
-                                <a href="/coupon/delete/<?= $c['id'] ?>" class="btn btn-sm btn-light border text-danger ms-1" 
-                                   onclick="return confirm('Bạn có chắc muốn xóa mã này?');" title="Xóa">
-                                    <i class="bi bi-trash"></i>
-                                </a>
+                                <div class="d-flex justify-content-center gap-1">
+                                    <a href="/coupon/edit/<?= $c['id'] ?>" class="btn btn-sm btn-light border text-primary" title="Chỉnh sửa">
+                                        <i class="bi bi-pencil-square"></i>
+                                    </a>
+                                    <a href="/coupon/delete/<?= $c['id'] ?>" class="btn btn-sm btn-light border text-danger" 
+                                       onclick="return confirm('Xóa mã [<?= htmlspecialchars($c['code']) ?>]?');" title="Xóa">
+                                        <i class="bi bi-trash"></i>
+                                    </a>
+                                </div>
                             </td>
                         </tr>
                         <?php endforeach; ?>

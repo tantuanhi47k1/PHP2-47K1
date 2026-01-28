@@ -2,14 +2,16 @@
 class HomeController extends Controller {
     
     public function index() {
-        $productModel = $this->model('ProductModel');
-        $products = $productModel->all();
-        
-        $dataView = [
-            'title' => 'Trang Chủ - MY SHOP',
-            'products' => $products
-        ];
+        if (session_status() === PHP_SESSION_NONE) {
+            session_start();
+        }
 
-        $this->view('admin/home/index', $dataView);
+        if (isset($_SESSION['admin_id']) && $_SESSION['admin_role'] == 2) {
+            header("Location: /admin/index");
+            exit;
+        }
+
+        header("Location: /auth/adminLogin");
+        exit;
     }
 }

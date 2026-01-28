@@ -1,77 +1,87 @@
 <?php
-class BrandController extends Controller
-{
-    private $brandModel;
+class BrandController extends Controller {
 
-    public function __construct()
-    {
-        if (!isset($_SESSION['admin_id']) || $_SESSION['admin_role'] != 2) {
-            header("Location: /auth/adminLogin");
-            exit;
-        }
-        $this->brandModel = $this->model('BrandModel');
+    public function index() {
+        $brandModel = $this->model('BrandModel');
+        $brands = $brandModel->all(); 
+        $this->view('admin/brand/index', ['brands' => $brands]);
     }
 
-    public function index()
-    {
-        $brands = $this->brandModel->all();
-        $this->view('admin/brand/index', [
-            'brands' => $brands
-        ]);
-    }
-
-    public function create()
-    {
+    public function create() {
         $this->view('admin/brand/create');
     }
 
-    public function store()
-    {
-        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            $data = [
-                'name'        => $_POST['name'] ?? '',
-                'logo'        => $_POST['logo'] ?? '',
-                'description' => $_POST['description'] ?? ''
-            ];
+    public function store() {
+        $brandModel = $this->model('BrandModel');
+        $logoPath = ''; 
 
-            $this->brandModel->create($data);
-            $_SESSION['success'] = "Thêm thương hiệu thành công!";
-            header("Location: /brand/index");
-            exit;
+        if (isset($_FILES['logo']) && $_FILES['logo']['error'] == 0) {
+            $targetDir = 'image/brand/';
+            if (!is_dir($targetDir)) mkdir($targetDir, 0777, true);
+
+            $fileName = time() . '_' . basename($_FILES['logo']['name']);
+            $targetPath = $targetDir . $fileName;
+            
+            if (move_uploaded_file($_FILES['logo']['tmp_name'], $targetPath)) {
+                $logoPath = $targetPath;
+            }
         }
+
+        $brandData = [
+            'name'        => $_POST['name'],
+            'logo'        => $logoPath,
+            'description' => $_POST['description'] ?? ''
+        ];
+
+        $brandModel->create($brandData);
+        header("Location: /brand");
     }
 
-    public function edit($id)
-    {
-        $brand = $this->brandModel->find($id);
-        if (!$brand) {
-            header("Location: /brand/index");
-            exit;
-        }
+    public function edit($id) {
+        $brand = $this->model('BrandModel')->find($id);
         $this->view('admin/brand/edit', ['brand' => $brand]);
     }
 
-    public function update($id)
-    {
-        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            $data = [
-                'name'        => $_POST['name'] ?? '',
-                'logo'        => $_POST['logo'] ?? '',
-                'description' => $_POST['description'] ?? ''
-            ];
+    public function update($id) {
+        $brandModel = $this->model('BrandModel');
+        $oldBrand = $brandModel->find($id);
+        $logoPath = $oldBrand['logo'];
 
-            $this->brandModel->update($id, $data);
-            $_SESSION['success'] = "Cập nhật thương hiệu thành công!";
-            header("Location: /brand/index");
-            exit;
+        if (isset($_FILES['logo']) && $_FILES['logo']['error'] == 0) {
+            $targetDir = 'image/brand/';
+            $fileName = time() . '_' . basename($_FILES['logo']['name']);
+            $targetPath = $targetDir . $fileName;
+            
+            if (move_uploaded_file($_FILES['logo']['tmp_name'], $targetPath)) {
+                $logoPath = $targetPath;
+            }
         }
+
+        $brandData = [
+            'name'        => $_POST['name'],
+            'logo'        => $logoPath,
+            'description' => $_POST['description']
+        ];
+
+        $brandModel->update($id, $brandData);
+        header("Location: /brand");
     }
 
-    public function delete($id)
-    {
-        $this->brandModel->delete($id);
-        $_SESSION['success'] = "Đã xóa thương hiệu!";
-        header("Location: /brand/index");
-        exit;
+    public function delete($id) {
+    $brandModel = $this->model('BrandModel');
+    
+    $brand = $brandModel->find($id);
+
+    if ($brand) {
+        $imagePath = $brand['logo'];
+        if (!empty($imagePath) && file_exists($imagePath)) {
+            unlink($imagePath);
+        }
+
+        $brandModel->delete($id);
     }
+
+    header("Location: /brand");
+    exit;
+}
 }

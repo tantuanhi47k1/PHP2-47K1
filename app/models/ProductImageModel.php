@@ -12,6 +12,24 @@ class ProductImageModel extends Model
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
+    public function getImagesByVariantId($variantId)
+    {
+        $sql = "SELECT * FROM $this->table WHERE variant_id = :variant_id";
+        $conn = $this->connect($sql);
+        $stmt = $conn->prepare($sql);
+        $stmt->execute([':variant_id' => $variantId]);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    public function find($id)
+    {
+        $sql = "SELECT * FROM $this->table WHERE id = :id";
+        $conn = $this->connect($sql);
+        $stmt = $conn->prepare($sql);
+        $stmt->execute([':id' => $id]);
+        return $stmt->fetch(PDO::FETCH_ASSOC);
+    }
+
     public function create($data)
     {
         $sql = "INSERT INTO $this->table 
@@ -21,7 +39,7 @@ class ProductImageModel extends Model
 
         $conn = $this->connect($sql);
         $stmt = $conn->prepare($sql);
-        $stmt->execute($data);
+        return $stmt->execute($data);
     }
 
     public function delete($id)
@@ -29,6 +47,6 @@ class ProductImageModel extends Model
         $sql = "DELETE FROM $this->table WHERE id = :id";
         $conn = $this->connect($sql);
         $stmt = $conn->prepare($sql);
-        $stmt->execute([':id' => $id]);
+        return $stmt->execute([':id' => $id]);
     }
 }

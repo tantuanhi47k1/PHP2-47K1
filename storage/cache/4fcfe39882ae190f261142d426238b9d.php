@@ -44,8 +44,7 @@
                                 <label class="form-label fw-bold">Mã Coupon <span class="text-danger">*</span></label>
                                 <input type="text" name="code" 
                                        class="form-control <?= isset($errors['code']) ? 'is-invalid' : '' ?>" 
-                                       value="<?= htmlspecialchars($coupon['code']) ?>"
-                                      >
+                                       value="<?= htmlspecialchars($coupon['code']) ?>">
                                 <?php if(isset($errors['code'])): ?>
                                     <div class="invalid-feedback"><?= $errors['code'] ?></div>
                                 <?php endif; ?>
@@ -63,22 +62,22 @@
                         <div class="row">
                             <div class="col-md-6 mb-3">
                                 <label class="form-label fw-bold">Loại giảm <span class="text-danger">*</span></label>
-                                <select name="type" class="form-select <?= isset($errors['type']) ? 'is-invalid' : '' ?>">
-                                    <option value="fixed" <?= $coupon['type'] == 'fixed' ? 'selected' : '' ?>>Tiền mặt (VNĐ)</option>
-                                    <option value="percent" <?= $coupon['type'] == 'percent' ? 'selected' : '' ?>>Phần trăm (%)</option>
+                                <select name="discount_type" class="form-select <?= isset($errors['discount_type']) ? 'is-invalid' : '' ?>">
+                                    <option value="fixed" <?= $coupon['discount_type'] == 'fixed' ? 'selected' : '' ?>>Tiền mặt (VNĐ)</option>
+                                    <option value="percentage" <?= $coupon['discount_type'] == 'percentage' ? 'selected' : '' ?>>Phần trăm (%)</option>
                                 </select>
-                                <?php if(isset($errors['type'])): ?>
-                                    <div class="invalid-feedback"><?= $errors['type'] ?></div>
+                                <?php if(isset($errors['discount_type'])): ?>
+                                    <div class="invalid-feedback"><?= $errors['discount_type'] ?></div>
                                 <?php endif; ?>
                             </div>
 
                             <div class="col-md-6 mb-3">
                                 <label class="form-label fw-bold">Giá trị giảm <span class="text-danger">*</span></label>
-                                <input type="number" name="value" 
-                                       class="form-control <?= isset($errors['value']) ? 'is-invalid' : '' ?>"
-                                       value="<?= $coupon['value'] ?>" min="0">
-                                <?php if(isset($errors['value'])): ?>
-                                    <div class="invalid-feedback"><?= $errors['value'] ?></div>
+                                <input type="number" name="discount_value" 
+                                       class="form-control <?= isset($errors['discount_value']) ? 'is-invalid' : '' ?>"
+                                       value="<?= (float)$coupon['discount_value'] ?>" min="0" step="0.01">
+                                <?php if(isset($errors['discount_value'])): ?>
+                                    <div class="invalid-feedback"><?= $errors['discount_value'] ?></div>
                                 <?php endif; ?>
                             </div>
                         </div>
@@ -87,21 +86,26 @@
                             <div class="col-md-6 mb-3">
                                 <label class="form-label fw-bold">Đơn tối thiểu</label>
                                 <input type="number" name="min_order_value" 
-                                       class="form-control <?= isset($errors['min_order_value']) ? 'is-invalid' : '' ?>"
-                                       value="<?= $coupon['min_order_value'] ?>" min="0">
-                                <?php if(isset($errors['min_order_value'])): ?>
-                                    <div class="invalid-feedback"><?= $errors['min_order_value'] ?></div>
-                                <?php endif; ?>
+                                       class="form-control"
+                                       value="<?= (float)$coupon['min_order_value'] ?>" min="0" step="0.01">
                             </div>
 
                             <div class="col-md-6 mb-3">
-                                <label class="form-label fw-bold">Lượt dùng tối đa</label>
-                                <input type="number" name="max_usage" 
-                                       class="form-control <?= isset($errors['max_usage']) ? 'is-invalid' : '' ?>"
-                                       value="<?= $coupon['max_usage'] ?>" placeholder="Không giới hạn">
-                                <?php if(isset($errors['max_usage'])): ?>
-                                    <div class="invalid-feedback"><?= $errors['max_usage'] ?></div>
-                                <?php endif; ?>
+                                <label class="form-label fw-bold">Giảm tối đa (VNĐ)</label>
+                                <input type="number" name="max_discount_amount" 
+                                       class="form-control"
+                                       value="<?= $coupon['max_discount_amount'] ? (float)$coupon['max_discount_amount'] : '' ?>" 
+                                       placeholder="Không giới hạn">
+                                <small class="text-muted">Quan trọng khi giảm theo %.</small>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-12 mb-3">
+                                <label class="form-label fw-bold">Tổng lượt dùng tối đa</label>
+                                <input type="number" name="usage_limit" 
+                                       class="form-control"
+                                       value="<?= $coupon['usage_limit'] ?>" placeholder="Để trống = Không giới hạn">
                             </div>
                         </div>
 
@@ -125,7 +129,7 @@
                         </div>
 
                         <button type="submit" class="btn btn-brand w-100 fw-bold py-2 mt-2">
-                            <i class="bi bi-save me-1"></i> Cập nhật
+                            <i class="bi bi-save me-1"></i> Cập nhật thay đổi
                         </button>
                     </div>
                 </form>

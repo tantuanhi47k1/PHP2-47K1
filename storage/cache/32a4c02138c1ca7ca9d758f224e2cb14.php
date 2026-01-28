@@ -7,6 +7,7 @@
         .btn-brand { background-color: #009981; color: white; }
         .btn-brand:hover { background-color: #007a67; color: white; }
         .img-thumb { width: 60px; height: 60px; object-fit: cover; border-radius: 8px; border: 1px solid #eee; }
+        .badge-variant:hover { background-color: #0dcaf0 !important; color: white !important; transition: 0.3s; }
     </style>
 
     <div class="container-fluid px-4 py-4">
@@ -62,11 +63,15 @@
                             <td>
                                 <div class="fw-bold text-dark"><?= number_format($p['base_price'], 0, ',', '.') ?> đ</div>
                             </td>
+                            
                             <td class="text-center">
-                                <span class="badge rounded-pill bg-info bg-opacity-10 text-info">
-                                    <?= $p['variant_count'] ?? 0 ?> biến thể
-                                </span>
+                                <a href="/variant/index/<?= $p['id'] ?>" class="text-decoration-none">
+                                    <span class="badge rounded-pill bg-info bg-opacity-10 text-info border border-info badge-variant">
+                                        <i class="bi bi-layers me-1"></i> <?= $p['variant_count'] ?? 0 ?> biến thể
+                                    </span>
+                                </a>
                             </td>
+
                             <td class="text-center">
                                 <?php if(isset($p['status']) && $p['status'] == 1): ?>
                                 <span class="badge bg-success bg-opacity-10 text-success rounded-pill px-3">Hoạt động</span>
@@ -74,7 +79,12 @@
                                 <span class="badge bg-secondary bg-opacity-10 text-secondary rounded-pill px-3">Ẩn</span>
                                 <?php endif; ?>
                             </td>
+                            
                             <td class="text-center pe-4">
+                                <a href="/variant/index/<?= $p['id'] ?>" class="btn btn-sm btn-light border text-info" title="Quản lý biến thể">
+                                    <i class="bi bi-diagram-3"></i>
+                                </a>
+
                                 <a href="/product/edit/<?= $p['id'] ?>" class="btn btn-sm btn-light border text-primary" title="Sửa">
                                     <i class="bi bi-pencil"></i>
                                 </a>

@@ -1,7 +1,10 @@
 <?php
 $uri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
 $segments = explode('/', trim($uri, '/'));
-$current_page = $segments[0] ?? 'admin'; 
+$current_page = $segments[0] ?? 'admin';
+
+// Giả định bạn lưu role vào session khi đăng nhập
+$admin_role = $_SESSION['admin_role'] ?? 1;
 ?>
 
 <style>
@@ -54,13 +57,9 @@ $current_page = $segments[0] ?? 'admin';
     }
 
     .sidebar-menu .nav-link.active {
-        background-color: rgba(0, 153, 129, 0.15); 
-        color: #009981 !important;           
+        background-color: rgba(0, 153, 129, 0.15);
+        color: #009981 !important;
         font-weight: 600;
-    }
-
-    .sidebar-menu .nav-link.active i {
-        color: #009981;
     }
 
     .sidebar-menu .nav-link:hover:not(.active) {
@@ -73,6 +72,14 @@ $current_page = $segments[0] ?? 'admin';
         margin-top: 20px !important;
         padding-top: 20px !important;
     }
+
+    .role-badge-sidebar {
+        font-size: 0.65rem;
+        background: #2d3238;
+        padding: 2px 6px;
+        border-radius: 4px;
+        margin-left: auto;
+    }
 </style>
 
 <aside class="sidebar" id="sidebar">
@@ -81,53 +88,56 @@ $current_page = $segments[0] ?? 'admin';
     </a>
 
     <ul class="sidebar-menu p-0">
+
+
+        <?php if ($admin_role == 2): ?>
+
         <li class="nav-item">
-            <a class="nav-link <?= ($current_page == 'admin' || $current_page == '') ? 'active' : '' ?>" href="/admin/index">
+            <a class="nav-link <?= $current_page == 'admin' || $current_page == '' ? 'active' : '' ?>"
+                href="/admin/index">
                 <i class="bi bi-speedometer2"></i> Dashboard
             </a>
         </li>
 
         <li class="nav-item">
-            <a class="nav-link <?= ($current_page == 'product') ? 'active' : '' ?>" href="/product">
+            <a class="nav-link <?= $current_page == 'product' ? 'active' : '' ?>" href="/product">
                 <i class="bi bi-box-seam"></i> Sản phẩm
             </a>
         </li>
 
         <li class="nav-item">
-            <a class="nav-link <?= ($current_page == 'category') ? 'active' : '' ?>" href="/category">
+            <a class="nav-link <?= $current_page == 'category' ? 'active' : '' ?>" href="/category">
                 <i class="bi bi-tags"></i> Danh mục
             </a>
         </li>
 
         <li class="nav-item">
-            <a class="nav-link <?= ($current_page == 'brand') ? 'active' : '' ?>" href="/brand">
+            <a class="nav-link <?= $current_page == 'brand' ? 'active' : '' ?>" href="/brand">
                 <i class="bi bi-star"></i> Thương hiệu
             </a>
         </li>
 
         <li class="nav-item">
-            <a class="nav-link <?= ($current_page == 'user') ? 'active' : '' ?>" href="/user">
-                <i class="bi bi-people"></i> Người dùng
-            </a>
-        </li>
-
-        <li class="nav-item">
-            <a class="nav-link <?= ($current_page == 'coupon') ? 'active' : '' ?>" href="/coupon">
+            <a class="nav-link <?= $current_page == 'coupon' ? 'active' : '' ?>" href="/coupon">
                 <i class="bi bi-ticket"></i> Mã giảm giá
             </a>
         </li>
+        
+        <hr style="border-color: #2d3238; margin: 10px 20px;">
 
         <li class="nav-item">
-            <a class="nav-link <?= ($current_page == 'color') ? 'active' : '' ?>" href="/color">
-                <i class="bi bi-palette"></i> Màu sắc
+            <a class="nav-link <?= $current_page == 'user' ? 'active' : '' ?>" href="/user">
+                <i class="bi bi-people"></i> Khách hàng
             </a>
         </li>
 
         <li class="nav-item">
-            <a class="nav-link <?= ($current_page == 'size') ? 'active' : '' ?>" href="/size">
-                <i class="bi bi-rulers"></i> Kích cỡ
+            <a class="nav-link <?= $current_page == 'adminmanage' ? 'active' : '' ?>" href="/adminmanage">
+                <i class="bi bi-shield-check"></i> Quản trị viên
             </a>
         </li>
+
+        <?php endif; ?>
 
         <li class="nav-item logout-item">
             <a class="nav-link text-danger" href="/auth/logout">

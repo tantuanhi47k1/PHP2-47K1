@@ -1,15 +1,57 @@
 
 <?php $__env->startSection('content'); ?>
     <style>
-        :root { --primary-color: #009981; }
-        .text-brand { color: var(--primary-color) !important; }
-        .btn-brand { background-color: var(--primary-color); color: white; }
-        .btn-brand:hover { background-color: #007a67; color: white; }
-        .card { border: none; box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075); border-radius: 0.5rem; }
-        .form-label { font-weight: 600; font-size: 0.9rem; color: #555; }
-        .img-edit-preview { width: 100%; height: 120px; object-fit: cover; border-radius: 5px; border: 1px solid #ddd; }
-        .image-container { position: relative; display: inline-block; }
-        .btn-remove-img { position: absolute; top: -5px; right: -5px; padding: 0 5px; border-radius: 50%; font-size: 12px; }
+        :root {
+            --primary-color: #009981;
+        }
+
+        .text-brand {
+            color: var(--primary-color) !important;
+        }
+
+        .btn-brand {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .btn-brand:hover {
+            background-color: #007a67;
+            color: white;
+        }
+
+        .card {
+            border: none;
+            box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+            border-radius: 0.5rem;
+        }
+
+        .form-label {
+            font-weight: 600;
+            font-size: 0.9rem;
+            color: #555;
+        }
+
+        .img-edit-preview {
+            width: 100%;
+            height: 120px;
+            object-fit: cover;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+        }
+
+        .image-container {
+            position: relative;
+            display: inline-block;
+        }
+
+        .btn-remove-img {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            padding: 0 5px;
+            border-radius: 50%;
+            font-size: 12px;
+        }
     </style>
 
     <div class="container py-5">
@@ -33,17 +75,19 @@
                             <div class="col-md-7">
                                 <div class="mb-3">
                                     <label class="form-label">Tên sản phẩm <span class="text-danger">*</span></label>
-                                    <input type="text" name="name" class="form-control" required value="<?= htmlspecialchars($product['name']) ?>">
+                                    <input type="text" name="name" class="form-control" required
+                                        value="<?= htmlspecialchars($product['name']) ?>">
                                 </div>
 
                                 <div class="mb-3">
                                     <label class="form-label">Giá bán gốc (VND) <span class="text-danger">*</span></label>
-                                    <input type="number" name="base_price" class="form-control" required value="<?= $product['base_price'] ?>">
+                                    <input type="number" name="base_price" class="form-control" required
+                                        value="<?= $product['base_price'] ?>">
                                 </div>
 
                                 <div class="mb-3">
                                     <label class="form-label">Mô tả ngắn</label>
-                                    <textarea name="short_description" class="form-control" rows="2"><?= htmlspecialchars($product['short_description']) ?></textarea>
+                                    <textarea name="short_description" class="form-control" rows="2"><?= htmlspecialchars($product['short_description'] ?? '') ?></textarea>
                                 </div>
                                 <div class="mb-3">
                                     <label class="form-label">Mô tả chi tiết</label>
@@ -60,23 +104,28 @@
                                                 <div class="col-4 image-container">
                                                     <img src="/<?= $img['image_path'] ?>" class="img-edit-preview">
                                                     <?php if($img['is_thumbnail']): ?>
-                                                        <span class="badge bg-success position-absolute bottom-0 start-0 m-1" style="font-size: 10px;">Đại diện</span>
+                                                        <span
+                                                            class="badge bg-success position-absolute bottom-0 start-0 m-1"
+                                                            style="font-size: 10px;">Đại diện</span>
                                                     <?php endif; ?>
                                                 </div>
                                             <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                                         <?php else: ?>
-                                            <div class="col-12"><small class="text-muted fst-italic">Chưa có ảnh nào.</small></div>
+                                            <div class="col-12"><small class="text-muted fst-italic">Chưa có ảnh
+                                                    nào.</small></div>
                                         <?php endif; ?>
                                     </div>
                                     <label class="form-label small text-muted">Thêm ảnh mới (chọn nhiều)</label>
-                                    <input type="file" name="images[]" class="form-control form-control-sm" multiple accept="image/*">
+                                    <input type="file" name="images[]" class="form-control form-control-sm" multiple
+                                        accept="image/*">
                                 </div>
 
                                 <div class="mb-3">
                                     <label class="form-label">Danh mục <span class="text-danger">*</span></label>
                                     <select name="category_id" class="form-select" required>
                                         <?php $__currentLoopData = $categories; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $c): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                                            <option value="<?= $c['id'] ?>" <?= $c['id'] == $product['category_id'] ? 'selected' : '' ?>>
+                                            <option value="<?= $c['id'] ?>"
+                                                <?= $c['id'] == $product['category_id'] ? 'selected' : '' ?>>
                                                 <?= htmlspecialchars($c['name']) ?>
                                             </option>
                                         <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
@@ -88,7 +137,8 @@
                                     <select name="brand_id" class="form-select">
                                         <option value="">-- Chọn thương hiệu --</option>
                                         <?php $__currentLoopData = $brands; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $b): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                                            <option value="<?= $b['id'] ?>" <?= $product['brand_id'] == $b['id'] ? 'selected' : '' ?>>
+                                            <option value="<?= $b['id'] ?>"
+                                                <?= $product['brand_id'] == $b['id'] ? 'selected' : '' ?>>
                                                 <?= $b['name'] ?>
                                             </option>
                                         <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
@@ -98,15 +148,14 @@
                                 <div class="mb-4">
                                     <label class="form-label">Trạng thái</label>
                                     <select name="status" class="form-select">
-                                        <option value="1" <?= $product['status'] == 1 ? 'selected' : '' ?>>Đang bán</option>
-                                        <option value="0" <?= $product['status'] == 0 ? 'selected' : '' ?>>Tạm ẩn</option>
+                                        <?php
+                                        $currentStatus = isset($product['status']) ? $product['status'] : 1;
+                                        ?>
+                                        <option value="1" <?= $currentStatus == 1 ? 'selected' : '' ?>>Đang bán
+                                        </option>
+                                        <option value="0"
+                                            <?= (string) $currentStatus === '0' ? 'selected' : '' ?>>Tạm ẩn</option>
                                     </select>
-                                </div>
-
-                                <div class="p-3 bg-light rounded border mb-4">
-                                    <h6 class="fw-bold small mb-2"><i class="bi bi-layers me-1"></i> Quản lý biến thể</h6>
-                                    <p class="text-muted small mb-0">Sản phẩm này hiện có <strong><?= $product['variant_count'] ?? 0 ?></strong> phiên bản khác nhau.</p>
-                                    <a href="/product/<?= $product['id'] ?>/variants" class="btn btn-sm btn-outline-primary mt-2 w-100">Chỉnh sửa biến thể (Size/Màu)</a>
                                 </div>
 
                                 <button type="submit" class="btn btn-brand w-100 fw-bold py-2">
@@ -120,4 +169,5 @@
         </div>
     </div>
 <?php $__env->stopSection(); ?>
+
 <?php echo $__env->make('layout.adminLayout', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?><?php /**PATH D:\laragon\www\php2_tantuan47k1\app\views/admin/product/edit.blade.php ENDPATH**/ ?>

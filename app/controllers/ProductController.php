@@ -23,9 +23,8 @@ class ProductController extends Controller {
         $imageModel = $this->model('ProductImageModel');
 
         if (empty($_POST['name']) || !isset($_POST['base_price']) || $_POST['base_price'] < 0) {
-            $mess = "Dữ liệu không hợp lệ!";
             $this->view('admin/product/create', [
-                'mess' => $mess,
+                'mess' => "Dữ liệu không hợp lệ!",
                 'categories' => $this->model('CategoryModel')->all(),
                 'brands' => $this->model('BrandModel')->all()
             ]);
@@ -33,16 +32,18 @@ class ProductController extends Controller {
         }
 
         $productData = [
-            'name'        => $_POST['name'],
-            'base_price'  => $_POST['base_price'],
-            'description' => $_POST['description'] ?? '',
-            'category_id' => $_POST['category_id'],
-            'brand_id'    => !empty($_POST['brand_id']) ? $_POST['brand_id'] : null,
+            'name'              => $_POST['name'],
+            'short_description' => $_POST['short_description'] ?? '',
+            'description'       => $_POST['description'] ?? '',
+            'base_price'        => $_POST['base_price'],
+            'category_id'       => $_POST['category_id'],
+            'brand_id'          => !empty($_POST['brand_id']) ? $_POST['brand_id'] : null,
+            'status'            => $_POST['status'] ?? 1,
         ];
-        
+
         $productId = $productModel->create($productData);
 
-        if (isset($_FILES['images']) && !empty($_FILES['images']['name'][0])) {
+        if ($productId && isset($_FILES['images']) && !empty($_FILES['images']['name'][0])) {
             $files = $_FILES['images'];
             $targetDir = 'image/product/';
             if (!is_dir($targetDir)) mkdir($targetDir, 0777, true);
@@ -65,6 +66,7 @@ class ProductController extends Controller {
         }
         
         header("Location: /product");
+        exit;
     }
 
     public function edit($id) {
@@ -86,21 +88,25 @@ class ProductController extends Controller {
         $imageModel = $this->model('ProductImageModel');
 
         $productData = [
-            'name'        => $_POST['name'],
-            'base_price'  => $_POST['base_price'],
-            'description' => $_POST['description'],
-            'category_id' => $_POST['category_id'],
-            'brand_id'    => !empty($_POST['brand_id']) ? $_POST['brand_id'] : null
+            'name'              => $_POST['name'],
+            'short_description' => $_POST['short_description'] ?? '', 
+            'description'       => $_POST['description'] ?? '',
+            'base_price'        => $_POST['base_price'],
+            'category_id'       => $_POST['category_id'],
+            'brand_id'          => !empty($_POST['brand_id']) ? $_POST['brand_id'] : null,
+            'status'            => $_POST['status']
         ];
+
         $productModel->update($id, $productData);
 
         if (isset($_FILES['images']) && !empty($_FILES['images']['name'][0])) {
             $files = $_FILES['images'];
             $targetDir = 'image/product/';
+            if (!is_dir($targetDir)) mkdir($targetDir, 0777, true);
 
             foreach ($files['name'] as $key => $name) {
                 if ($files['error'][$key] == 0) {
-                    $fileName = time() . '_' . $name;
+                    $fileName = time() . '_' . basename($name);
                     $targetPath = $targetDir . $fileName;
                     
                     if (move_uploaded_file($files['tmp_name'][$key], $targetPath)) {
@@ -116,10 +122,25 @@ class ProductController extends Controller {
         }
 
         header("Location: /product");
+        exit;
     }
 
     public function delete($id) {
-        $this->model('ProductModel')->delete($id);
+        $productModel = $this->model('ProductModel');
+        $imageModel = $this->model('ProductImageModel');
+
+        $images = $imageModel->getImagesByProductId($id);
+        if (!empty($images)) {
+            foreach ($images as $img) {
+                if (file_exists($img['image_path'])) {
+                    unlink($img['image_path']);
+                }
+            }
+        }
+
+        $productModel->delete($id);
+
         header("Location: /product");
+        exit;
     }
 }

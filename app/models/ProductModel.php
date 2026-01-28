@@ -23,9 +23,9 @@ class ProductModel extends Model
 
     public function find($id)
     {
-        // Bỏ deleted_at
-        $sql = "SELECT * FROM $this->table WHERE id = :id";
-        $conn = $this->connect($sql);
+        $sql = "SELECT * FROM products WHERE id = :id";
+
+        $conn = $this->connect();
         $stmt = $conn->prepare($sql);
         $stmt->execute([':id' => $id]);
         return $stmt->fetch(PDO::FETCH_ASSOC);
@@ -34,31 +34,35 @@ class ProductModel extends Model
     public function create($data)
     {
         $sql = "INSERT INTO $this->table 
-                (name, description, base_price, category_id, brand_id) 
+                (name, short_description, description, base_price, category_id, brand_id, status) 
                 VALUES 
-                (:name, :description, :base_price, :category_id, :brand_id)";
+                (:name, :short_description, :description, :base_price, :category_id, :brand_id, :status)";
 
         $conn = $this->connect($sql);
         $stmt = $conn->prepare($sql);
         $stmt->execute($data);
-        
+
         return $conn->lastInsertId();
     }
 
     public function update($id, $data)
     {
-        $data['id'] = $id; 
+        $data['id'] = $id;
+
         $sql = "UPDATE $this->table SET 
                 name = :name, 
+                short_description = :short_description, 
                 description = :description, 
                 base_price = :base_price, 
                 category_id = :category_id, 
-                brand_id = :brand_id
+                brand_id = :brand_id,
+                status = :status
                 WHERE id = :id";
 
         $conn = $this->connect($sql);
         $stmt = $conn->prepare($sql);
-        $stmt->execute($data);
+
+        return $stmt->execute($data);
     }
 
     public function delete($id)

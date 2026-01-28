@@ -5,12 +5,12 @@ class CouponController extends Controller
     {
         $couponModel = $this->model('CouponModel');
         $coupons = $couponModel->all();
-        $this->view('/admin/coupon/index', ['coupons' => $coupons]);
+        $this->view('admin/coupon/index', ['coupons' => $coupons]);
     }
 
     public function create()
     {
-        $this->view('/admin/coupon/create');
+        $this->view('admin/coupon/create');
     }
 
     public function store()
@@ -20,66 +20,41 @@ class CouponController extends Controller
             exit;
         }
 
-        $code = strtoupper(trim($_POST['code'] ?? ''));
-        $type = $_POST['type'] ?? 'fixed';
-        $value = $_POST['value'] ?? 0;
-        $min_order_value = $_POST['min_order_value'] ?? 0;
-        $max_usage = $_POST['max_usage'] ?? '';
-        $start_date = $_POST['start_date'] ?? '';
-        $end_date = $_POST['end_date'] ?? '';
+        $couponModel = $this->model('CouponModel');
 
-        $status = (int)($_POST['status'] ?? 0);
+        $code = strtoupper(trim($_POST['code'] ?? ''));
+        $discount_type = $_POST['discount_type'] ?? 'fixed';
+        $discount_value = $_POST['discount_value'] ?? 0;
+        $min_order_value = $_POST['min_order_value'] ?? 0;
+        $max_discount_amount = $_POST['max_discount_amount'] ?? null;
+        $usage_limit = $_POST['usage_limit'] ?? '';
+        $start_date = $_POST['start_date'] ?? date('Y-m-d H:i:s');
+        $end_date = $_POST['end_date'] ?? null;
 
         $errors = [];
 
         if (empty($code)) {
             $errors['code'] = 'Mã giảm giá không được để trống.';
-        } elseif (!preg_match('/^[A-Z0-9]+$/', $code)) {
-            $errors['code'] = 'Mã chỉ được chứa chữ cái in hoa và số, không có ký tự đặc biệt.';
-        } else {
-            $couponModel = $this->model('CouponModel');
-            if ($couponModel->findByCode($code)) {
-                $errors['code'] = 'Mã giảm giá này đã tồn tại.';
-            }
+        } elseif ($couponModel->findByCode($code)) {
+            $errors['code'] = 'Mã giảm giá này đã tồn tại.';
         }
 
-        if (!in_array($type, ['fixed', 'percent'])) {
-            $errors['type'] = 'Loại giảm giá không hợp lệ.';
+        if (!in_array($discount_type, ['fixed', 'percentage'])) {
+            $errors['discount_type'] = 'Loại giảm giá không hợp lệ.';
         }
 
-        if (!filter_var($value, FILTER_VALIDATE_INT) || $value <= 0) {
-            $errors['value'] = 'Giá trị giảm phải là số nguyên dương.';
-        } else {
-            if ($type == 'percent' && $value > 100) {
-                $errors['value'] = 'Giảm theo phần trăm không được vượt quá 100%.';
-            }
-            if ($type == 'fixed' && $value > 1000000000) {
-                $errors['value'] = 'Giá trị giảm tiền mặt quá lớn, vui lòng kiểm tra lại.';
-            }
+        if ($discount_value <= 0) {
+            $errors['discount_value'] = 'Giá trị giảm phải lớn hơn 0.';
+        } elseif ($discount_type == 'percentage' && $discount_value > 100) {
+            $errors['discount_value'] = 'Giảm theo phần trăm không được vượt quá 100%.';
         }
 
-        if (!filter_var($min_order_value, FILTER_VALIDATE_INT) || $min_order_value < 0) {
-            $errors['min_order_value'] = 'Đơn hàng tối thiểu phải là số nguyên không âm.';
-        }
-
-        $max_usage_val = null;
-        if ($max_usage !== '') {
-            if (!filter_var($max_usage, FILTER_VALIDATE_INT) || $max_usage <= 0) {
-                $errors['max_usage'] = 'Lượt dùng tối đa phải là số nguyên dương.';
-            } else {
-                $max_usage_val = (int)$max_usage;
-            }
-        }
-
-        $start_time = empty($start_date) ? date('Y-m-d H:i:s') : $start_date;
-        $end_time = empty($end_date) ? null : $end_date;
-
-        if ($end_time && strtotime($end_time) <= strtotime($start_time)) {
+        if ($end_date && strtotime($end_date) <= strtotime($start_date)) {
             $errors['end_date'] = 'Ngày kết thúc phải lớn hơn ngày bắt đầu.';
         }
 
         if (!empty($errors)) {
-            $this->view('coupon/create', [
+            $this->view('admin/coupon/create', [
                 'errors' => $errors,
                 'old' => $_POST
             ]);
@@ -87,20 +62,17 @@ class CouponController extends Controller
         }
 
         $data = [
-            'code' => $code,
-            'type' => $type,
-            'value' => (int)$value,
-            'min_order_value' => (int)$min_order_value,
-            'max_usage' => $max_usage_val,
-            'times_used' => 0,
-            'start_date' => $start_time,
-            'end_date' => $end_time,
-            'status' => $status
+            'code'                => $code,
+            'discount_type'       => $discount_type,
+            'discount_value'      => (float)$discount_value,
+            'min_order_value'     => (float)$min_order_value,
+            'max_discount_amount' => $max_discount_amount ? (float)$max_discount_amount : null,
+            'start_date'          => $start_date,
+            'end_date'            => $end_date ?: null,
+            'usage_limit'         => $usage_limit !== '' ? (int)$usage_limit : null
         ];
 
-        $couponModel = $this->model('CouponModel');
         $couponModel->create($data);
-
         header("Location: /coupon");
         exit;
     }
@@ -134,64 +106,27 @@ class CouponController extends Controller
         }
 
         $code = strtoupper(trim($_POST['code'] ?? ''));
-        $type = $_POST['type'] ?? 'fixed';
-        $value = $_POST['value'] ?? 0;
+        $discount_type = $_POST['discount_type'] ?? 'fixed';
+        $discount_value = $_POST['discount_value'] ?? 0;
         $min_order_value = $_POST['min_order_value'] ?? 0;
-        $max_usage = $_POST['max_usage'] ?? '';
-        $start_date = $_POST['start_date'] ?? '';
-        $end_date = $_POST['end_date'] ?? '';
-        $status = (int)($_POST['status'] ?? 0);
+        $max_discount_amount = $_POST['max_discount_amount'] ?? null;
+        $usage_limit = $_POST['usage_limit'] ?? '';
+        $start_date = $_POST['start_date'] ?? $currentCoupon['start_date'];
+        $end_date = $_POST['end_date'] ?? null;
 
         $errors = [];
 
         if (empty($code)) {
-            $errors['code'] = 'Mã giảm giá không được để trống.';
-        } elseif (!preg_match('/^[A-Z0-9]+$/', $code)) {
-            $errors['code'] = 'Mã chỉ được chứa chữ cái in hoa và số.';
+            $errors['code'] = 'Mã không được để trống.';
         } else {
-            $existingCoupon = $couponModel->findByCode($code);
-            if ($existingCoupon && $existingCoupon['id'] != $id) {
+            $existing = $couponModel->findByCode($code);
+            if ($existing && $existing['id'] != $id) {
                 $errors['code'] = 'Mã giảm giá này đã tồn tại.';
             }
         }
 
-        if (!in_array($type, ['fixed', 'percent'])) {
-            $errors['type'] = 'Loại giảm giá không hợp lệ.';
-        }
-
-        if (!filter_var($value, FILTER_VALIDATE_INT) || $value <= 0) {
-            $errors['value'] = 'Giá trị giảm phải là số nguyên dương.';
-        } else {
-            if ($type == 'percent' && $value > 100) {
-                $errors['value'] = 'Giảm theo phần trăm không được vượt quá 100%.';
-            }
-            if ($type == 'fixed' && $value > 1000000000) {
-                $errors['value'] = 'Giá trị giảm tiền mặt quá lớn.';
-            }
-        }
-
-        if (!filter_var($min_order_value, FILTER_VALIDATE_INT) || $min_order_value < 0) {
-            $errors['min_order_value'] = 'Đơn hàng tối thiểu phải là số nguyên không âm.';
-        }
-
-        $max_usage_val = null;
-        if ($max_usage !== '') {
-            if (!filter_var($max_usage, FILTER_VALIDATE_INT) || $max_usage <= 0) {
-                $errors['max_usage'] = 'Lượt dùng tối đa phải là số nguyên dương.';
-            } else {
-                $max_usage_val = (int)$max_usage;
-            }
-        }
-
-        $start_time = empty($start_date) ? date('Y-m-d H:i:s') : $start_date;
-        $end_time = empty($end_date) ? null : $end_date;
-
-        if ($end_time && strtotime($end_time) <= strtotime($start_time)) {
-            $errors['end_date'] = 'Ngày kết thúc phải lớn hơn ngày bắt đầu.';
-        }
-
         if (!empty($errors)) {
-            $this->view('coupon/edit', [
+            $this->view('admin/coupon/edit', [
                 'coupon' => array_merge($currentCoupon, $_POST, ['id' => $id]),
                 'errors' => $errors
             ]);
@@ -199,26 +134,25 @@ class CouponController extends Controller
         }
 
         $data = [
-            'code' => $code,
-            'type' => $type,
-            'value' => (int)$value,
-            'min_order_value' => (int)$min_order_value,
-            'max_usage' => $max_usage_val,
-            'start_date' => $start_time,
-            'end_date' => $end_time,
-            'status' => $status
+            'code'                => $code,
+            'discount_type'       => $discount_type,
+            'discount_value'      => (float)$discount_value,
+            'min_order_value'     => (float)$min_order_value,
+            'max_discount_amount' => $max_discount_amount ? (float)$max_discount_amount : null,
+            'start_date'          => $start_date,
+            'end_date'            => $end_date ?: null,
+            'usage_limit'         => $usage_limit !== '' ? (int)$usage_limit : null
         ];
 
         $couponModel->update($id, $data);
-
         header("Location: /coupon");
         exit;
     }
 
     public function delete($id)
     {
-        $couponModel = $this->model('CouponModel');
-        $couponModel->delete($id);
+        $this->model('CouponModel')->delete($id);
         header("Location: /coupon");
+        exit;
     }
 }

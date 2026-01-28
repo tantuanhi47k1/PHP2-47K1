@@ -1,104 +1,92 @@
 @extends('layout.adminLayout')
 
 @section('content')
-    <style>
-        :root {
-            --primary-color: #009981;
-        }
+<style>
+    .text-brand { color: #009981 !important; }
+    .btn-brand { background-color: #009981; color: white; }
+    .btn-brand:hover { background-color: #007a67; color: white; }
+    .current-avatar { width: 100px; height: 100px; object-fit: cover; border-radius: 50%; border: 3px solid #eee; }
+    #preview-avatar { width: 100px; height: 100px; object-fit: cover; border-radius: 50%; border: 3px solid #009981; display: none; }
+</style>
 
-        .text-brand {
-            color: var(--primary-color) !important;
-        }
-
-        .btn-brand {
-            background-color: var(--primary-color);
-            color: white;
-        }
-
-        .btn-brand:hover {
-            background-color: #007a67;
-            color: white;
-        }
-
-        .img-edit-avatar {
-            width: 80px;
-            height: 80px;
-            object-fit: cover;
-            border-radius: 50%;
-            border: 2px solid #eee;
-        }
-    </style>
-
-    <div class="container py-5">
-        <div class="row justify-content-center">
-            <div class="col-lg-7">
-                <div class="d-flex justify-content-between align-items-center mb-4">
-                    <h4 class="fw-bold text-brand m-0"><i class="bi bi-person-gear me-2"></i>Cập nhật Người dùng</h4>
-                    <a href="/user" class="btn btn-outline-secondary btn-sm"><i class="bi bi-arrow-left"></i> Quay lại</a>
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-white py-3 d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0 fw-bold text-brand"><i class="bi bi-person-gear me-2"></i>Cập nhật thông tin thành viên</h5>
+                    <a href="/user/index" class="btn btn-outline-secondary btn-sm">Quay lại</a>
                 </div>
-
-                <div class="card p-4 border-0 shadow-sm">
+                <div class="card-body p-4">
                     <form action="/user/update/<?= $user['id'] ?>" method="POST" enctype="multipart/form-data">
-                        
-                        <div class="text-center mb-4">
-                            <img src="/<?= $user['avatar'] ?? 'image/avatar/default.png' ?>" class="img-edit-avatar mb-2" onerror="this.src='https://ui-avatars.com/api/?name=<?= urlencode($user['name']) ?>&background=random'">
-                            <div class="small text-muted">Ảnh đại diện hiện tại</div>
-                        </div>
-
                         <div class="row">
-                            <div class="col-md-6 mb-3">
-                                <label class="form-label fw-bold">Họ và tên <span class="text-danger">*</span></label>
-                                <input type="text" name="name" class="form-control" required
-                                    value="<?= htmlspecialchars($user['name']) ?>">
+                            <div class="col-md-12 text-center mb-4">
+                                <div class="d-flex justify-content-center align-items-center gap-4">
+                                    <div>
+                                        <small class="d-block text-muted mb-1">Ảnh hiện tại</small>
+                                        <img src="/<?= $user['avatar'] ?: 'image/avatar/default.png' ?>" class="current-avatar">
+                                    </div>
+                                    <div id="avatar-preview-container">
+                                        <small class="d-block text-brand mb-1" id="preview-label" style="display:none;">Ảnh mới</small>
+                                        <img id="preview-avatar" src="#">
+                                    </div>
+                                </div>
+                                <div class="mt-3 mx-auto" style="max-width: 300px;">
+                                    <input type="file" name="avatar" class="form-control form-control-sm" accept="image/*" onchange="previewFile(this)">
+                                    <small class="text-muted">Định dạng: JPG, PNG. Để trống nếu giữ ảnh cũ.</small>
+                                </div>
                             </div>
-                            <div class="col-md-6 mb-3">
-                                <label class="form-label fw-bold">Email <span class="text-danger">*</span></label>
-                                <input type="email" name="email" class="form-control" required
-                                    value="<?= htmlspecialchars($user['email']) ?>">
-                            </div>
-                        </div>
 
-                        <div class="row">
                             <div class="col-md-6 mb-3">
-                                <label class="form-label fw-bold">Thay đổi Mật khẩu</label>
-                                <input type="password" name="password" class="form-control"
-                                    placeholder="Để trống nếu không muốn đổi">
-                                <small class="text-muted fst-italic">Giữ nguyên mật khẩu cũ nếu không nhập.</small>
+                                <label class="form-label fw-bold small">Họ và tên <span class="text-danger">*</span></label>
+                                <input type="text" name="full_name" class="form-control" value="<?= htmlspecialchars($user['full_name']) ?>" required>
                             </div>
                             <div class="col-md-6 mb-3">
-                                <label class="form-label fw-bold">Thay ảnh đại diện mới</label>
-                                <input type="file" name="avatar" class="form-control" accept="image/*">
+                                <label class="form-label fw-bold small">Địa chỉ Email <span class="text-danger">*</span></label>
+                                <input type="email" name="email" class="form-control" value="<?= htmlspecialchars($user['email']) ?>" required>
                             </div>
-                        </div>
 
-                        <div class="row">
                             <div class="col-md-6 mb-3">
-                                <label class="form-label fw-bold">Số điện thoại</label>
-                                <input type="text" name="phone" class="form-control"
-                                    value="<?= htmlspecialchars($user['phone'] ?? '') ?>">
+                                <label class="form-label fw-bold small">Số điện thoại</label>
+                                <input type="text" name="phone" class="form-control" value="<?= htmlspecialchars($user['phone']) ?>">
                             </div>
                             <div class="col-md-6 mb-3">
-                                <label class="form-label fw-bold">Vai trò</label>
-                                <select name="role" class="form-select">
-                                    <option value="user" <?= $user['role'] === 'user' ? 'selected' : '' ?>>Khách hàng (User)</option>
-                                    <option value="admin" <?= $user['role'] === 'admin' ? 'selected' : '' ?>>Quản trị viên (Admin)</option>
-                                </select>
+                                <label class="form-label fw-bold small">Mật khẩu mới</label>
+                                <input type="password" name="password" class="form-control" placeholder="••••••••">
+                                <small class="text-muted">Chỉ nhập nếu bạn muốn thay đổi mật khẩu.</small>
                             </div>
-                        </div>
 
-                        <div class="mb-4">
-                            <label class="form-label fw-bold">Địa chỉ</label>
-                            <textarea name="address" class="form-control" rows="2"><?= htmlspecialchars($user['address'] ?? '') ?></textarea>
-                        </div>
+                            <div class="col-md-12 mb-4">
+                                <label class="form-label fw-bold small">Địa chỉ thường trú</label>
+                                <textarea name="address" class="form-control" rows="2"><?= htmlspecialchars($user['address']) ?></textarea>
+                            </div>
 
-                        <div class="d-grid">
-                            <button type="submit" class="btn btn-brand fw-bold py-2">
-                                <i class="bi bi-check-lg me-1"></i> Lưu thay đổi
-                            </button>
+                            <div class="col-md-12">
+                                <button type="submit" class="btn btn-brand w-100 fw-bold py-2">
+                                    Lưu thay đổi thông tin
+                                </button>
+                            </div>
                         </div>
                     </form>
                 </div>
             </div>
         </div>
     </div>
+</div>
+
+<script>
+    function previewFile(input) {
+        const preview = document.getElementById('preview-avatar');
+        const label = document.getElementById('preview-label');
+        if (input.files && input.files[0]) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                preview.src = e.target.result;
+                preview.style.display = 'block';
+                label.style.display = 'block';
+            }
+            reader.readAsDataURL(input.files[0]);
+        }
+    }
+</script>
 @endsection

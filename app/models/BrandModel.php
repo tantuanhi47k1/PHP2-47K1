@@ -26,8 +26,13 @@ class BrandModel extends Model {
     }
 
     public function update($id, $data) {
-        $data['id'] = $id;
-        $sql = "UPDATE $this->table SET name = :name, logo = :logo, description = :description WHERE id = :id";
+        $data['id'] = $id; 
+        $sql = "UPDATE $this->table SET 
+                name = :name, 
+                logo = :logo, 
+                description = :description 
+                WHERE id = :id";
+
         $conn = $this->connect($sql);
         $stmt = $conn->prepare($sql);
         $stmt->execute($data);
