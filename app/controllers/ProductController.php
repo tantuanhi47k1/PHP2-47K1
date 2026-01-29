@@ -45,19 +45,23 @@ class ProductController extends Controller {
 
         if ($productId && isset($_FILES['images']) && !empty($_FILES['images']['name'][0])) {
             $files = $_FILES['images'];
-            $targetDir = 'image/product/';
+
+            $targetDir = 'public/image/product/';
             if (!is_dir($targetDir)) mkdir($targetDir, 0777, true);
 
             foreach ($files['name'] as $key => $name) {
                 if ($files['error'][$key] == 0) {
                     $fileName = time() . '_' . basename($name);
-                    $targetPath = $targetDir . $fileName;
-                    
+
+                    $targetPath = $targetDir . $fileName; 
+
+                    $dbPath = 'image/product/' . $fileName;
+
                     if (move_uploaded_file($files['tmp_name'][$key], $targetPath)) {
                         $imageModel->create([
                             'product_id'   => $productId,
                             'variant_id'   => null,
-                            'image_path'   => $targetPath,
+                            'image_path'   => $dbPath,
                             'is_thumbnail' => ($key == 0) ? 1 : 0 
                         ]);
                     }
@@ -101,19 +105,23 @@ class ProductController extends Controller {
 
         if (isset($_FILES['images']) && !empty($_FILES['images']['name'][0])) {
             $files = $_FILES['images'];
-            $targetDir = 'image/product/';
+
+            $targetDir = 'public/image/product/';
             if (!is_dir($targetDir)) mkdir($targetDir, 0777, true);
 
             foreach ($files['name'] as $key => $name) {
                 if ($files['error'][$key] == 0) {
                     $fileName = time() . '_' . basename($name);
+
                     $targetPath = $targetDir . $fileName;
-                    
+
+                    $dbPath = 'image/product/' . $fileName;
+
                     if (move_uploaded_file($files['tmp_name'][$key], $targetPath)) {
                         $imageModel->create([
                             'product_id'   => $id,
                             'variant_id'   => null,
-                            'image_path'   => $targetPath,
+                            'image_path'   => $dbPath,
                             'is_thumbnail' => 0 
                         ]);
                     }
@@ -132,8 +140,10 @@ class ProductController extends Controller {
         $images = $imageModel->getImagesByProductId($id);
         if (!empty($images)) {
             foreach ($images as $img) {
-                if (file_exists($img['image_path'])) {
-                    unlink($img['image_path']);
+                $realPath = 'public/' . $img['image_path'];
+                
+                if (file_exists($realPath)) {
+                    unlink($realPath);
                 }
             }
         }
