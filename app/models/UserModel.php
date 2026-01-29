@@ -26,7 +26,7 @@ class UserModel extends Model
         if (isset($data['password']) && !empty($data['password'])) {
             $data['password'] = password_hash($data['password'], PASSWORD_DEFAULT);
         } else {
-            $data['password'] = null; // Cho phép null nếu login bằng Google
+            $data['password'] = null;
         }
 
         $sql = "INSERT INTO `$this->table` 
@@ -49,7 +49,6 @@ class UserModel extends Model
             ':auth_provider'=> $data['auth_provider'] ?? 'local'
         ]);
 
-        // SỬA QUAN TRỌNG: Trả về ID vừa tạo thay vì true/false
         if ($result) {
             return $conn->lastInsertId();
         }
@@ -97,7 +96,7 @@ class UserModel extends Model
         return $stmt->execute([':id' => $id]);
     }
 
-    // --- CÁC HÀM PHỤC VỤ ĐĂNG NHẬP (Bao gồm Google Login) ---
+    // tìm email
 
     public function findByEmail($email)
     {
@@ -118,7 +117,7 @@ class UserModel extends Model
         return $result['count'] > 0;
     }
 
-    // 1. Tìm user bằng Google ID (MỚI)
+    // tìm gg id
     public function findByGoogleId($google_id)
     {
         $sql = "SELECT * FROM `$this->table` WHERE google_id = :google_id";
@@ -128,12 +127,55 @@ class UserModel extends Model
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }
 
-    // 2. Cập nhật Google ID cho user đã tồn tại (MỚI)
+    // update gg id
     public function updateGoogleId($id, $google_id)
     {
         $sql = "UPDATE `$this->table` SET google_id = :google_id, auth_provider = 'google' WHERE id = :id";
         $conn = $this->connect();
         $stmt = $conn->prepare($sql);
         return $stmt->execute([':google_id' => $google_id, ':id' => $id]);
+    }
+
+    // quên mk
+
+    public function updateResetToken($email, $token) {
+        $expiry = date('Y-m-d H:i:s', strtotime('+15 minutes'));
+        
+        $sql = "UPDATE `$this->table` SET reset_token = :token, reset_token_expiry = :expiry WHERE email = :email";
+        $conn = $this->connect();
+        $stmt = $conn->prepare($sql);
+        return $stmt->execute([
+            ':token' => $token,
+            ':expiry' => $expiry,
+            ':email' => $email
+        ]);
+    }
+
+    public function findByResetToken($token) {
+        $now = date('Y-m-d H:i:s');
+        
+        $sql = "SELECT * FROM `$this->table` WHERE reset_token = :token AND reset_token_expiry > :now";
+        
+        $conn = $this->connect();
+        $stmt = $conn->prepare($sql);
+        $stmt->execute([
+            ':token' => $token,
+            ':now' => $now
+        ]);
+        
+        return $stmt->fetch(PDO::FETCH_ASSOC);
+    }
+
+    public function updatePasswordAndClearToken($id, $newPassword) {
+        $hashedPassword = password_hash($newPassword, PASSWORD_DEFAULT);
+        
+        $sql = "UPDATE `$this->table` SET password = :password, reset_token = NULL, reset_token_expiry = NULL WHERE id = :id";
+        
+        $conn = $this->connect();
+        $stmt = $conn->prepare($sql);
+        return $stmt->execute([
+            ':password' => $hashedPassword,
+            ':id' => $id
+        ]);
     }
 }

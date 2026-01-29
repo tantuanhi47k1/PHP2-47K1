@@ -1,19 +1,14 @@
 <header>
-    
     <style>
-        /* Logo chữ giãn cách nhẹ */
         .navbar-brand { letter-spacing: 0.5px; }
-        
-        /* Link menu: Font nhỏ gọn, hiệu ứng chuyển màu mượt */
+
         .nav-link { transition: all 0.2s ease; font-size: 0.95rem; font-weight: 500; }
         .nav-link:hover, .nav-link.active { color: #0d6efd !important; }
-        
-        /* Dropdown menu: Bo tròn, đổ bóng, cách xa menu cha một chút */
+
         .dropdown-menu { border-radius: 0.5rem; margin-top: 12px !important; border: none; }
         .dropdown-item { padding: 8px 20px; font-size: 0.9rem; transition: all 0.2s; }
         .dropdown-item:hover { background-color: #f0f7ff; color: #0d6efd; padding-left: 24px; }
-        
-        /* Badge giỏ hàng: Chỉnh vị trí nằm đè lên góc icon */
+
         .badge-cart { font-size: 0.6rem; padding: 0.35em 0.5em; top: 5px; right: 5px; }
 
         .btn-auth { font-weight: 600; font-size: 0.85rem; letter-spacing: 0.3px; transition: all 0.3s; }
@@ -44,7 +39,7 @@
     <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm sticky-top py-3">
         <div class="container">
             <a class="navbar-brand fw-bold text-primary fs-3 d-flex align-items-center" href="/">
-                <i class="bi bi-bag-heart-fill me-2"></i> MY SHOP
+                <i class="bi bi-bag-heart-fill me-2"></i> TECHHUB SHOP
             </a>
 
             <button class="navbar-toggler border-0 shadow-none" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent">

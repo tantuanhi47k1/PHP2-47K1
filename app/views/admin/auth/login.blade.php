@@ -1,135 +1,157 @@
 @extends('layout.authLayout')
 
+@section('title', 'Đăng nhập Quản trị')
+
 @section('content')
 <style>
     body {
-        background: #f4f6f9;
-        height: 100vh;
+        background: #0f172a !important;
+        background-image: radial-gradient(at 0% 0%, hsla(253,16%,7%,1) 0, transparent 50%), 
+                          radial-gradient(at 50% 0%, hsla(225,39%,30%,1) 0, transparent 50%), 
+                          radial-gradient(at 100% 0%, hsla(339,49%,30%,1) 0, transparent 50%);
+        min-height: 100vh;
         display: flex;
         align-items: center;
         justify-content: center;
-        font-family: 'Inter', sans-serif;
     }
-    .login-box {
-        width: 100%;
-        max-width: 420px;
-        padding: 15px;
-    }
-    .card {
-        border-radius: 20px;
-        border: none;
-        box-shadow: 0 15px 35px rgba(0, 153, 129, 0.1);
+
+    .admin-card {
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(10px);
+        border-radius: 24px;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
         overflow: hidden;
+        width: 100%;
+        max-width: 400px;
     }
-    .card-header {
-        background: white;
-        border: none;
-        padding-top: 30px;
-    }
-    .btn-brand {
-        background-color: #009981;
-        color: white;
-        font-weight: 600;
-        padding: 12px;
-        border-radius: 10px;
-        transition: all 0.3s ease;
-    }
-    .btn-brand:hover {
-        background-color: #007a67;
-        color: white;
-        transform: translateY(-2px);
-        box-shadow: 0 5px 15px rgba(0, 153, 129, 0.3);
-    }
-    .text-brand {
-        color: #009981;
-    }
-    .input-group-text {
-        background-color: #f8f9fa;
-        border-right: none;
-        color: #6c757d;
-    }
-    .form-control {
-        border-left: none;
-        padding: 12px 15px;
-        border-radius: 0 10px 10px 0;
-    }
-    .form-control:focus {
-        border-color: #dee2e6;
-        box-shadow: none;
-    }
-    .input-group:focus-within .input-group-text {
-        border-color: #009981;
-        color: #009981;
-    }
-    .input-group:focus-within .form-control {
-        border-color: #009981;
-    }
-    /* Style mới cho link đăng ký */
-    .register-link {
-        display: block;
+
+    .admin-header {
+        background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+        padding: 40px 30px;
         text-align: center;
-        margin-top: 20px;
-        padding-top: 20px;
-        border-top: 1px solid #f1f1f1;
-        color: #6c757d;
+        color: white;
+        position: relative;
+    }
+    
+    .admin-logo-box {
+        width: 70px;
+        height: 70px;
+        background: rgba(255,255,255,0.1);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 15px;
+        border: 1px solid rgba(255,255,255,0.2);
+        box-shadow: 0 0 20px rgba(99, 102, 241, 0.3);
+    }
+
+    .form-control-admin {
+        background-color: #f8fafc;
+        border: 2px solid #e2e8f0;
+        border-radius: 12px;
+        padding: 12px 15px 12px 45px;
+        font-size: 0.95rem;
+        transition: all 0.3s ease;
+        height: 50px;
+    }
+
+    .form-control-admin:focus {
+        background-color: #fff;
+        border-color: #6366f1;
+        box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.1);
+    }
+
+    .input-icon-wrapper {
+        position: relative;
+        margin-bottom: 20px;
+    }
+
+    .input-icon {
+        position: absolute;
+        left: 15px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: #94a3b8;
+        font-size: 1.1rem;
+        transition: color 0.3s;
+    }
+
+    .form-control-admin:focus + .input-icon,
+    .form-control-admin:focus ~ .input-icon {
+        color: #6366f1;
+    }
+
+    .btn-admin {
+        background: linear-gradient(135deg, #4f46e5 0%, #4338ca 100%);
+        color: white;
+        border: none;
+        padding: 14px;
+        border-radius: 12px;
+        font-weight: 600;
+        letter-spacing: 0.5px;
+        font-size: 1rem;
+        transition: all 0.3s;
+        width: 100%;
+    }
+
+    .btn-admin:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 20px -10px rgba(79, 70, 229, 0.5);
+        color: white;
+    }
+
+    .link-create {
+        color: #64748b;
+        font-size: 0.85rem;
         text-decoration: none;
-        font-size: 0.9rem;
-        transition: 0.2s;
+        transition: 0.3s;
     }
-    .register-link:hover {
-        color: #009981;
-    }
-    .register-link b {
-        color: #009981;
+    .link-create:hover {
+        color: #4f46e5;
     }
 </style>
 
-<div class="login-box">
-    <div class="text-center mb-4">
-        <div class="mb-3">
-            <i class="bi bi-shield-lock-fill text-brand" style="font-size: 3rem;"></i>
+<div class="admin-card">
+    <div class="admin-header">
+        <div class="admin-logo-box">
+            <i class="bi bi-shield-lock-fill fs-2 text-white"></i>
         </div>
-        <h2 class="fw-bold text-dark mb-1">ADMIN TECHHUB</h2>
-        <p class="text-muted">Hệ thống quản lý cửa hàng</p>
+        <h4 class="fw-bold mb-1">QUẢN TRỊ VIÊN</h4>
+        <p class="mb-0 opacity-75 small">Đăng nhập để vào hệ thống</p>
     </div>
 
-    <div class="card shadow">
-        <div class="card-body p-4 p-md-5">
-            <?php if (isset($_SESSION['error'])): ?>
-                <div class="alert alert-danger border-0 small d-flex align-items-center mb-4" style="background-color: #fff5f5; color: #e53e3e;">
-                    <i class="bi bi-exclamation-circle-fill me-2"></i>
-                    <div><?= $_SESSION['error']; unset($_SESSION['error']); ?></div>
-                </div>
-            <?php endif; ?>
+    <div class="p-4 p-md-5">
+        <?php if (isset($_SESSION['error'])): ?>
+            <div class="alert alert-danger d-flex align-items-center small rounded-3 mb-4" role="alert">
+                <i class="bi bi-exclamation-octagon-fill me-2"></i>
+                <div><?= $_SESSION['error']; unset($_SESSION['error']); ?></div>
+            </div>
+        <?php endif; ?>
 
-            <form action="/auth/handleAdminLogin" method="POST">
-                <div class="mb-3">
-                    <label class="form-label small fw-bold text-secondary">EMAIL QUẢN TRỊ</label>
-                    <div class="input-group">
-                        <span class="input-group-text"><i class="bi bi-envelope"></i></span>
-                        <input type="email" name="email" class="form-control" placeholder="admin@example.com" required>
-                    </div>
-                </div>
+        <form action="/auth/handleAdminLogin" method="POST">
+            
+            <div class="input-icon-wrapper">
+                <input type="email" name="email" class="form-control form-control-admin" placeholder="Email quản trị" required>
+                <i class="bi bi-envelope input-icon"></i>
+            </div>
 
-                <div class="mb-4">
-                    <label class="form-label small fw-bold text-secondary">MẬT KHẨU</label>
-                    <div class="input-group">
-                        <span class="input-group-text"><i class="bi bi-key"></i></span>
-                        <input type="password" name="password" class="form-control" placeholder="••••••••" required>
-                    </div>
-                </div>
+            <div class="input-icon-wrapper">
+                <input type="password" name="password" class="form-control form-control-admin" placeholder="Mật khẩu bảo mật" required>
+                <i class="bi bi-lock input-icon"></i>
+            </div>
 
-                <div class="d-grid gap-2">
-                    <button type="submit" class="btn btn-brand">
-                        ĐĂNG NHẬP NGAY
-                    </button>
-                </div>
-                
-                <a href="/auth/adminRegister" class="register-link">
-                    Chưa có tài khoản? <b>Tạo Admin mới</b>
+            <button type="submit" class="btn btn-admin mt-2">
+                TRUY CẬP HỆ THỐNG <i class="bi bi-arrow-right ms-2"></i>
+            </button>
+
+            <div class="text-center mt-4 pt-3 border-top border-light">
+                <a href="/auth/adminRegister" class="link-create">
+                    Chưa có tài khoản? <span class="fw-bold text-dark">Đăng ký mới</span>
                 </a>
-            </form>
-        </div>
+            </div>
+        </form>
     </div>
 </div>
 @endsection
