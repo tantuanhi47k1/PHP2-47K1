@@ -19,21 +19,52 @@ $admin_role = $_SESSION['admin_role'] ?? 1;
         flex-direction: column;
     }
 
-    .sidebar-brand {
-        padding: 20px 24px;
+    .brand-container {
+        padding: 10px 10px;
         display: flex;
+        flex-direction: column;
         align-items: center;
-        text-decoration: none;
-        color: white;
-        font-weight: bold;
-        font-size: 1.25rem;
-        border-bottom: 1px solid #2d3238;
+        justify-content: center;
         background: #15181c;
+        border-bottom: 1px solid #2d3238;
     }
 
-    .sidebar-brand i {
-        color: #6366f1;
-        font-size: 1.5rem;
+    .sidebar-brand {
+        display: block;
+        text-decoration: none;
+        transition: transform 0.3s ease;
+    }
+
+    .sidebar-brand:hover {
+        transform: scale(1.05);
+    }
+
+    .sidebar-brand img {
+        width: 200px !important; 
+        height: auto !important;
+        object-fit: contain;
+        filter: drop-shadow(0px 4px 10px rgba(99, 102, 241, 0.2));
+    }
+
+    .brand-container h3 {
+        color: #ffffff;
+        font-size: 1.1rem;
+        font-weight: 800;
+        margin-top: 15px;
+        margin-bottom: 0;
+        letter-spacing: 2px;
+        text-transform: uppercase;
+        text-align: center;
+    }
+
+    .brand-container h3::after {
+        content: '';
+        display: block;
+        width: 35px;
+        height: 2px;
+        background: #6366f1;
+        margin: 10px auto 0;
+        border-radius: 2px;
     }
 
     .sidebar-menu {
@@ -73,7 +104,7 @@ $admin_role = $_SESSION['admin_role'] ?? 1;
         font-weight: 600;
         border-left: 3px solid #6366f1;
     }
-    
+
     .sidebar-menu .nav-link.active i {
         color: #818cf8;
     }
@@ -91,18 +122,18 @@ $admin_role = $_SESSION['admin_role'] ?? 1;
 </style>
 
 <aside class="sidebar" id="sidebar">
-    <a href="/admin/index" class="sidebar-brand">
-        <i class="bi bi-shield-lock-fill me-2"></i> 
-        <span>TECHHUB ADMIN</span>
-    </a>
+    <div class="brand-container">
+        <a href="/" class="sidebar-brand">
+            <img src="/image/logo_techhub1.png" alt="Logo">
+        </a>
+        <h3>TECHHUB ADMIN</h3>
+    </div>
 
     <ul class="sidebar-menu">
-
         <?php if ($admin_role == 2): ?>
-
         <li class="nav-item">
             <a class="nav-link <?= ($current_page == 'admin' || $current_page == '') ? 'active' : '' ?>"
-               href="/admin/index">
+                href="/admin/index">
                 <i class="bi bi-speedometer2"></i> Tổng quan
             </a>
         </li>
@@ -126,13 +157,19 @@ $admin_role = $_SESSION['admin_role'] ?? 1;
         </li>
 
         <li class="nav-item">
+            <a class="nav-link <?= $current_page == 'attribute' ? 'active' : '' ?>" href="/attribute">
+                <i class="bi bi-star"></i> Biến Thể
+            </a>
+        </li>
+
+        <li class="nav-item">
             <a class="nav-link <?= $current_page == 'coupon' ? 'active' : '' ?>" href="/coupon">
                 <i class="bi bi-ticket-perforated"></i> Mã giảm giá
             </a>
         </li>
-        
+
         <li class="nav-item mt-3 mb-2 px-3">
-            <small class="text-uppercase text-muted fw-bold" style="font-size: 11px; letter-spacing: 1px;">Người dùng</small>
+            <small class="text-uppercase text-white fw-bold" style="font-size: 11px; letter-spacing: 1px;">Người dùng</small>
         </li>
 
         <li class="nav-item">
@@ -146,9 +183,7 @@ $admin_role = $_SESSION['admin_role'] ?? 1;
                 <i class="bi bi-person-badge"></i> Quản trị viên
             </a>
         </li>
-
         <?php endif; ?>
-
     </ul>
 
     <div class="logout-item">

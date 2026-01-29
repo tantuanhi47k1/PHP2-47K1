@@ -7,7 +7,7 @@
         Quản trị hệ thống
     </div>
 
-    <div class="d-flex align-items-center">
+    {{-- <div class="d-flex align-items-center">
         <div class="dropdown">
             <button class="btn btn-outline-success btn-sm dropdown-toggle d-flex align-items-center gap-2"
                 type="button" data-bs-toggle="dropdown">
@@ -34,5 +34,5 @@
                 <?php endif; ?>
             </ul>
         </div>
-    </div>
+    </div> --}}
 </header>

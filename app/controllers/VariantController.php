@@ -1,213 +1,157 @@
 <?php
 class VariantController extends Controller {
-
+    
     public function index($productId = null) {
         if (!$productId) {
-            header("Location: /product");
+            header("Location: /product/manage");
             exit;
         }
 
-        $product = $this->model('ProductModel')->find($productId);
+        $productModel = $this->model('ProductModel');
+        $variantModel = $this->model('VariantModel');
+        $attributeModel = $this->model('AttributeModel');
 
+        $product = $productModel->find($productId);
+        
         if (!$product) {
-            header("Location: /product");
+            $_SESSION['error'] = "Không tìm thấy sản phẩm!";
+            header("Location: /product/manage");
             exit;
         }
 
-        $variants = $this->model('VariantModel')->getByProductId($productId);
+        $variants = $variantModel->getByProductId($productId);
+
+        $attributes = $attributeModel->allWithValues();
 
         $this->view('admin/variant/index', [
-            'product'  => $product,
-            'variants' => $variants
-        ]);
-    }
-
-    public function create($productId = null) {
-        if (!$productId) {
-            header("Location: /product");
-            exit;
-        }
-
-        $product = $this->model('ProductModel')->find($productId);
-        $conn = $this->model('Model')->connect();
-
-        $stmtAttr = $conn->prepare("SELECT * FROM attributes");
-        $stmtAttr->execute();
-        $attributes = $stmtAttr->fetchAll(PDO::FETCH_ASSOC);
-
-        foreach ($attributes as &$attr) {
-            $stmtVal = $conn->prepare("SELECT * FROM attribute_values WHERE attribute_id = :aid");
-            $stmtVal->execute([':aid' => $attr['id']]);
-            $attr['values'] = $stmtVal->fetchAll(PDO::FETCH_ASSOC);
-        }
-
-        $this->view('admin/variant/create', [
             'product'    => $product,
+            'variants'   => $variants,
             'attributes' => $attributes
         ]);
     }
 
-    public function store($productId) {
-        $variantModel = $this->model('VariantModel');
-        $imageModel = $this->model('ProductImageModel');
-        $conn = $this->model('Model')->connect();
+    public function store() {
+        if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+            $variantModel = $this->model('VariantModel');
+            $productId = $_POST['product_id'];
 
-        $variantId = $variantModel->create([
-            'product_id'     => $productId,
-            'variant_name'   => $_POST['variant_name'],
-            'price'          => $_POST['price'],
-            'sku'            => $_POST['sku'],
-            'stock_quantity' => $_POST['stock_quantity']
-        ]);
+            $imagePath = null;
+            if (!empty($_FILES['image']['name'])) {
+                $fileName = time() . '_' . basename($_FILES['image']['name']);
+                $targetDir = dirname(__DIR__, 2) . '/public/image/variant/';
+                if (!is_dir($targetDir)) mkdir($targetDir, 0777, true);
 
-        if ($variantId && isset($_FILES['variant_image']) && $_FILES['variant_image']['error'] == 0) {
-            $targetDir = 'public/image/product/';
-            if (!is_dir($targetDir)) mkdir($targetDir, 0777, true);
-
-            $fileName = time() . '_v_' . basename($_FILES['variant_image']['name']);
-
-            $targetPath = $targetDir . $fileName;
-
-            $dbPath = 'image/product/' . $fileName;
-
-            if (move_uploaded_file($_FILES['variant_image']['tmp_name'], $targetPath)) {
-                $imageModel->create([
-                    'product_id'   => $productId,
-                    'variant_id'   => $variantId,
-                    'image_path'   => $dbPath,
-                    'is_thumbnail' => 0 
-                ]);
+                if (move_uploaded_file($_FILES['image']['tmp_name'], $targetDir . $fileName)) {
+                    $imagePath = 'image/variant/' . $fileName;
+                }
             }
-        }
 
-        if ($variantId && !empty($_POST['attributes'])) {
-            $sqlAttr = "INSERT INTO variant_attribute_values (variant_id, attribute_value_id) VALUES (:vid, :avid)";
-            $stmtAttr = $conn->prepare($sqlAttr);
-            foreach ($_POST['attributes'] as $valueId) {
-                $stmtAttr->execute([':vid' => $variantId, ':avid' => $valueId]);
+            $variantData = [
+                'product_id'     => $productId,
+                'price'          => $_POST['price'] ?? 0,
+                'sku'            => 'SKU-' . strtoupper(uniqid()),
+                'stock_quantity' => $_POST['stock'] ?? 0,
+                'image'          => $imagePath,
+                'is_default'     => 0
+            ];
+
+            $variantId = $variantModel->createVariant($variantData);
+
+            if ($variantId && !empty($_POST['attribute_values'])) {
+                foreach ($_POST['attribute_values'] as $valueId) {
+                    $variantModel->addAttributeValue($variantId, $valueId);
+                }
             }
-        }
 
-        header("Location: /variant/index/$productId");
-        exit;
+            $_SESSION['success'] = "Đã thêm biến thể mới thành công!";
+            header("Location: /variant/index/" . $productId);
+            exit;
+        }
     }
 
-    public function edit($variantId) {
+    public function edit($id) {
         $variantModel = $this->model('VariantModel');
-        $conn = $this->model('Model')->connect();
+        $productModel = $this->model('ProductModel');
+        $attributeModel = $this->model('AttributeModel');
 
-        $variant = $variantModel->find($variantId);
-
+        $variant = $variantModel->find($id);
         if (!$variant) {
-            header("Location: /product");
+            $_SESSION['error'] = "Biến thể không tồn tại!";
+            header("Location: /product/manage");
             exit;
         }
 
-        $product = $this->model('ProductModel')->find($variant['product_id']);
-
-        $stmtSelected = $conn->prepare("SELECT attribute_value_id FROM variant_attribute_values WHERE variant_id = :vid");
-        $stmtSelected->execute([':vid' => $variantId]);
-        $selectedAttributes = $stmtSelected->fetchAll(PDO::FETCH_COLUMN);
-
-        $stmtAttr = $conn->prepare("SELECT * FROM attributes");
-        $stmtAttr->execute();
-        $attributes = $stmtAttr->fetchAll(PDO::FETCH_ASSOC);
-
-        foreach ($attributes as &$attr) {
-            $stmtVal = $conn->prepare("SELECT * FROM attribute_values WHERE attribute_id = :aid");
-            $stmtVal->execute([':aid' => $attr['id']]);
-            $attr['values'] = $stmtVal->fetchAll(PDO::FETCH_ASSOC);
-        }
+        $product = $productModel->find($variant['product_id']);
+        $attributes = $attributeModel->allWithValues();
+        $selectedIds = $variantModel->getSelectedValueIds($id);
 
         $this->view('admin/variant/edit', [
-            'product'            => $product,
-            'variant'            => $variant,
-            'attributes'         => $attributes,
-            'selectedAttributes' => $selectedAttributes
+            'variant'     => $variant,
+            'product'     => $product,
+            'attributes'  => $attributes,
+            'selectedIds' => $selectedIds
         ]);
     }
 
-    public function update($variantId) {
-        $variantModel = $this->model('VariantModel');
-        $imageModel = $this->model('ProductImageModel');
-        $conn = $this->model('Model')->connect();
-        
-        $variant = $variantModel->find($variantId);
-        if (!$variant) {
-            header("Location: /product/index");
+    public function update($id) {
+        if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+            $variantModel = $this->model('VariantModel');
+            $oldVariant = $variantModel->find($id);
+
+            if (!$oldVariant) {
+                header("Location: /product/manage");
+                exit;
+            }
+
+            $imagePath = $oldVariant['image'];
+            if (!empty($_FILES['image']['name'])) {
+                $fileName = time() . '_' . basename($_FILES['image']['name']);
+                $targetDir = dirname(__DIR__, 2) . '/public/image/variant/';
+                if (!is_dir($targetDir)) mkdir($targetDir, 0777, true);
+
+                if (move_uploaded_file($_FILES['image']['tmp_name'], $targetDir . $fileName)) {
+                    $imagePath = 'image/variant/' . $fileName;
+                }
+            }
+
+            $updateData = [
+                'price'            => $_POST['price'],
+                'stock_quantity'   => $_POST['stock'],
+                'image'            => $imagePath,
+                'attribute_values' => $_POST['attribute_values'] ?? []
+            ];
+
+            $variantModel->updateVariant($id, $updateData);
+
+            $_SESSION['success'] = "Cập nhật biến thể thành công!";
+            header("Location: /variant/index/" . $oldVariant['product_id']);
             exit;
         }
-        $productId = $variant['product_id'];
-
-        $variantModel->update($variantId, [
-            'variant_name'   => $_POST['variant_name'],
-            'price'          => $_POST['price'],
-            'sku'            => $_POST['sku'],
-            'stock_quantity' => $_POST['stock_quantity']
-        ]);
-
-        if (isset($_FILES['variant_image']) && $_FILES['variant_image']['error'] == 0) {
-            $targetDir = 'public/image/product/';
-            if (!is_dir($targetDir)) mkdir($targetDir, 0777, true);
-
-            $fileName = time() . '_v_up_' . basename($_FILES['variant_image']['name']);
-            $targetPath = $targetDir . $fileName;
-            $dbPath = 'image/product/' . $fileName;
-
-            if (move_uploaded_file($_FILES['variant_image']['tmp_name'], $targetPath)) {
-                $oldImages = $imageModel->getImagesByVariantId($variantId);
-                if (!empty($oldImages)) {
-                    foreach ($oldImages as $old) {
-                        $oldPath = 'public/' . $old['image_path'];
-                        if (file_exists($oldPath)) unlink($oldPath);
-                        
-                        $imageModel->delete($old['id']);
-                    }
-                }
-
-                $imageModel->create([
-                    'product_id'   => $productId,
-                    'variant_id'   => $variantId,
-                    'image_path'   => $dbPath,
-                    'is_thumbnail' => 0
-                ]);
-            }
-        }
-
-        $conn->prepare("DELETE FROM variant_attribute_values WHERE variant_id = :vid")
-             ->execute([':vid' => $variantId]);
-
-        if (!empty($_POST['attributes'])) {
-            $sqlAttr = "INSERT INTO variant_attribute_values (variant_id, attribute_value_id) VALUES (:vid, :avid)";
-            $stmtAttr = $conn->prepare($sqlAttr);
-            foreach ($_POST['attributes'] as $valueId) {
-                $stmtAttr->execute([':vid' => $variantId, ':avid' => $valueId]);
-            }
-        }
-        
-        header("Location: /variant/index/$productId");
-        exit;
     }
 
-    public function delete($variantId) {
-        $variantModel = $this->model('VariantModel');
-        $imageModel = $this->model('ProductImageModel');
-        $variant = $variantModel->find($variantId);
-        
-        if ($variant) {
-            $productId = $variant['product_id'];
+    public function updateAll() {
+        if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+            $variantModel = $this->model('VariantModel');
+            $prices = $_POST['prices'] ?? [];
+            $stocks = $_POST['stocks'] ?? [];
 
-            $images = $imageModel->getImagesByVariantId($variantId);
-            foreach ($images as $img) {
-                $realPath = 'public/' . $img['image_path'];
-                if (file_exists($realPath)) unlink($realPath);
+            foreach ($prices as $id => $price) {
+                $stock = $stocks[$id] ?? 0;
+                $variantModel->updateFast($id, $price, $stock);
             }
 
-            $variantModel->delete($variantId);
-            header("Location: /variant/index/$productId");
-        } else {
-            header("Location: /product/index");
+            $_SESSION['success'] = "Đã cập nhật nhanh danh sách biến thể!";
+            header("Location: /variant/index/" . $_POST['product_id']);
+            exit;
         }
+    }
+
+    public function delete($id, $productId) {
+        $variantModel = $this->model('VariantModel');
+        $variantModel->deleteVariant($id);
+        
+        $_SESSION['success'] = "Đã xóa biến thể khỏi hệ thống!";
+        header("Location: /variant/index/" . $productId);
         exit;
     }
 }

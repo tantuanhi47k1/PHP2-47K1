@@ -4,7 +4,6 @@
 
 <?php $__env->startSection('content'); ?>
 
-
 <?php
     $limit = 9; 
     $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
@@ -16,7 +15,6 @@
     $offset = ($page - 1) * $limit;
     $displayProducts = array_slice($products, $offset, $limit);
 
-    // Mockup danh mục
     $categories = [
         ['id' => 1, 'name' => 'Điện thoại', 'count' => 15],
         ['id' => 2, 'name' => 'Laptop', 'count' => 8],
@@ -24,7 +22,6 @@
         ['id' => 4, 'name' => 'Đồng hồ', 'count' => 5],
     ];
 ?>
-
 
 <style>
     .product-img-frame {
@@ -105,11 +102,8 @@
     <div class="row">
         
         
-        
-        
         <div class="col-lg-3 order-2 order-lg-1 mb-4">
-            
-            
+
             <div class="sidebar-card shadow-sm">
                 <div class="p-3">
                     <form action="" method="GET">
@@ -123,7 +117,6 @@
                 </div>
             </div>
 
-            
             <div class="sidebar-card shadow-sm">
                 <div class="sidebar-header">
                     <i class="bi bi-list-ul me-2 text-primary"></i> Danh mục
@@ -138,7 +131,6 @@
                 </div>
             </div>
 
-            
             <div class="sidebar-card shadow-sm">
                 <div class="sidebar-header">
                     <i class="bi bi-funnel me-2 text-primary"></i> Khoảng giá
@@ -168,11 +160,7 @@
         </div>
 
         
-        
-        
         <div class="col-lg-9 order-1 order-lg-2 mb-5">
-            
-            
             <div class="d-flex justify-content-between align-items-center mb-4 p-3 bg-light rounded-3">
                 <div>
                     <h4 class="fw-bold mb-0 text-primary">Tất cả sản phẩm</h4>
@@ -189,24 +177,20 @@
                 </div>
             </div>
 
-            
             <div class="row row-cols-2 row-cols-md-3 row-cols-lg-3 g-3">
                 <?php if(!empty($displayProducts)): ?>
                     <?php $__currentLoopData = $displayProducts; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $item): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                         <?php if(isset($item['status']) && $item['status'] == 1): ?> 
                         <div class="col">
                             <div class="card h-100 shadow-sm product-card rounded-3 overflow-hidden">
-                                
                                 <div class="position-relative product-img-frame">
                                     <a href="/product/detail/<?php echo e($item['id']); ?>">
-                                        
                                         <img src="/<?php echo e($item['image'] ?? 'image/product/default.png'); ?>" 
                                              alt="<?php echo e($item['name']); ?>"
                                              onerror="this.src='https://placehold.co/300x300?text=No+Image'">
                                     </a>
                                 </div>
 
-                                
                                 <div class="card-body d-flex flex-column p-3">
                                     <h6 class="card-title text-truncate mb-2" style="font-size: 0.95rem;">
                                         <a href="/product/detail/<?php echo e($item['id']); ?>" class="text-decoration-none text-dark fw-bold" title="<?php echo e($item['name']); ?>">
@@ -248,7 +232,6 @@
                 <?php endif; ?>
             </div>
 
-            
             <?php if($totalPages > 1): ?>
             <div class="d-flex justify-content-center mt-5">
                 <nav aria-label="Page navigation">

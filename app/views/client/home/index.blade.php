@@ -1,104 +1,198 @@
 @extends('layout.clientLayout')
 
-@section('title', 'Cửa Hàng')
+@section('title', 'TechHub - Thế Giới Công Nghệ')
 
 @section('content')
 
 <style>
-    .product-img-frame {
-        position: relative;
-        width: 100%;
-        padding-top: 100%;
-        overflow: hidden;
-        background-color: #fff;
-        border-bottom: 1px solid #f0f0f0;
+    /* 1. Hero Section */
+    .hero-section {
+        background: linear-gradient(135deg, #1a1d21 0%, #31363f 100%);
+        padding: 80px 0; color: white; border-radius: 0 0 50px 50px; margin-bottom: 50px;
+    }
+    .hero-badge {
+        background: rgba(99, 102, 241, 0.2); color: #818cf8; padding: 5px 15px; border-radius: 20px; font-weight: 600; font-size: 0.8rem;
     }
 
-    .product-img-frame img {
-        position: absolute;
-        top: 0; left: 0; width: 100%; height: 100%;
-        object-fit: contain;
-        padding: 15px;
-        transition: transform 0.5s ease;
+    /* 2. Category Circles */
+    .category-item { transition: all 0.3s ease; text-align: center; display: inline-block; width: 100%; }
+    .category-icon {
+        width: 100px; height: 100px; background: #f8f9fa; border-radius: 50%; display: flex; align-items: center; justify-content: center;
+        margin: 0 auto 15px; font-size: 2.2rem; color: #6366f1; transition: 0.3s; border: 1px solid #eee;
+    }
+    .category-item:hover .category-icon {
+        background: #6366f1; color: white; transform: translateY(-8px); box-shadow: 0 10px 20px rgba(99, 102, 241, 0.2);
     }
 
-    .product-card {
+    /* 3. Product Card */
+    .product-card { border: none; border-radius: 20px; transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); background: #fff; }
+    .product-card:hover { transform: translateY(-10px); box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1) !important; }
+    .product-img-frame { padding-top: 100%; position: relative; overflow: hidden; }
+    .product-img-frame img { position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: contain; padding: 25px; transition: 0.5s; }
+
+    /* --- NÂNG CẤP CSS NÚT BẤM --- */
+    .btn-cart-quick {
+        background: #f1f5f9;
+        color: #334155;
+        border: none;
+        width: 45px;
+        height: 45px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 12px;
         transition: all 0.3s ease;
-        border: 1px solid #eee;
+    }
+    .btn-cart-quick:hover {
+        background: #6366f1;
+        color: white;
+        transform: rotate(-10deg);
     }
 
-    .product-card:hover {
-        box-shadow: 0 10px 20px rgba(0,0,0,0.1) !important;
-        transform: translateY(-5px);
-        border-color: transparent;
+    .btn-buy-now {
+        background: #1e293b;
+        color: white;
+        border: none;
+        border-radius: 12px;
+        padding: 10px 20px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-grow: 1;
     }
-
-    .product-card:hover .product-img-frame img {
-        transform: scale(1.1);
+    .btn-buy-now:hover {
+        background: #6366f1;
+        color: white;
+        box-shadow: 0 8px 15px rgba(99, 102, 241, 0.3);
     }
+    /* ---------------------------- */
 </style>
 
-<div class="container py-5">
-    <div class="d-flex justify-content-between align-items-center mb-4 border-bottom pb-2">
-        <h3 class="fw-bold text-dark border-start border-4 border-primary ps-3 mb-0">
-            Tất Cả Sản Phẩm
-        </h3>
-        <span class="text-muted small">{{ count($products) }} sản phẩm</span>
+<section class="hero-section shadow-lg">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-6 mb-5 mb-lg-0">
+                <span class="hero-badge mb-3 d-inline-block">NEW ARRIVAL 2026</span>
+                <h1 class="display-3 fw-bold mb-4">Nâng Tầm Trải Nghiệm <span class="text-primary">Công Nghệ</span></h1>
+                <p class="lead opacity-75 mb-5">Khám phá bộ sưu tập thiết bị thông minh hàng đầu tại TechHub. Chất lượng đỉnh cao, bảo hành dài hạn.</p>
+                <div class="d-flex gap-3">
+                    <a href="/shop" class="btn btn-primary btn-lg px-4 rounded-pill fw-bold shadow">Mua Ngay</a>
+                    <a href="#featured" class="btn btn-outline-light btn-lg px-4 rounded-pill">Xem Ưu Đãi</a>
+                </div>
+            </div>
+            <div class="col-lg-6 text-center">
+                <img src="/image/hero_product.png" class="img-fluid" alt="TechHub Hero" onerror="this.src='https://placehold.co/600x400/transparent/white?text=TechHub+Premium'">
+            </div>
+        </div>
+    </div>
+</section>
+
+<div class="container mb-5 mt-n5">
+    <div class="row g-4 text-center">
+        <div class="col-md-3">
+            <div class="p-4 border-0 rounded-4 bg-white shadow-sm">
+                <i class="bi bi-truck fs-2 text-primary mb-2"></i>
+                <h6 class="fw-bold mb-1">Giao hàng miễn phí</h6>
+                <small class="text-muted">Đơn hàng từ 1.000.000đ</small>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="p-4 border-0 rounded-4 bg-white shadow-sm">
+                <i class="bi bi-shield-check fs-2 text-primary mb-2"></i>
+                <h6 class="fw-bold mb-1">Chính hãng 100%</h6>
+                <small class="text-muted">Cam kết chất lượng</small>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="p-4 border-0 rounded-4 bg-white shadow-sm">
+                <i class="bi bi-headset fs-2 text-primary mb-2"></i>
+                <h6 class="fw-bold mb-1">Hỗ trợ 24/7</h6>
+                <small class="text-muted">Tư vấn chuyên nghiệp</small>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="p-4 border-0 rounded-4 bg-white shadow-sm">
+                <i class="bi bi-arrow-repeat fs-2 text-primary mb-2"></i>
+                <h6 class="fw-bold mb-1">Đổi trả dễ dàng</h6>
+                <small class="text-muted">Trong vòng 7 ngày</small>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container mb-5 py-4">
+    <h4 class="fw-bold mb-5 text-center text-dark">Danh Mục Nổi Bật</h4>
+    <div class="row row-cols-2 row-cols-md-4 g-4 justify-content-center text-center">
+        <div class="col">
+            <a href="/category/1" class="text-decoration-none category-item">
+                <div class="category-icon shadow-sm"><i class="bi bi-headphones"></i></div>
+                <span class="fw-bold text-dark fs-5">Tai Nghe</span>
+            </a>
+        </div>
+        <div class="col">
+            <a href="/category/2" class="text-decoration-none category-item">
+                <div class="category-icon shadow-sm"><i class="bi bi-laptop"></i></div>
+                <span class="fw-bold text-dark fs-5">Laptop</span>
+            </a>
+        </div>
+        <div class="col">
+            <a href="/category/3" class="text-decoration-none category-item">
+                <div class="category-icon shadow-sm"><i class="bi bi-phone"></i></div>
+                <span class="fw-bold text-dark fs-5">Điện Thoại</span>
+            </a>
+        </div>
+        <div class="col">
+            <a href="/category/4" class="text-decoration-none category-item">
+                <div class="category-icon shadow-sm"><i class="bi bi-watch"></i></div>
+                <span class="fw-bold text-dark fs-5">Đồng Hồ</span>
+            </a>
+        </div>
+    </div>
+</div>
+
+<div class="container mb-5" id="featured">
+    <div class="d-flex justify-content-between align-items-end mb-4 px-2">
+        <div>
+            <h3 class="fw-bold mb-1 text-dark">Sản Phẩm Mới Nhất</h3>
+            <p class="text-muted mb-0 small">Cập nhật công nghệ mới nhất mỗi ngày</p>
+        </div>
+        <a href="/shop" class="btn btn-link text-primary fw-bold text-decoration-none p-0">Xem tất cả <i class="bi bi-arrow-right"></i></a>
     </div>
 
-    @if(isset($_SESSION['success']))
-        <div class="alert alert-success alert-dismissible fade show shadow-sm" role="alert">
-            <i class="bi bi-check-circle-fill me-2"></i> {{ $_SESSION['success'] }}
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-        </div>
-        @php unset($_SESSION['success']); @endphp
-    @endif
-
     <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-4">
-        @if(!empty($products))
-            @foreach ($products as $item)
-                @if(isset($item['status']) && $item['status'] == 1) 
+        @foreach ($products as $item)
+            @if (isset($item['status']) && $item['status'] == 1)
                 <div class="col">
-                    <div class="card h-100 shadow-sm product-card rounded-3 overflow-hidden">
-
-                        <div class="position-relative product-img-frame">
+                    <div class="card h-100 shadow-sm product-card border-0">
+                        <div class="product-img-frame bg-light rounded-top-4">
                             <a href="/product/detail/{{ $item['id'] }}">
-                                <img src="/{{ $item['image'] ?? 'image/product/default.png' }}" 
-                                     alt="{{ $item['name'] }}"
-                                     onerror="this.src='https://placehold.co/300x300?text=No+Image'">
+                                <img src="/{{ $item['image'] ?? 'image/product/default.png' }}" alt="{{ $item['name'] }}" onerror="this.src='https://placehold.co/300x300?text=TechHub'">
                             </a>
                         </div>
-
-                        <div class="card-body d-flex flex-column">
-                            <h6 class="card-title text-truncate mb-2">
+                        <div class="card-body p-4 d-flex flex-column">
+                            <h6 class="mb-2 text-truncate text-center">
                                 <a href="/product/detail/{{ $item['id'] }}" class="text-decoration-none text-dark fw-bold" title="{{ $item['name'] }}">
                                     {{ $item['name'] }}
                                 </a>
                             </h6>
-
-                            <div class="mb-3 text-primary">
-                                @if(isset($item['variant_price']) && $item['variant_price'] > 0)
-                                    <small class="text-muted text-dark">Giá từ:</small> 
-                                    <span class="fw-bold fs-5">{{ number_format($item['variant_price'], 0, ',', '.') }}đ</span>
-                                
-                                @elseif(isset($item['base_price']))
-                                    <span class="fw-bold fs-5">{{ number_format($item['base_price'], 0, ',', '.') }}đ</span>
-                                @else
-                                    <span class="text-muted small">Liên hệ</span>
-                                @endif
+                            <div class="text-primary fw-bold fs-5 mb-4 text-center">
+                                {{ number_format($item['variant_price'] ?? $item['base_price'], 0, ',', '.') }}đ
                             </div>
-
+                            
                             <div class="mt-auto">
                                 <form action="/cart/add" method="POST">
                                     <input type="hidden" name="id" value="{{ $item['id'] }}">
                                     <input type="hidden" name="quantity" value="1">
-                                    
-                                    <div class="d-grid gap-2">
-                                        <button type="submit" class="btn btn-outline-primary btn-sm rounded-pill fw-bold hover-shadow">
-                                            <i class="bi bi-cart-plus me-1"></i> Thêm vào giỏ
+                                    <div class="d-flex gap-2">
+                                        <button type="submit" class="btn-cart-quick" title="Thêm vào giỏ hàng">
+                                            <i class="bi bi-bag-plus fs-5"></i>
                                         </button>
-                                        <a href="/product/detail/{{ $item['id'] }}" class="btn btn-primary btn-sm rounded-pill fw-bold text-white shadow-sm">
-                                            Xem chi tiết
+                                        <a href="/product/detail/{{ $item['id'] }}" class="btn-buy-now text-decoration-none">
+                                            Mua Ngay
                                         </a>
                                     </div>
                                 </form>
@@ -106,15 +200,27 @@
                         </div>
                     </div>
                 </div>
-                @endif
-            @endforeach
-        @else
-            <div class="col-12 text-center py-5">
-                <i class="bi bi-box2 text-muted opacity-25" style="font-size: 4rem;"></i>
-                <p class="text-muted mt-3 fs-5">Chưa có sản phẩm nào trong hệ thống.</p>
-                <a href="/" class="btn btn-outline-primary rounded-pill mt-2">Quay về trang chủ</a>
-            </div>
-        @endif
+            @endif
+        @endforeach
     </div>
 </div>
+
+<section class="container mb-5 pb-5">
+    <div class="p-5 bg-primary rounded-5 text-white shadow-lg position-relative overflow-hidden border-0">
+        <div class="row align-items-center position-relative" style="z-index: 2;">
+            <div class="col-md-8">
+                <h2 class="fw-bold mb-3">Nhận Ưu Đãi Độc Quyền!</h2>
+                <p class="mb-0 opacity-75">Đăng ký để nhận thông báo về sản phẩm mới và mã giảm giá 20%.</p>
+            </div>
+            <div class="col-md-4 mt-4 mt-md-0">
+                <div class="input-group">
+                    <input type="email" class="form-control rounded-pill-start border-0 py-3 ps-4" placeholder="Email của bạn...">
+                    <button class="btn btn-dark rounded-pill-end px-4 fw-bold">Gửi Ngay</button>
+                </div>
+            </div>
+        </div>
+        <div class="position-absolute top-50 start-0 translate-middle-y bg-white opacity-10 rounded-circle" style="width: 200px; height: 200px; margin-left: -100px;"></div>
+    </div>
+</section>
+
 @endsection

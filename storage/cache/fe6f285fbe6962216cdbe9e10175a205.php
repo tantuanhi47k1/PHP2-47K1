@@ -75,19 +75,15 @@
                         </td>
                         <td class="text-center pe-4">
                             <div class="d-flex justify-content-center gap-2">
-                                
                                 <a href="/adminmanage/edit/<?= $ad['id'] ?>" class="btn btn-sm btn-outline-primary" title="Chỉnh sửa">
                                     <i class="bi bi-pencil-square"></i>
                                 </a>
 
-                                
                                 <?php if(isset($_SESSION['admin_id']) && $_SESSION['admin_id'] == $ad['id']): ?>
-                                    
                                     <button class="btn btn-sm btn-secondary disabled" title="Bạn không thể xóa chính mình" style="cursor: not-allowed; opacity: 0.5;">
                                         <i class="bi bi-trash"></i>
                                     </button>
                                 <?php else: ?>
-                                    
                                     <a href="/adminmanage/delete/<?= $ad['id'] ?>" class="btn btn-sm btn-outline-danger" 
                                        onclick="return confirm('Xóa tài khoản admin [<?= htmlspecialchars($ad['username']) ?>]? Thao tác này không thể hoàn tác.');" title="Xóa">
                                         <i class="bi bi-trash"></i>

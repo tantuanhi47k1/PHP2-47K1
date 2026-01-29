@@ -1,8 +1,6 @@
 <footer class="bg-dark text-white pt-5 pb-2 mt-auto border-top border-secondary border-opacity-25">
     <div class="container">
-        
         <div class="row">
-            
             <div class="col-lg-4 col-md-6 mb-4">
                 <h5 class="text-uppercase fw-bold text-primary mb-3">
                     <i class="bi bi-bag-heart-fill me-2"></i>TechHub Shop
@@ -21,7 +19,6 @@
                 </div>
             </div>
 
-            
             <div class="col-lg-2 col-md-6 mb-4">
                 <h6 class="fw-bold text-uppercase mb-3 small text-white-50">Hỗ trợ khách hàng</h6>
                 <ul class="list-unstyled small">
@@ -33,7 +30,6 @@
                 </ul>
             </div>
 
-            
             <div class="col-lg-2 col-md-6 mb-4">
                 <h6 class="fw-bold text-uppercase mb-3 small text-white-50">Về TechHub</h6>
                 <ul class="list-unstyled small">
@@ -45,7 +41,6 @@
                 </ul>
             </div>
 
-            
             <div class="col-lg-4 col-md-6 mb-4">
                 <h6 class="fw-bold text-uppercase mb-3 small text-white-50">Đăng ký nhận tin</h6>
                 <p class="small text-secondary mb-3">Nhận thông tin về khuyến mãi và sản phẩm mới sớm nhất.</p>
@@ -67,7 +62,6 @@
 
         <hr class="border-secondary opacity-25 my-3">
 
-        
         <div class="row align-items-center py-2">
             <div class="col-md-6 text-center text-md-start mb-2 mb-md-0">
                 <p class="small text-secondary mb-0">

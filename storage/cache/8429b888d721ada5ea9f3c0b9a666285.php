@@ -4,7 +4,6 @@
 
 <?php $__env->startSection('content'); ?>
 
-
 <style>
     .cart-container { background-color: #f8f9fa; min-height: 80vh; }
     .cart-item { transition: background 0.2s; border-bottom: 1px solid #eee; }
@@ -15,7 +14,6 @@
     .qty-btn { border: 1px solid #dee2e6; background: #fff; width: 35px; height: 35px; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: 0.2s; }
     .qty-btn:hover { background: #f1f3f5; }
     .qty-input { border: 1px solid #dee2e6; border-left: none; border-right: none; text-align: center; width: 50px; height: 35px; }
-    /* Xóa mũi tên input number mặc định */
     input[type=number]::-webkit-inner-spin-button, 
     input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
     
@@ -34,7 +32,6 @@
             </span>
         </div>
 
-        
         <?php if(isset($_SESSION['success'])): ?>
             <div class="alert alert-success alert-dismissible fade show rounded-3 shadow-sm" role="alert">
                 <i class="bi bi-check-circle-fill me-2"></i> <?php echo $_SESSION['success']; ?>
@@ -47,7 +44,6 @@
         <?php if(isset($cart) && count($cart) > 0): ?>
             <form action="/cart/update" method="POST">
                 <div class="row g-4">
-                    
                     <div class="col-lg-8">
                         <div class="card border-0 shadow-sm rounded-4 overflow-hidden">
                             <div class="card-header bg-white py-3 border-bottom">
@@ -61,7 +57,6 @@
                             <div class="card-body p-0">
                                 <?php $__currentLoopData = $cart; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $id => $item): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                                     <div class="row align-items-center p-3 cart-item mx-0">
-                                        
                                         <div class="col-6 d-flex align-items-center">
                                             <a href="/product/detail/<?php echo e($id); ?>">
                                                 <img src="/<?php echo e($item['image'] ?? 'image/product/default.png'); ?>" 
@@ -83,15 +78,12 @@
                                             </div>
                                         </div>
 
-                                        
                                         <div class="col-3 d-flex justify-content-center">
                                             <div class="input-group qty-input-group">
-                                                
                                                 <input type="number" name="quantity[<?php echo e($id); ?>]" value="<?php echo e($item['quantity']); ?>" min="1" class="form-control text-center rounded">
                                             </div>
                                         </div>
 
-                                        
                                         <div class="col-3 text-end fw-bold text-primary fs-6">
                                             <?php echo e(number_format($item['price'] * $item['quantity'])); ?>đ
                                         </div>
@@ -110,7 +102,6 @@
                         </div>
                     </div>
 
-                    
                     <div class="col-lg-4">
                         <div class="card summary-card p-4 bg-white">
                             <h5 class="fw-bold mb-4">Cộng giỏ hàng</h5>
@@ -149,7 +140,6 @@
                 </div>
             </form>
         <?php else: ?>
-            
             <div class="text-center py-5 bg-white rounded-4 shadow-sm">
                 <div class="mb-4">
                     <i class="bi bi-cart-x text-muted opacity-25" style="font-size: 5rem;"></i>

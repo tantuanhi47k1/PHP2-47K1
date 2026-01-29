@@ -11,9 +11,19 @@
             border: 1px solid #eee;
         }
 
-        /* Thêm hiệu ứng hover cho dòng bảng */
         .hover-shadow:hover {
             background-color: #f8f9fa;
+        }
+
+        .btn-variant {
+            background-color: #e3f2fd;
+            color: #0d6efd;
+            border: 1px solid #0d6efd;
+        }
+
+        .btn-variant:hover {
+            background-color: #0d6efd;
+            color: white;
         }
     </style>
 
@@ -22,19 +32,22 @@
             <div class="card-header bg-white py-3 d-flex justify-content-between align-items-center">
                 <h5 class="mb-0 fw-bold text-primary"><i class="bi bi-box-seam me-2"></i>Quản lý Sản phẩm</h5>
                 <a href="/product/create" class="btn btn-primary btn-sm">
-                    <i class="bi bi-plus-lg me-1"></i> Thêm mới
+                    <i class="bi bi-plus-lg me-1"></i> Thêm mới sản phẩm
                 </a>
             </div>
 
             <div class="card-body">
                 @if (isset($_SESSION['success']))
-                    <div class="alert alert-success"><?= $_SESSION['success'] ?></div>
+                    <div class="alert alert-success alert-dismissible fade show" role="alert">
+                        <i class="bi bi-check-circle-fill me-2"></i> <?= $_SESSION['success'] ?>
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
                     <?php unset($_SESSION['success']); ?>
                 @endif
 
                 <div class="table-responsive">
                     <table class="table table-hover align-middle mb-0">
-                        <thead class="bg-light">
+                        <thead class="bg-light text-secondary">
                             <tr>
                                 <th class="ps-4">Sản phẩm</th>
                                 <th>Danh mục</th>
@@ -47,11 +60,14 @@
                         <tbody>
                             @if (empty($products))
                                 <tr>
-                                    <td colspan="6" class="text-center py-5 text-muted">Chưa có sản phẩm nào.</td>
+                                    <td colspan="6" class="text-center py-5 text-muted">
+                                        <i class="bi bi-inbox fs-1 d-block mb-2 opacity-25"></i>
+                                        Chưa có sản phẩm nào.
+                                    </td>
                                 </tr>
                             @else
                                 @foreach ($products as $p)
-                                    <tr>
+                                    <tr class="hover-shadow">
                                         <td class="ps-4">
                                             <div class="d-flex align-items-center">
                                                 <img src="/<?= $p['image'] ?? 'image/no-image.png' ?>"
@@ -59,14 +75,13 @@
                                                     onerror="this.src='https://placehold.co/60x60?text=No+Image'">
                                                 <div>
                                                     <div class="fw-bold text-dark"><?= htmlspecialchars($p['name']) ?></div>
-                                                    <small class="text-muted">Brand:
-                                                        <?= $p['brand_name'] ?? 'N/A' ?></small>
+                                                    <small class="text-muted">Brand: <?= htmlspecialchars($p['brand_name'] ?? 'ThinkHub') ?></small>
                                                 </div>
                                             </div>
                                         </td>
                                         <td>
-                                            <span class="badge bg-light text-secondary border">
-                                                <?= htmlspecialchars($p['category_name'] ?? 'Không có') ?>
+                                            <span class="badge bg-light text-secondary border fw-normal">
+                                                <?= htmlspecialchars($p['category_name'] ?? 'N/A') ?>
                                             </span>
                                         </td>
                                         <td>
@@ -74,46 +89,38 @@
                                                 <?= number_format($p['base_price'] ?? 0, 0, ',', '.') ?> đ
                                             </div>
                                             @if (isset($p['variant_price']) && $p['variant_price'] > 0)
-                                                <small class="text-muted" style="font-size: 0.75rem;">
-                                                    Min: <?= number_format($p['variant_price'], 0, ',', '.') ?> đ
+                                                <small class="text-primary" style="font-size: 0.7rem;">
+                                                    <i class="bi bi-tag-fill me-1"></i>Giá biến thể từ: <?= number_format($p['variant_price'], 0, ',', '.') ?> đ
                                                 </small>
                                             @endif
                                         </td>
                                         <td class="text-center">
-                                            {{-- SỬA Ở ĐÂY: Thêm thẻ <a> bao quanh badge để bấm vào trang Variant --}}
-                                            <a href="/variant/index/<?= $p['id'] ?>" class="text-decoration-none"
-                                                title="Quản lý biến thể">
-                                                <span
-                                                    class="badge bg-info bg-opacity-10 text-info rounded-pill px-3 border border-info border-opacity-25">
-                                                    <i class="bi bi-gear-fill me-1"></i>
-                                                    <?= $p['variant_count'] ?> phiên bản
-                                                </span>
+                                            <a href="/variant/index/<?= $p['id'] ?>" class="btn btn-sm btn-variant rounded-pill px-3 shadow-sm"
+                                                title="Quản lý các thuộc tính Màu, RAM, Size...">
+                                                <i class="bi bi-layers-half me-1"></i>
+                                                <?= $p['variant_count'] ?? 0 ?> phiên bản
                                             </a>
                                         </td>
                                         <td class="text-center">
-                                            @if ($p['status'] == 1)
-                                                <span
-                                                    class="badge bg-success bg-opacity-10 text-success rounded-pill px-3">Hoạt
-                                                    động</span>
+                                            @if (($p['status'] ?? 1) == 1)
+                                                <span class="badge bg-success bg-opacity-10 text-success rounded-pill px-3">Đang bán</span>
                                             @else
-                                                <span
-                                                    class="badge bg-secondary bg-opacity-10 text-secondary rounded-pill px-3">Ẩn</span>
+                                                <span class="badge bg-secondary bg-opacity-10 text-secondary rounded-pill px-3">Tạm ẩn</span>
                                             @endif
                                         </td>
                                         <td class="text-end pe-4">
-                                            {{-- Nút sửa sản phẩm --}}
-                                            <a href="/product/edit/<?= $p['id'] ?>" class="btn btn-sm btn-outline-primary"
-                                                title="Sửa thông tin chung">
-                                                <i class="bi bi-pencil"></i>
-                                            </a>
-
-                                            {{-- Nút xóa --}}
-                                            <a href="/product/delete/<?= $p['id'] ?>"
-                                                class="btn btn-sm btn-outline-danger ms-1"
-                                                onclick="return confirm('Xóa sản phẩm này sẽ xóa luôn các biến thể và ảnh liên quan. Tiếp tục?');"
-                                                title="Xóa">
-                                                <i class="bi bi-trash"></i>
-                                            </a>
+                                            <div class="btn-group shadow-sm rounded">
+                                                <a href="/product/edit/<?= $p['id'] ?>" class="btn btn-sm btn-outline-primary"
+                                                    title="Sửa thông tin chung">
+                                                    <i class="bi bi-pencil"></i>
+                                                </a>
+                                                <a href="/product/delete/<?= $p['id'] ?>"
+                                                    class="btn btn-sm btn-outline-danger"
+                                                    onclick="return confirm('Cảnh báo: Xóa sản phẩm sẽ xóa tất cả biến thể liên quan! Bạn chắc chắn chứ?');"
+                                                    title="Xóa sản phẩm">
+                                                    <i class="bi bi-trash"></i>
+                                                </a>
+                                            </div>
                                         </td>
                                     </tr>
                                 @endforeach
