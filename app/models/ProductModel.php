@@ -5,7 +5,6 @@ class ProductModel extends Model
 
     public function all()
     {
-        
         $sql = "SELECT p.*, 
                        c.name as category_name, 
                        b.name as brand_name,
@@ -29,7 +28,8 @@ class ProductModel extends Model
                        c.name as category_name,
                        b.name as brand_name,
                        (SELECT image_path FROM product_images WHERE product_id = p.id AND is_thumbnail = 1 LIMIT 1) as image,
-                       (SELECT MIN(price) FROM variants WHERE product_id = p.id) as variant_price
+                       (SELECT MIN(price) FROM variants WHERE product_id = p.id) as variant_price,
+                       (SELECT MAX(price) FROM variants WHERE product_id = p.id) as max_price
                 FROM $this->table p
                 LEFT JOIN categories c ON p.category_id = c.id
                 LEFT JOIN brands b ON p.brand_id = b.id
@@ -39,6 +39,24 @@ class ProductModel extends Model
         $stmt = $conn->prepare($sql);
         $stmt->execute([':id' => $id]);
         return $stmt->fetch(PDO::FETCH_ASSOC);
+    }
+
+    public function getVariants($productId)
+    {
+        $sql = "SELECT * FROM variants WHERE product_id = :id ORDER BY price ASC";
+        $conn = $this->connect();
+        $stmt = $conn->prepare($sql);
+        $stmt->execute([':id' => $productId]);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    public function getImages($productId)
+    {
+        $sql = "SELECT * FROM product_images WHERE product_id = :id ORDER BY is_thumbnail DESC";
+        $conn = $this->connect();
+        $stmt = $conn->prepare($sql);
+        $stmt->execute([':id' => $productId]);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
     public function create($data)

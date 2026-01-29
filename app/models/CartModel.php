@@ -3,10 +3,9 @@ class CartModel extends Model {
     private $tableOrder = 'orders';
     private $tableDetail = 'order_details';
 
-    // Lưu đơn hàng và chi tiết đơn hàng
     public function checkout($userId, $total, $couponCode, $cartItems) {
         $sql = "INSERT INTO $this->tableOrder (user_id, total_price, coupon_code, status, created_at) VALUES (?, ?, ?, 'pending', NOW())";
-        $conn = $this->connect($sql); // Lấy connection theo cách của bạn
+        $conn = $this->connect($sql);
         
         try {
             $conn->beginTransaction();

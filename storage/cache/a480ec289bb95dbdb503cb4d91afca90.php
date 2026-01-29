@@ -3,7 +3,7 @@ $uri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
 $segments = explode('/', trim($uri, '/'));
 $current_page = $segments[0] ?? 'admin';
 
-// Giả định bạn lưu role vào session khi đăng nhập
+// Lấy role từ session
 $admin_role = $_SESSION['admin_role'] ?? 1;
 ?>
 
@@ -14,25 +14,33 @@ $admin_role = $_SESSION['admin_role'] ?? 1;
         min-height: 100vh;
         color: #aeb7c1;
         transition: all 0.3s;
+        border-right: 1px solid #2d3238;
+        display: flex;
+        flex-direction: column;
     }
 
     .sidebar-brand {
         padding: 20px 24px;
-        display: block;
+        display: flex;
+        align-items: center;
         text-decoration: none;
         color: white;
         font-weight: bold;
         font-size: 1.25rem;
         border-bottom: 1px solid #2d3238;
+        background: #15181c;
     }
 
     .sidebar-brand i {
-        color: #009981;
+        color: #6366f1;
+        font-size: 1.5rem;
     }
 
     .sidebar-menu {
         list-style: none;
-        margin-top: 15px;
+        margin-top: 20px;
+        padding-left: 0;
+        flex-grow: 1;
     }
 
     .sidebar-menu .nav-item {
@@ -40,67 +48,67 @@ $admin_role = $_SESSION['admin_role'] ?? 1;
     }
 
     .sidebar-menu .nav-link {
-        color: #aeb7c1;
+        color: #94a3b8;
         padding: 12px 15px;
         display: flex;
         align-items: center;
         text-decoration: none;
         border-radius: 8px;
         transition: all 0.2s;
+        font-size: 0.95rem;
     }
 
     .sidebar-menu .nav-link i {
         margin-right: 12px;
         font-size: 1.1rem;
-        width: 20px;
+        width: 24px;
         text-align: center;
+        color: #64748b;
+        transition: 0.2s;
     }
 
     .sidebar-menu .nav-link.active {
-        background-color: rgba(0, 153, 129, 0.15);
-        color: #009981 !important;
+        background: linear-gradient(90deg, rgba(99, 102, 241, 0.15) 0%, rgba(99, 102, 241, 0.05) 100%);
+        color: #818cf8 !important;
         font-weight: 600;
+        border-left: 3px solid #6366f1;
+    }
+    
+    .sidebar-menu .nav-link.active i {
+        color: #818cf8;
     }
 
     .sidebar-menu .nav-link:hover:not(.active) {
         background-color: rgba(255, 255, 255, 0.05);
-        color: white;
+        color: #e2e8f0;
     }
 
     .logout-item {
         border-top: 1px solid #2d3238;
-        margin-top: 20px !important;
-        padding-top: 20px !important;
-    }
-
-    .role-badge-sidebar {
-        font-size: 0.65rem;
-        background: #2d3238;
-        padding: 2px 6px;
-        border-radius: 4px;
-        margin-left: auto;
+        margin-top: auto !important;
+        padding: 20px 12px;
     }
 </style>
 
 <aside class="sidebar" id="sidebar">
-    <a href="/" class="sidebar-brand">
-        <i class="bi bi-shield-lock-fill me-2"></i> TechHub Shop
+    <a href="/admin/index" class="sidebar-brand">
+        <i class="bi bi-shield-lock-fill me-2"></i> 
+        <span>TECHHUB ADMIN</span>
     </a>
 
-    <ul class="sidebar-menu p-0">
-
+    <ul class="sidebar-menu">
 
         <?php if ($admin_role == 2): ?>
 
         <li class="nav-item">
-            <a class="nav-link <?= $current_page == 'admin' || $current_page == '' ? 'active' : '' ?>"
-                href="/admin/index">
-                <i class="bi bi-speedometer2"></i> Dashboard
+            <a class="nav-link <?= ($current_page == 'admin' || $current_page == '') ? 'active' : '' ?>"
+               href="/admin/index">
+                <i class="bi bi-speedometer2"></i> Tổng quan
             </a>
         </li>
 
         <li class="nav-item">
-            <a class="nav-link <?= $current_page == 'product' ? 'active' : '' ?>" href="/product">
+            <a class="nav-link <?= $current_page == 'product' ? 'active' : '' ?>" href="/product/manage">
                 <i class="bi bi-box-seam"></i> Sản phẩm
             </a>
         </li>
@@ -119,11 +127,13 @@ $admin_role = $_SESSION['admin_role'] ?? 1;
 
         <li class="nav-item">
             <a class="nav-link <?= $current_page == 'coupon' ? 'active' : '' ?>" href="/coupon">
-                <i class="bi bi-ticket"></i> Mã giảm giá
+                <i class="bi bi-ticket-perforated"></i> Mã giảm giá
             </a>
         </li>
         
-        <hr style="border-color: #2d3238; margin: 10px 20px;">
+        <li class="nav-item mt-3 mb-2 px-3">
+            <small class="text-uppercase text-muted fw-bold" style="font-size: 11px; letter-spacing: 1px;">Người dùng</small>
+        </li>
 
         <li class="nav-item">
             <a class="nav-link <?= $current_page == 'user' ? 'active' : '' ?>" href="/user">
@@ -133,17 +143,17 @@ $admin_role = $_SESSION['admin_role'] ?? 1;
 
         <li class="nav-item">
             <a class="nav-link <?= $current_page == 'adminmanage' ? 'active' : '' ?>" href="/adminmanage">
-                <i class="bi bi-shield-check"></i> Quản trị viên
+                <i class="bi bi-person-badge"></i> Quản trị viên
             </a>
         </li>
 
         <?php endif; ?>
 
-        <li class="nav-item logout-item">
-            <a class="nav-link text-danger" href="/auth/logout">
-                <i class="bi bi-box-arrow-right"></i> Đăng xuất
-            </a>
-        </li>
     </ul>
-</aside>
-<?php /**PATH D:\laragon\www\php2_tantuan47k1\app\views/layout/components/admin/sidebar.blade.php ENDPATH**/ ?>
+
+    <div class="logout-item">
+        <a class="nav-link text-danger bg-danger bg-opacity-10 justify-content-center fw-bold" href="/auth/logout">
+            <i class="bi bi-box-arrow-right text-danger"></i> Đăng xuất
+        </a>
+    </div>
+</aside><?php /**PATH D:\laragon\www\php2_tantuan47k1\app\views/layout/components/admin/sidebar.blade.php ENDPATH**/ ?>

@@ -53,7 +53,7 @@
                         <a class="nav-link active" href="/">Trang chủ</a>
                     </li>
                     <li class="nav-item me-2">
-                        <a class="nav-link" href="/#">Sản phẩm</a>
+                        <a class="nav-link" href="/product">Sản phẩm</a>
                     </li>
                     <li class="nav-item me-2">
                         <a class="nav-link" href="#">Giới thiệu</a>
@@ -94,7 +94,7 @@
                             <ul class="dropdown-menu dropdown-menu-end shadow-lg animate slideIn">
                                 <?php if(isset($_SESSION['user_role']) && $_SESSION['user_role'] == 1): ?>
                                     <li>
-                                        <a class="dropdown-item text-primary fw-bold" href="/product/manage">
+                                        <a class="dropdown-item text-primary fw-bold" href="/admin/index">
                                             <i class="bi bi-speedometer2 me-2"></i> Trang quản trị
                                         </a>
                                     </li>

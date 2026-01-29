@@ -1,7 +1,44 @@
 <?php
+
 class ProductController extends Controller {
 
     public function index() {
+        $productModel = $this->model('ProductModel');
+        $products = $productModel->all(); 
+
+        $this->view('client/product/index', ['products' => $products]);
+    }
+
+    public function detail($id) {
+        $productModel = $this->model('ProductModel');
+        $product = $productModel->find($id);
+
+        if (!$product) {
+            header("Location: /product");
+            exit;
+        }
+
+        $variants = $productModel->getVariants($id);
+        $images = $productModel->getImages($id);
+
+        $this->view('client/product/detail', [
+            'product'  => $product,
+            'variants' => $variants,
+            'images'   => $images
+        ]);
+    }
+
+    private function requireAdmin() {
+        if (session_status() === PHP_SESSION_NONE) session_start();
+        if (!isset($_SESSION['admin_id'])) {
+            header("Location: /auth/adminLogin");
+            exit;
+        }
+    }
+
+    public function manage() {
+        $this->requireAdmin();
+
         $productModel = $this->model('ProductModel');
         $products = $productModel->all(); 
 
@@ -9,6 +46,8 @@ class ProductController extends Controller {
     }
 
     public function create() {
+        $this->requireAdmin();
+
         $categories = $this->model('CategoryModel')->all();
         $brands = $this->model('BrandModel')->all();
 
@@ -19,12 +58,14 @@ class ProductController extends Controller {
     }
 
     public function store() {
+        $this->requireAdmin();
+
         $productModel = $this->model('ProductModel');
         $imageModel = $this->model('ProductImageModel');
 
         if (empty($_POST['name']) || !isset($_POST['base_price']) || $_POST['base_price'] < 0) {
             $this->view('admin/product/create', [
-                'mess' => "Dữ liệu không hợp lệ!",
+                'mess' => "Dữ liệu không hợp lệ! Vui lòng kiểm tra lại tên hoặc giá.",
                 'categories' => $this->model('CategoryModel')->all(),
                 'brands' => $this->model('BrandModel')->all()
             ]);
@@ -45,16 +86,14 @@ class ProductController extends Controller {
 
         if ($productId && isset($_FILES['images']) && !empty($_FILES['images']['name'][0])) {
             $files = $_FILES['images'];
-
-            $targetDir = 'public/image/product/';
+            $targetDir = dirname(__DIR__, 2) . '/public/image/product/';
+            
             if (!is_dir($targetDir)) mkdir($targetDir, 0777, true);
 
             foreach ($files['name'] as $key => $name) {
                 if ($files['error'][$key] == 0) {
                     $fileName = time() . '_' . basename($name);
-
                     $targetPath = $targetDir . $fileName; 
-
                     $dbPath = 'image/product/' . $fileName;
 
                     if (move_uploaded_file($files['tmp_name'][$key], $targetPath)) {
@@ -69,11 +108,13 @@ class ProductController extends Controller {
             }
         }
         
-        header("Location: /product");
+        header("Location: /product/manage");
         exit;
     }
 
     public function edit($id) {
+        $this->requireAdmin();
+
         $product = $this->model('ProductModel')->find($id);
         $categories = $this->model('CategoryModel')->all();
         $brands = $this->model('BrandModel')->all();
@@ -88,6 +129,8 @@ class ProductController extends Controller {
     }
 
     public function update($id) {
+        $this->requireAdmin();
+
         $productModel = $this->model('ProductModel');
         $imageModel = $this->model('ProductImageModel');
 
@@ -105,16 +148,14 @@ class ProductController extends Controller {
 
         if (isset($_FILES['images']) && !empty($_FILES['images']['name'][0])) {
             $files = $_FILES['images'];
-
-            $targetDir = 'public/image/product/';
+            $targetDir = dirname(__DIR__, 2) . '/public/image/product/';
+            
             if (!is_dir($targetDir)) mkdir($targetDir, 0777, true);
 
             foreach ($files['name'] as $key => $name) {
                 if ($files['error'][$key] == 0) {
                     $fileName = time() . '_' . basename($name);
-
                     $targetPath = $targetDir . $fileName;
-
                     $dbPath = 'image/product/' . $fileName;
 
                     if (move_uploaded_file($files['tmp_name'][$key], $targetPath)) {
@@ -129,19 +170,21 @@ class ProductController extends Controller {
             }
         }
 
-        header("Location: /product");
+        header("Location: /product/manage");
         exit;
     }
 
     public function delete($id) {
+        $this->requireAdmin();
+
         $productModel = $this->model('ProductModel');
         $imageModel = $this->model('ProductImageModel');
 
         $images = $imageModel->getImagesByProductId($id);
         if (!empty($images)) {
+            $baseDir = dirname(__DIR__, 2) . '/public/';
             foreach ($images as $img) {
-                $realPath = 'public/' . $img['image_path'];
-                
+                $realPath = $baseDir . $img['image_path'];
                 if (file_exists($realPath)) {
                     unlink($realPath);
                 }
@@ -150,7 +193,7 @@ class ProductController extends Controller {
 
         $productModel->delete($id);
 
-        header("Location: /product");
+        header("Location: /product/manage");
         exit;
     }
 }

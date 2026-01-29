@@ -3,9 +3,18 @@
 <?php $__env->startSection('content'); ?>
 
     <style>
-        .img-thumb { width: 60px; height: 60px; object-fit: cover; border-radius: 8px; border: 1px solid #eee; }
+        .img-thumb {
+            width: 60px;
+            height: 60px;
+            object-fit: cover;
+            border-radius: 8px;
+            border: 1px solid #eee;
+        }
+
         /* Thêm hiệu ứng hover cho dòng bảng */
-        .hover-shadow:hover { background-color: #f8f9fa; }
+        .hover-shadow:hover {
+            background-color: #f8f9fa;
+        }
     </style>
 
     <div class="container-fluid px-4 py-4">
@@ -42,65 +51,71 @@
                                 </tr>
                             <?php else: ?>
                                 <?php $__currentLoopData = $products; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $p): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                                <tr>
-                                    <td class="ps-4">
-                                        <div class="d-flex align-items-center">
-                                            
-                                            <img src="/public/<?= $p['image'] ?? 'image/no-image.png' ?>" 
-                                                 class="img-thumb me-3" 
-                                                 onerror="this.src='https://placehold.co/60x60?text=No+Image'">
-                                            <div>
-                                                <div class="fw-bold text-dark"><?= htmlspecialchars($p['name']) ?></div>
-                                                <small class="text-muted">Brand: <?= $p['brand_name'] ?? 'N/A' ?></small>
+                                    <tr>
+                                        <td class="ps-4">
+                                            <div class="d-flex align-items-center">
+                                                <img src="/<?= $p['image'] ?? 'image/no-image.png' ?>"
+                                                    class="img-thumb me-3"
+                                                    onerror="this.src='https://placehold.co/60x60?text=No+Image'">
+                                                <div>
+                                                    <div class="fw-bold text-dark"><?= htmlspecialchars($p['name']) ?></div>
+                                                    <small class="text-muted">Brand:
+                                                        <?= $p['brand_name'] ?? 'N/A' ?></small>
+                                                </div>
                                             </div>
-                                        </div>
-                                    </td>
-                                    <td>
-                                        <span class="badge bg-light text-secondary border">
-                                            <?= htmlspecialchars($p['category_name'] ?? 'Không có') ?>
-                                        </span>
-                                    </td>
-                                    <td>
-                                        <div class="fw-bold text-dark">
-                                            <?= number_format($p['base_price'] ?? 0, 0, ',', '.') ?> đ
-                                        </div>
-                                        <?php if(isset($p['variant_price']) && $p['variant_price'] > 0): ?>
-                                            <small class="text-muted" style="font-size: 0.75rem;">
-                                                Min: <?= number_format($p['variant_price'], 0, ',', '.') ?> đ
-                                            </small>
-                                        <?php endif; ?>
-                                    </td>
-                                    <td class="text-center">
-                                        
-                                        <a href="/variant/index/<?= $p['id'] ?>" class="text-decoration-none" title="Quản lý biến thể">
-                                            <span class="badge bg-info bg-opacity-10 text-info rounded-pill px-3 border border-info border-opacity-25">
-                                                <i class="bi bi-gear-fill me-1"></i>
-                                                <?= $p['variant_count'] ?> phiên bản
+                                        </td>
+                                        <td>
+                                            <span class="badge bg-light text-secondary border">
+                                                <?= htmlspecialchars($p['category_name'] ?? 'Không có') ?>
                                             </span>
-                                        </a>
-                                    </td>
-                                    <td class="text-center">
-                                        <?php if($p['status'] == 1): ?>
-                                            <span class="badge bg-success bg-opacity-10 text-success rounded-pill px-3">Hoạt động</span>
-                                        <?php else: ?>
-                                            <span class="badge bg-secondary bg-opacity-10 text-secondary rounded-pill px-3">Ẩn</span>
-                                        <?php endif; ?>
-                                    </td>
-                                    <td class="text-end pe-4">
-                                        
-                                        <a href="/product/edit/<?= $p['id'] ?>" class="btn btn-sm btn-outline-primary" title="Sửa thông tin chung">
-                                            <i class="bi bi-pencil"></i>
-                                        </a>
-                                        
-                                        
-                                        <a href="/product/delete/<?= $p['id'] ?>" 
-                                           class="btn btn-sm btn-outline-danger ms-1" 
-                                           onclick="return confirm('Xóa sản phẩm này sẽ xóa luôn các biến thể và ảnh liên quan. Tiếp tục?');" 
-                                           title="Xóa">
-                                            <i class="bi bi-trash"></i>
-                                        </a>
-                                    </td>
-                                </tr>
+                                        </td>
+                                        <td>
+                                            <div class="fw-bold text-dark">
+                                                <?= number_format($p['base_price'] ?? 0, 0, ',', '.') ?> đ
+                                            </div>
+                                            <?php if(isset($p['variant_price']) && $p['variant_price'] > 0): ?>
+                                                <small class="text-muted" style="font-size: 0.75rem;">
+                                                    Min: <?= number_format($p['variant_price'], 0, ',', '.') ?> đ
+                                                </small>
+                                            <?php endif; ?>
+                                        </td>
+                                        <td class="text-center">
+                                            
+                                            <a href="/variant/index/<?= $p['id'] ?>" class="text-decoration-none"
+                                                title="Quản lý biến thể">
+                                                <span
+                                                    class="badge bg-info bg-opacity-10 text-info rounded-pill px-3 border border-info border-opacity-25">
+                                                    <i class="bi bi-gear-fill me-1"></i>
+                                                    <?= $p['variant_count'] ?> phiên bản
+                                                </span>
+                                            </a>
+                                        </td>
+                                        <td class="text-center">
+                                            <?php if($p['status'] == 1): ?>
+                                                <span
+                                                    class="badge bg-success bg-opacity-10 text-success rounded-pill px-3">Hoạt
+                                                    động</span>
+                                            <?php else: ?>
+                                                <span
+                                                    class="badge bg-secondary bg-opacity-10 text-secondary rounded-pill px-3">Ẩn</span>
+                                            <?php endif; ?>
+                                        </td>
+                                        <td class="text-end pe-4">
+                                            
+                                            <a href="/product/edit/<?= $p['id'] ?>" class="btn btn-sm btn-outline-primary"
+                                                title="Sửa thông tin chung">
+                                                <i class="bi bi-pencil"></i>
+                                            </a>
+
+                                            
+                                            <a href="/product/delete/<?= $p['id'] ?>"
+                                                class="btn btn-sm btn-outline-danger ms-1"
+                                                onclick="return confirm('Xóa sản phẩm này sẽ xóa luôn các biến thể và ảnh liên quan. Tiếp tục?');"
+                                                title="Xóa">
+                                                <i class="bi bi-trash"></i>
+                                            </a>
+                                        </td>
+                                    </tr>
                                 <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                             <?php endif; ?>
                         </tbody>
@@ -110,4 +125,5 @@
         </div>
     </div>
 <?php $__env->stopSection(); ?>
+
 <?php echo $__env->make('layout.adminLayout', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?><?php /**PATH D:\laragon\www\php2_tantuan47k1\app\views/admin/product/index.blade.php ENDPATH**/ ?>

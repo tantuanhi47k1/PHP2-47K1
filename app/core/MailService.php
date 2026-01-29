@@ -7,7 +7,6 @@ class MailService {
         $mail = new PHPMailer(true);
 
         try {
-            // Cấu hình Server
             $mail->isSMTP();
             $mail->Host       = $_ENV['MAIL_HOST'] ?? 'smtp.gmail.com';
             $mail->SMTPAuth   = true;
@@ -17,11 +16,9 @@ class MailService {
             $mail->Port       = $_ENV['MAIL_PORT'] ?? 587;
             $mail->CharSet    = 'UTF-8';
 
-            // Người gửi & Người nhận
             $mail->setFrom($_ENV['MAIL_USERNAME'], $_ENV['MAIL_FROM_NAME'] ?? 'My Shop');
             $mail->addAddress($to);
 
-            // Nội dung
             $mail->isHTML(true);
             $mail->Subject = $subject;
             $mail->Body    = $body;
@@ -29,7 +26,6 @@ class MailService {
             $mail->send();
             return true;
         } catch (Exception $e) {
-            // Ghi log lỗi nếu cần: error_log($mail->ErrorInfo);
             return false;
         }
     }
