@@ -83,7 +83,7 @@ $admin_role = $_SESSION['admin_role'] ?? 1;
 </style>
 
 <aside class="sidebar" id="sidebar">
-    <a href="/admin/index" class="sidebar-brand">
+    <a href="/" class="sidebar-brand">
         <i class="bi bi-shield-lock-fill me-2"></i> TechHub Shop
     </a>
 

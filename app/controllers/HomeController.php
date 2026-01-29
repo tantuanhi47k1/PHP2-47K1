@@ -2,16 +2,22 @@
 class HomeController extends Controller {
     
     public function index() {
+        // Kiểm tra session
         if (session_status() === PHP_SESSION_NONE) {
             session_start();
         }
 
-        if (isset($_SESSION['admin_id']) && $_SESSION['admin_role'] == 2) {
-            header("Location: /admin/index");
-            exit;
-        }
+        // --- SỬA LẠI ĐOẠN NÀY ---
+        
+        // 1. Gọi Model để lấy dữ liệu sản phẩm hiển thị ra trang chủ
+        // (Giả sử bạn muốn hiện danh sách sản phẩm mới nhất)
+        $productModel = $this->model('ProductModel');
+        $products = $productModel->all(); 
 
-        header("Location: /auth/adminLogin");
-        exit;
+        // 2. Gọi View của KHÁCH HÀNG (Client)
+        // File này nằm ở: app/views/client/home/index.blade.php
+        $this->view('client/home/index', [
+            'products' => $products
+        ]);
     }
 }

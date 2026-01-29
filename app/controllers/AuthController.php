@@ -7,7 +7,9 @@ class AuthController extends Controller
         }
     }
 
-    // --- LOGIC CHO KHÁCH HÀNG (Bảng users) ---
+    // =========================================================
+    // PHẦN LOGIC KHÁCH HÀNG (Client) - ĐÃ CẬP NHẬT CHUẨN
+    // =========================================================
     
     public function login() {
         if (isset($_SESSION['user_id'])) {
@@ -18,6 +20,10 @@ class AuthController extends Controller
     }
 
     public function register() {
+        if (isset($_SESSION['user_id'])) {
+            header("Location: /");
+            exit;
+        }
         $this->view('client/auth/register');
     }
 
@@ -26,20 +32,30 @@ class AuthController extends Controller
         $email = trim($_POST['email'] ?? '');
 
         if ($userModel->findByEmail($email)) {
-            $_SESSION['error'] = 'Email này đã được khách hàng khác sử dụng!';
+            $_SESSION['error'] = 'Email này đã được sử dụng!';
+            header("Location: /auth/register");
+            exit;
+        }
+
+        $password = $_POST['password'];
+        $confirmPassword = $_POST['confirm_password'] ?? '';
+        
+        if ($password !== $confirmPassword) {
+            $_SESSION['error'] = 'Mật khẩu xác nhận không khớp!';
             header("Location: /auth/register");
             exit;
         }
 
         $data = [
-            'full_name'     => trim($_POST['name']),
+            'full_name'     => trim($_POST['full_name'] ?? ''),
             'email'         => $email,
-            'password'      => password_hash($_POST['password'], PASSWORD_DEFAULT),
+            'password'      => $password,
             'phone'         => $_POST['phone'] ?? null,
             'address'       => $_POST['address'] ?? null,
             'avatar'        => 'image/avatar/default.png',
             'google_id'     => null,
-            'auth_provider' => 'local'
+            'auth_provider' => 'local',
+            'status'        => 1
         ];
 
         if ($userModel->create($data)) {
@@ -55,9 +71,17 @@ class AuthController extends Controller
     public function handleUserLogin() {
         $email = trim($_POST['email'] ?? '');
         $password = $_POST['password'] ?? '';
-        $user = $this->model('UserModel')->findByEmail($email);
+        
+        $userModel = $this->model('UserModel');
+        $user = $userModel->findByEmail($email);
 
         if ($user && password_verify($password, $user['password'])) {
+            if (isset($user['status']) && $user['status'] == 0) {
+                $_SESSION['error'] = 'Tài khoản của bạn đã bị khóa!';
+                header("Location: /auth/login");
+                exit;
+            }
+
             $_SESSION['user_id'] = $user['id'];
             $_SESSION['user_name'] = $user['full_name'];
             header("Location: /");
@@ -68,7 +92,9 @@ class AuthController extends Controller
         }
     }
 
-    // --- LOGIC CHO BAN QUẢN TRỊ (Bảng admins) ---
+    // =========================================================
+    // PHẦN LOGIC QUẢN TRỊ VIÊN (Admin) - GIỮ NGUYÊN
+    // =========================================================
 
     public function adminLogin() {
         if (isset($_SESSION['admin_id']) && $_SESSION['admin_role'] == 2) {
@@ -94,7 +120,7 @@ class AuthController extends Controller
                 header("Location: /admin/index"); 
                 exit;
             } else {
-                $_SESSION['error'] = 'Tài khoản (Role 1) chưa được cấp quyền quản trị!';
+                $_SESSION['error'] = 'Tài khoản chưa được cấp quyền quản trị!';
                 header("Location: /auth/adminLogin");
                 exit;
             }
@@ -140,7 +166,7 @@ class AuthController extends Controller
     public function logout() {
         session_unset();
         session_destroy();
-        header("Location: /auth/adminLogin");
+        header("Location: /auth/login");
         exit;
     }
 }
