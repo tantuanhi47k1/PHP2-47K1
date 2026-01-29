@@ -4,6 +4,8 @@
 
     <style>
         .img-thumb { width: 60px; height: 60px; object-fit: cover; border-radius: 8px; border: 1px solid #eee; }
+        /* Thêm hiệu ứng hover cho dòng bảng */
+        .hover-shadow:hover { background-color: #f8f9fa; }
     </style>
 
     <div class="container-fluid px-4 py-4">
@@ -16,7 +18,6 @@
             </div>
 
             <div class="card-body">
-                {{-- Thông báo --}}
                 @if (isset($_SESSION['success']))
                     <div class="alert alert-success"><?= $_SESSION['success'] ?></div>
                     <?php unset($_SESSION['success']); ?>
@@ -44,6 +45,7 @@
                                 <tr>
                                     <td class="ps-4">
                                         <div class="d-flex align-items-center">
+                                            {{-- Ảnh sản phẩm --}}
                                             <img src="/public/<?= $p['image'] ?? 'image/no-image.png' ?>" 
                                                  class="img-thumb me-3" 
                                                  onerror="this.src='https://placehold.co/60x60?text=No+Image'">
@@ -59,7 +61,6 @@
                                         </span>
                                     </td>
                                     <td>
-                                        {{-- Hiển thị giá gốc (base_price) --}}
                                         <div class="fw-bold text-dark">
                                             <?= number_format($p['base_price'] ?? 0, 0, ',', '.') ?> đ
                                         </div>
@@ -70,10 +71,13 @@
                                         @endif
                                     </td>
                                     <td class="text-center">
-                                        {{-- Thay cột Quantity bằng số lượng biến thể --}}
-                                        <span class="badge bg-info bg-opacity-10 text-info rounded-pill px-3">
-                                            <?= $p['variant_count'] ?> phiên bản
-                                        </span>
+                                        {{-- SỬA Ở ĐÂY: Thêm thẻ <a> bao quanh badge để bấm vào trang Variant --}}
+                                        <a href="/variant/index/<?= $p['id'] ?>" class="text-decoration-none" title="Quản lý biến thể">
+                                            <span class="badge bg-info bg-opacity-10 text-info rounded-pill px-3 border border-info border-opacity-25">
+                                                <i class="bi bi-gear-fill me-1"></i>
+                                                <?= $p['variant_count'] ?> phiên bản
+                                            </span>
+                                        </a>
                                     </td>
                                     <td class="text-center">
                                         @if($p['status'] == 1)
@@ -83,9 +87,12 @@
                                         @endif
                                     </td>
                                     <td class="text-end pe-4">
-                                        <a href="/product/edit/<?= $p['id'] ?>" class="btn btn-sm btn-outline-primary" title="Sửa">
+                                        {{-- Nút sửa sản phẩm --}}
+                                        <a href="/product/edit/<?= $p['id'] ?>" class="btn btn-sm btn-outline-primary" title="Sửa thông tin chung">
                                             <i class="bi bi-pencil"></i>
                                         </a>
+                                        
+                                        {{-- Nút xóa --}}
                                         <a href="/product/delete/<?= $p['id'] ?>" 
                                            class="btn btn-sm btn-outline-danger ms-1" 
                                            onclick="return confirm('Xóa sản phẩm này sẽ xóa luôn các biến thể và ảnh liên quan. Tiếp tục?');" 

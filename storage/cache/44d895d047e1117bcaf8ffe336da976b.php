@@ -1,8 +1,8 @@
-@extends('layout.clientLayout')
 
-@section('title', 'Đăng nhập')
 
-@section('content')
+<?php $__env->startSection('title', 'Đăng nhập'); ?>
+
+<?php $__env->startSection('content'); ?>
 <div class="container py-5" style="min-height: 80vh;">
     <div class="row justify-content-center align-items-center h-100">
         <div class="col-md-5">
@@ -13,7 +13,7 @@
                         <p class="text-muted">Chào mừng bạn quay trở lại!</p>
                     </div>
 
-                    {{-- Hiển thị thông báo LỖI --}}
+                    
                     <?php if (isset($_SESSION['error'])): ?>
                         <div class="alert alert-danger d-flex align-items-center" role="alert">
                             <i class="bi bi-exclamation-triangle-fill me-2"></i>
@@ -22,7 +22,7 @@
                         <?php unset($_SESSION['error']); ?>
                     <?php endif; ?>
 
-                    {{-- Hiển thị thông báo THÀNH CÔNG --}}
+                    
                     <?php if (isset($_SESSION['success'])): ?>
                         <div class="alert alert-success d-flex align-items-center" role="alert">
                             <i class="bi bi-check-circle-fill me-2"></i>
@@ -51,18 +51,18 @@
                             <a href="#" class="text-decoration-none small">Quên mật khẩu?</a>
                         </div>
 
-                        {{-- Nút Đăng nhập thường --}}
+                        
                         <div class="d-grid mb-3">
                             <button class="btn btn-primary btn-lg fw-bold" type="submit">ĐĂNG NHẬP</button>
                         </div>
 
-                        {{-- Phần phân cách --}}
+                        
                         <div class="position-relative my-4">
                             <hr class="text-muted opacity-25">
                             <span class="position-absolute top-50 start-50 translate-middle bg-white px-3 text-muted small">HOẶC</span>
                         </div>
 
-                        {{-- Nút Đăng nhập Google (MỚI THÊM) --}}
+                        
                         <div class="d-grid">
                             <a href="/auth/googleLogin" class="btn btn-outline-danger btn-lg fw-bold d-flex align-items-center justify-content-center">
                                 <i class="bi bi-google me-2"></i> 
@@ -79,4 +79,5 @@
         </div>
     </div>
 </div>
-@endsection
+<?php $__env->stopSection(); ?>
+<?php echo $__env->make('layout.clientLayout', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?><?php /**PATH G:\laragon\www\PHP2-47K1\app\views/client/auth/login.blade.php ENDPATH**/ ?>

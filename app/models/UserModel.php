@@ -23,8 +23,10 @@ class UserModel extends Model
 
     public function create($data)
     {
-        if (isset($data['password'])) {
+        if (isset($data['password']) && !empty($data['password'])) {
             $data['password'] = password_hash($data['password'], PASSWORD_DEFAULT);
+        } else {
+            $data['password'] = null; // Cho phép null nếu login bằng Google
         }
 
         $sql = "INSERT INTO `$this->table` 
@@ -35,17 +37,23 @@ class UserModel extends Model
         $conn = $this->connect();
         $stmt = $conn->prepare($sql);
 
-        return $stmt->execute([
-            ':full_name'     => $data['full_name'], 
-            ':email'         => $data['email'],
-            ':password'      => $data['password'],
-            ':phone'         => $data['phone'] ?? null,
-            ':address'       => $data['address'] ?? null,
-            ':avatar'        => $data['avatar'] ?? 'image/avatar/default.png',
-            ':status'        => $data['status'] ?? 1,
-            ':google_id'     => $data['google_id'] ?? null,
-            ':auth_provider' => $data['auth_provider'] ?? 'local'
+        $result = $stmt->execute([
+            ':full_name'    => $data['full_name'], 
+            ':email'        => $data['email'],
+            ':password'     => $data['password'],
+            ':phone'        => $data['phone'] ?? null,
+            ':address'      => $data['address'] ?? null,
+            ':avatar'       => $data['avatar'] ?? 'image/avatar/default.png',
+            ':status'       => $data['status'] ?? 1,
+            ':google_id'    => $data['google_id'] ?? null,
+            ':auth_provider'=> $data['auth_provider'] ?? 'local'
         ]);
+
+        // SỬA QUAN TRỌNG: Trả về ID vừa tạo thay vì true/false
+        if ($result) {
+            return $conn->lastInsertId();
+        }
+        return false;
     }
 
     public function update($id, $data)
@@ -89,7 +97,7 @@ class UserModel extends Model
         return $stmt->execute([':id' => $id]);
     }
 
-    // --- CÁC HÀM MỚI PHỤC VỤ ĐĂNG NHẬP / ĐĂNG KÝ ---
+    // --- CÁC HÀM PHỤC VỤ ĐĂNG NHẬP (Bao gồm Google Login) ---
 
     public function findByEmail($email)
     {
@@ -108,5 +116,24 @@ class UserModel extends Model
         $stmt->execute([':email' => $email]);
         $result = $stmt->fetch(PDO::FETCH_ASSOC);
         return $result['count'] > 0;
+    }
+
+    // 1. Tìm user bằng Google ID (MỚI)
+    public function findByGoogleId($google_id)
+    {
+        $sql = "SELECT * FROM `$this->table` WHERE google_id = :google_id";
+        $conn = $this->connect();
+        $stmt = $conn->prepare($sql);
+        $stmt->execute([':google_id' => $google_id]);
+        return $stmt->fetch(PDO::FETCH_ASSOC);
+    }
+
+    // 2. Cập nhật Google ID cho user đã tồn tại (MỚI)
+    public function updateGoogleId($id, $google_id)
+    {
+        $sql = "UPDATE `$this->table` SET google_id = :google_id, auth_provider = 'google' WHERE id = :id";
+        $conn = $this->connect();
+        $stmt = $conn->prepare($sql);
+        return $stmt->execute([':google_id' => $google_id, ':id' => $id]);
     }
 }

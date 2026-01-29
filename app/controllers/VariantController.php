@@ -1,8 +1,22 @@
 <?php
 class VariantController extends Controller {
 
-    public function index($productId) {
+    // SỬA 1: Thêm '= null' để tránh lỗi ArgumentCountError
+    public function index($productId = null) {
+        // Kiểm tra: Nếu không có ID sản phẩm -> Quay về trang quản lý sản phẩm
+        if (!$productId) {
+            header("Location: /product");
+            exit;
+        }
+
         $product = $this->model('ProductModel')->find($productId);
+        
+        // Nếu ID không tồn tại trong DB cũng đẩy về
+        if (!$product) {
+            header("Location: /product");
+            exit;
+        }
+
         $variants = $this->model('VariantModel')->getByProductId($productId);
 
         $this->view('admin/variant/index', [
@@ -11,7 +25,12 @@ class VariantController extends Controller {
         ]);
     }
 
-    public function create($productId) {
+    public function create($productId = null) {
+        if (!$productId) {
+            header("Location: /product");
+            exit;
+        }
+
         $product = $this->model('ProductModel')->find($productId);
         $conn = $this->model('Model')->connect();
 
@@ -45,17 +64,23 @@ class VariantController extends Controller {
         ]);
 
         if ($variantId && isset($_FILES['variant_image']) && $_FILES['variant_image']['error'] == 0) {
-            $targetDir = 'image/product/';
+            // SỬA 2: Cập nhật đường dẫn upload đúng vào thư mục public bên ngoài
+            $targetDir = 'public/image/product/';
             if (!is_dir($targetDir)) mkdir($targetDir, 0777, true);
 
             $fileName = time() . '_v_' . basename($_FILES['variant_image']['name']);
+            
+            // Đường dẫn vật lý để upload
             $targetPath = $targetDir . $fileName;
+            
+            // Đường dẫn lưu vào DB (để View tự thêm /public/)
+            $dbPath = 'image/product/' . $fileName;
 
             if (move_uploaded_file($_FILES['variant_image']['tmp_name'], $targetPath)) {
                 $imageModel->create([
                     'product_id'   => $productId,
                     'variant_id'   => $variantId,
-                    'image_path'   => $targetPath,
+                    'image_path'   => $dbPath,
                     'is_thumbnail' => 0 
                 ]);
             }
@@ -78,6 +103,13 @@ class VariantController extends Controller {
         $conn = $this->model('Model')->connect();
 
         $variant = $variantModel->find($variantId);
+        
+        // Kiểm tra biến thể có tồn tại không
+        if (!$variant) {
+            header("Location: /product");
+            exit;
+        }
+
         $product = $this->model('ProductModel')->find($variant['product_id']);
 
         $stmtSelected = $conn->prepare("SELECT attribute_value_id FROM variant_attribute_values WHERE variant_id = :vid");
@@ -122,15 +154,22 @@ class VariantController extends Controller {
         ]);
 
         if (isset($_FILES['variant_image']) && $_FILES['variant_image']['error'] == 0) {
-            $targetDir = 'image/product/';
+            // SỬA 3: Cập nhật đường dẫn upload cho phần Update
+            $targetDir = 'public/image/product/';
+            if (!is_dir($targetDir)) mkdir($targetDir, 0777, true);
+
             $fileName = time() . '_v_up_' . basename($_FILES['variant_image']['name']);
             $targetPath = $targetDir . $fileName;
+            $dbPath = 'image/product/' . $fileName;
 
             if (move_uploaded_file($_FILES['variant_image']['tmp_name'], $targetPath)) {
                 $oldImages = $imageModel->getImagesByVariantId($variantId);
                 if (!empty($oldImages)) {
                     foreach ($oldImages as $old) {
-                        if (file_exists($old['image_path'])) unlink($old['image_path']);
+                        // Xóa file cũ: Thêm 'public/' vào đường dẫn để tìm thấy file
+                        $oldPath = 'public/' . $old['image_path'];
+                        if (file_exists($oldPath)) unlink($oldPath);
+                        
                         $imageModel->delete($old['id']);
                     }
                 }
@@ -138,7 +177,7 @@ class VariantController extends Controller {
                 $imageModel->create([
                     'product_id'   => $productId,
                     'variant_id'   => $variantId,
-                    'image_path'   => $targetPath,
+                    'image_path'   => $dbPath,
                     'is_thumbnail' => 0
                 ]);
             }
@@ -169,7 +208,9 @@ class VariantController extends Controller {
 
             $images = $imageModel->getImagesByVariantId($variantId);
             foreach ($images as $img) {
-                if (file_exists($img['image_path'])) unlink($img['image_path']);
+                // SỬA 4: Xóa ảnh đúng đường dẫn public
+                $realPath = 'public/' . $img['image_path'];
+                if (file_exists($realPath)) unlink($realPath);
             }
 
             $variantModel->delete($variantId);

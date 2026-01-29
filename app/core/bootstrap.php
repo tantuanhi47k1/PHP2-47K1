@@ -8,7 +8,7 @@ define('VIEW_PATH', APP_PATH . '/views');
 define('CONTROLLER_PATH', APP_PATH . '/controllers');
 define('MODEL_PATH', APP_PATH . '/models');
 
-$venderAutoload = BASE_PATH . '/app/vendor/autoload.php';
+$venderAutoload = BASE_PATH . '/vendor/autoload.php';
 if (file_exists($venderAutoload)) {
     require_once $venderAutoload;
 } else {
