@@ -1,5 +1,5 @@
-@extends('layout.adminLayout')
-@section('content')
+
+<?php $__env->startSection('content'); ?>
     <style>
         :root { --primary-color: #009981; }
         .text-brand { color: var(--primary-color) !important; }
@@ -19,22 +19,22 @@
                     </a>
                 </div>
 
-                @if (isset($mess))
+                <?php if(isset($mess)): ?>
                     <div class="alert alert-success d-flex align-items-center" role="alert">
                         <i class="bi bi-check-circle-fill me-2"></i>
                         <div><?= $mess ?></div>
                     </div>
-                @endif
+                <?php endif; ?>
 
-                @if (!empty($errors))
+                <?php if(!empty($errors)): ?>
                     <div class="alert alert-danger mb-4">
                         <ul class="mb-0">
-                            @foreach ($errors as $error)
-                                <li>{{ $error }}</li>
-                            @endforeach
+                            <?php $__currentLoopData = $errors; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $error): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                <li><?php echo e($error); ?></li>
+                            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                         </ul>
                     </div>
-                @endif
+                <?php endif; ?>
 
                 <form action="/product/store" method="POST" enctype="multipart/form-data">
                     <div class="card p-4">
@@ -76,11 +76,11 @@
                                     <label class="form-label">Danh mục <span class="text-danger">*</span></label>
                                     <select name="category_id" class="form-select">
                                         <option value="">-- Chọn danh mục --</option>
-                                        @foreach ($categories as $c)
+                                        <?php $__currentLoopData = $categories; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $c): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                                             <option value="<?= $c['id'] ?>" <?= (isset($old['category_id']) && $old['category_id'] == $c['id']) ? 'selected' : '' ?>>
                                                 <?= htmlspecialchars($c['name']) ?>
                                             </option>
-                                        @endforeach
+                                        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                                     </select>
                                 </div>
 
@@ -88,11 +88,11 @@
                                     <label class="form-label">Thương hiệu</label>
                                     <select name="brand_id" class="form-select">
                                         <option value="">-- Chọn thương hiệu --</option>
-                                        @foreach ($brands as $b)
+                                        <?php $__currentLoopData = $brands; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $b): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                                             <option value="<?= $b['id'] ?>" <?= (isset($old['brand_id']) && $old['brand_id'] == $b['id']) ? 'selected' : '' ?>>
                                                 <?= htmlspecialchars($b['name']) ?>
                                             </option>
-                                        @endforeach
+                                        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                                     </select>
                                 </div>
 
@@ -119,4 +119,5 @@
             </div>
         </div>
     </div>
-@endsection
+<?php $__env->stopSection(); ?>
+<?php echo $__env->make('layout.adminLayout', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?><?php /**PATH G:\laragon\www\PHP2-47K1\app\views/admin/product/create.blade.php ENDPATH**/ ?>

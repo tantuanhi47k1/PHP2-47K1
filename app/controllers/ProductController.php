@@ -63,22 +63,42 @@ class ProductController extends Controller {
         $productModel = $this->model('ProductModel');
         $imageModel = $this->model('ProductImageModel');
 
-        if (empty($_POST['name']) || !isset($_POST['base_price']) || $_POST['base_price'] < 0) {
+        $errors = [];
+        $name = trim($_POST['name'] ?? '');
+        $base_price = $_POST['base_price'] ?? '';
+        $category_id = $_POST['category_id'] ?? '';
+        $brand_id = $_POST['brand_id'] ?? '';
+
+        if (empty($name)) {
+            $errors[] = "Tên sản phẩm không được để trống.";
+        }
+        if ($base_price === '' || !is_numeric($base_price) || $base_price < 0) {
+            $errors[] = "Giá sản phẩm phải là số và không được nhỏ hơn 0.";
+        }
+        if (empty($category_id)) {
+            $errors[] = "Vui lòng chọn danh mục cho sản phẩm.";
+        }
+        if (empty($brand_id)) {
+            $errors[] = "Vui lòng chọn thương hiệu cho sản phẩm.";
+        }
+
+        if (!empty($errors)) {
             $this->view('admin/product/create', [
-                'mess' => "Dữ liệu không hợp lệ! Vui lòng kiểm tra lại tên hoặc giá.",
+                'errors'     => $errors,
+                'old'        => $_POST,
                 'categories' => $this->model('CategoryModel')->all(),
-                'brands' => $this->model('BrandModel')->all()
+                'brands'     => $this->model('BrandModel')->all()
             ]);
             return;
         }
 
         $productData = [
-            'name'              => $_POST['name'],
+            'name'              => $name,
             'short_description' => $_POST['short_description'] ?? '',
             'description'       => $_POST['description'] ?? '',
-            'base_price'        => $_POST['base_price'],
-            'category_id'       => $_POST['category_id'],
-            'brand_id'          => !empty($_POST['brand_id']) ? $_POST['brand_id'] : null,
+            'base_price'        => $base_price,
+            'category_id'       => $category_id,
+            'brand_id'          => $brand_id,
             'status'            => $_POST['status'] ?? 1,
         ];
 
@@ -90,9 +110,9 @@ class ProductController extends Controller {
             
             if (!is_dir($targetDir)) mkdir($targetDir, 0777, true);
 
-            foreach ($files['name'] as $key => $name) {
+            foreach ($files['name'] as $key => $nameFile) {
                 if ($files['error'][$key] == 0) {
-                    $fileName = time() . '_' . basename($name);
+                    $fileName = time() . '_' . basename($nameFile);
                     $targetPath = $targetDir . $fileName; 
                     $dbPath = 'image/product/' . $fileName;
 
@@ -134,11 +154,33 @@ class ProductController extends Controller {
         $productModel = $this->model('ProductModel');
         $imageModel = $this->model('ProductImageModel');
 
+        $errors = [];
+        $name = trim($_POST['name'] ?? '');
+        $base_price = $_POST['base_price'] ?? '';
+
+        if (empty($name)) {
+            $errors[] = "Tên sản phẩm không được để trống.";
+        }
+        if ($base_price === '' || !is_numeric($base_price) || $base_price < 0) {
+            $errors[] = "Giá sản phẩm không hợp lệ.";
+        }
+
+        if (!empty($errors)) {
+            $this->view('admin/product/edit', [
+                'errors'     => $errors,
+                'product'    => $productModel->find($id),
+                'categories' => $this->model('CategoryModel')->all(),
+                'brands'     => $this->model('BrandModel')->all(),
+                'images'     => $imageModel->getImagesByProductId($id)
+            ]);
+            return;
+        }
+
         $productData = [
-            'name'              => $_POST['name'],
+            'name'              => $name,
             'short_description' => $_POST['short_description'] ?? '', 
             'description'       => $_POST['description'] ?? '',
-            'base_price'        => $_POST['base_price'],
+            'base_price'        => $base_price,
             'category_id'       => $_POST['category_id'],
             'brand_id'          => !empty($_POST['brand_id']) ? $_POST['brand_id'] : null,
             'status'            => $_POST['status']
@@ -152,9 +194,9 @@ class ProductController extends Controller {
             
             if (!is_dir($targetDir)) mkdir($targetDir, 0777, true);
 
-            foreach ($files['name'] as $key => $name) {
+            foreach ($files['name'] as $key => $nameFile) {
                 if ($files['error'][$key] == 0) {
-                    $fileName = time() . '_' . basename($name);
+                    $fileName = time() . '_' . basename($nameFile);
                     $targetPath = $targetDir . $fileName;
                     $dbPath = 'image/product/' . $fileName;
 

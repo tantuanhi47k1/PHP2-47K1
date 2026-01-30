@@ -13,13 +13,11 @@ class Controller
 {
     public function view(string $view, array $data = []): void
     {
-        // chuẩn hoá tên view
         $view = $this->normalizeViewName($view);
 
         $viewsPath = VIEW_PATH;
         $cachePath = BASE_PATH . '/storage/cache';
 
-        // tạo thư mục cache if chưa tồn tại
         if (!is_dir($cachePath) && !mkdir($cachePath, 0775, true) && !is_dir($cachePath)) {
             throw new RuntimeException("Cannot create cache directory: {$cachePath}");
         }

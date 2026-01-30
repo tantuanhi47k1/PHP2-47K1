@@ -1,0 +1,10 @@
+{
+    "require": {
+        "phpmailer/phpmailer": "^7.0",
+        "vlucas/phpdotenv": "^5.6",
+        "illuminate/view": "^12.49",
+        "illuminate/filesystem": "^12.49",
+        "illuminate/events": "^12.49",
+        "google/apiclient": "^2.19"
+    }
+}
