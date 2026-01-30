@@ -130,7 +130,6 @@
             box-shadow: 0 8px 15px rgba(99, 102, 241, 0.3);
         }
 
-        /* ---------------------------- */
     </style>
 
     <section class="hero-section shadow-lg">
@@ -255,7 +254,8 @@
                                         <input type="hidden" name="id" value="{{ $item['id'] }}">
                                         <input type="hidden" name="quantity" value="1">
                                         <div class="d-flex gap-2">
-                                            <button type="submit" class="btn-cart-quick" title="Thêm vào giỏ hàng">
+                                            <button type="button" class="btn-cart-quick ajax-add-to-cart" 
+                                                    data-id="{{ $item['id'] }}" title="Thêm vào giỏ hàng">
                                                 <i class="bi bi-bag-plus fs-5"></i>
                                             </button>
                                             <a href="/product/detail/{{ $item['id'] }}"
@@ -292,5 +292,46 @@
                 style="width: 200px; height: 200px; margin-left: -100px;"></div>
         </div>
     </section>
+
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+    document.querySelectorAll('.ajax-add-to-cart').forEach(button => {
+        button.addEventListener('click', function() {
+            const productId = this.getAttribute('data-id');
+            
+            fetch('/cart/add', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: `id=${productId}&quantity=1`
+            })
+            .then(response => {
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Đã thêm vào giỏ hàng!',
+                    showConfirmButton: false,
+                    timer: 1500,
+                    toast: true,
+                    position: 'top-end'
+                });
+
+                const cartBadge = document.querySelector('.badge-cart');
+                if(cartBadge) {
+                    let currentCount = parseInt(cartBadge.innerText) || 0;
+                    cartBadge.innerText = currentCount + 1;
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Thất bại',
+                    text: 'Không thể thêm sản phẩm vào giỏ.',
+                });
+            });
+        });
+    });
+    </script>
 
 @endsection
