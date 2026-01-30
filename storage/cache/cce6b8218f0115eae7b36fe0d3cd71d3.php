@@ -1,6 +1,6 @@
-@extends('layout.adminLayout')
 
-@section('content')
+
+<?php $__env->startSection('content'); ?>
     <style>
         .content-wrapper {
             background-color: #f4f7f6;
@@ -124,7 +124,7 @@
             </h4>
         </div>
 
-        @if (isset($_SESSION['success']))
+        <?php if(isset($_SESSION['success'])): ?>
             <div class="alert alert-success alert-dismissible fade show shadow-sm border-0 mb-4 py-3" role="alert">
                 <div class="d-flex align-items-center">
                     <i class="bi bi-check-circle-fill fs-4 me-3"></i>
@@ -133,7 +133,7 @@
                 <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
             </div>
             <?php unset($_SESSION['success']); ?>
-        @endif
+        <?php endif; ?>
 
         <div class="row g-4">
             <div class="col-lg-4">
@@ -180,39 +180,40 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    @if (empty($attributes))
+                                    <?php if(empty($attributes)): ?>
                                         <tr>
                                             <td colspan="4" class="text-center py-5 text-muted">
                                                 <i class="bi bi-inbox fs-2 d-block mb-2"></i>
                                                 Chưa có dữ liệu nào được tạo.
                                             </td>
                                         </tr>
-                                    @else
-                                        @foreach ($attributes as $attr)
+                                    <?php else: ?>
+                                        <?php $__currentLoopData = $attributes; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $attr): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                                             <tr class="attr-row">
                                                 <td class="ps-4">
-                                                    <div class="fw-bold text-dark fs-6">{{ $attr['name'] }}</div>
-                                                    <small class="text-muted">ID: #{{ $attr['id'] }}</small>
+                                                    <div class="fw-bold text-dark fs-6"><?php echo e($attr['name']); ?></div>
+                                                    <small class="text-muted">ID: #<?php echo e($attr['id']); ?></small>
                                                 </td>
                                                 <td>
                                                     <div class="d-flex flex-wrap gap-2">
-                                                        @foreach ($attr['values'] as $val)
+                                                        <?php $__currentLoopData = $attr['values']; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $val): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                                                             <div class="attr-value-badge shadow-sm">
-                                                                {{ $val['value'] }}
-                                                                <a href="/attribute/deleteValue/{{ $val['id'] }}"
+                                                                <?php echo e($val['value']); ?>
+
+                                                                <a href="/attribute/deleteValue/<?php echo e($val['id']); ?>"
                                                                     class="delete-val-btn"
-                                                                    onclick="return confirm('Xóa giá trị [{{ $val['value'] }}]?');">
+                                                                    onclick="return confirm('Xóa giá trị [<?php echo e($val['value']); ?>]?');">
                                                                     <i class="bi bi-x-circle-fill"></i>
                                                                 </a>
                                                             </div>
-                                                        @endforeach
+                                                        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                                                     </div>
                                                 </td>
                                                 <td>
                                                     <form action="/attribute/storeValue" method="POST"
                                                         class="input-group quick-add-group">
                                                         <input type="hidden" name="attribute_id"
-                                                            value="{{ $attr['id'] }}">
+                                                            value="<?php echo e($attr['id']); ?>">
                                                         <input type="text" name="value"
                                                             class="form-control quick-add-input" placeholder="VD: Đỏ, 256GB..."
                                                             required>
@@ -222,17 +223,17 @@
                                                     </form>
                                                 </td>
                                                 <td class="text-center">
-                                                    <a href="/attribute/deleteAttribute/{{ $attr['id'] }}"
+                                                    <a href="/attribute/deleteAttribute/<?php echo e($attr['id']); ?>"
                                                         class="btn btn-sm btn-outline-danger border-0 rounded-circle"
                                                         style="width: 35px; height: 35px; line-height: 23px;"
-                                                        onclick="return confirm('LƯU Ý: Xóa toàn bộ thuộc tính [{{ $attr['name'] }}] sẽ ảnh hưởng đến các sản phẩm liên quan. Bạn có chắc chắn?');"
+                                                        onclick="return confirm('LƯU Ý: Xóa toàn bộ thuộc tính [<?php echo e($attr['name']); ?>] sẽ ảnh hưởng đến các sản phẩm liên quan. Bạn có chắc chắn?');"
                                                         title="Xóa thuộc tính">
                                                         <i class="bi bi-trash3"></i>
                                                     </a>
                                                 </td>
                                             </tr>
-                                        @endforeach
-                                    @endif
+                                        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                                    <?php endif; ?>
                                 </tbody>
                             </table>
                         </div>
@@ -241,4 +242,6 @@
             </div>
         </div>
     </div>
-@endsection
+<?php $__env->stopSection(); ?>
+
+<?php echo $__env->make('layout.adminLayout', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?><?php /**PATH D:\laragon\www\php2_tantuan47k1\app\views/admin/attribute/index.blade.php ENDPATH**/ ?>
