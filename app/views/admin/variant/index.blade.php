@@ -40,6 +40,13 @@
                 <form action="/variant/store" method="POST" enctype="multipart/form-data">
                     <input type="hidden" name="product_id" value="{{ $product['id'] }}">
 
+                    <div class="mb-3">
+                        <label class="form-label small fw-bold text-primary">TÊN PHIÊN BẢN (HIỂN THỊ)</label>
+                        <input type="text" name="variant_name" class="form-control shadow-sm border-primary border-opacity-25" 
+                               placeholder="VD: Màu Đen, Bản 128GB..." required>
+                        <div class="form-text small">Tên này sẽ hiện thị trên trang chi tiết để khách hàng chọn.</div>
+                    </div>
+
                     @foreach($attributes as $attr)
                     <div class="mb-3">
                         <label class="form-label small fw-bold text-secondary">CHỌN {{ strtoupper($attr['name']) }}</label>
@@ -108,7 +115,9 @@
                                                  onerror="this.src='https://placehold.co/50x50?text=No+Img'">
                                         </td>
                                         <td>
-                                            <div class="fw-bold text-dark">{{ $v['sku_info'] }}</div>
+                                            <div class="fw-bold text-dark">
+                                                {{ $v['variant_name'] ?? $v['sku_info'] }}
+                                            </div>
                                             <code class="small text-muted" style="font-size: 0.7rem;">{{ $v['sku'] }}</code>
                                         </td>
                                         <td>

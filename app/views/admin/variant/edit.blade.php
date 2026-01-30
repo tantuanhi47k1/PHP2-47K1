@@ -22,6 +22,14 @@
                     <form action="/variant/update/{{ $variant['id'] }}" method="POST" enctype="multipart/form-data">
                         <input type="hidden" name="product_id" value="{{ $product['id'] }}">
 
+                        <div class="mb-4">
+                            <label class="form-label fw-bold text-primary small uppercase">Tên phiên bản (Hiển thị khách hàng)</label>
+                            <input type="text" name="variant_name" value="{{ $variant['variant_name'] }}" 
+                                   class="form-control shadow-sm border-primary border-opacity-25" 
+                                   placeholder="VD: Màu Đen, Bản 256GB..." required>
+                            <div class="form-text small">Tên này sẽ hiện thị thay cho mã SKU trên trang chi tiết sản phẩm.</div>
+                        </div>
+
                         <div class="row mb-4">
                             <div class="col-12">
                                 <label class="form-label fw-bold text-secondary small uppercase">Cấu hình thuộc tính</label>

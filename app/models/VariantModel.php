@@ -32,11 +32,12 @@ class VariantModel extends Model {
 
     public function createVariant($data) {
         $conn = $this->connect();
-        $sql = "INSERT INTO variants (product_id, price, sku, stock_quantity, image, is_default) 
-                VALUES (:pid, :price, :sku, :stock, :img, :is_default)";
+        $sql = "INSERT INTO variants (product_id, variant_name, price, sku, stock_quantity, image, is_default) 
+                VALUES (:pid, :vname, :price, :sku, :stock, :img, :is_default)";
         $stmt = $conn->prepare($sql);
         $stmt->execute([
             ':pid'        => $data['product_id'],
+            ':vname'      => $data['variant_name'],
             ':price'      => $data['price'],
             ':sku'        => $data['sku'],
             ':stock'      => $data['stock_quantity'],
@@ -49,9 +50,10 @@ class VariantModel extends Model {
     public function updateVariant($id, $data) {
         $conn = $this->connect();
 
-        $sql = "UPDATE variants SET price = :price, stock_quantity = :stock, image = :img WHERE id = :id";
+        $sql = "UPDATE variants SET variant_name = :vname, price = :price, stock_quantity = :stock, image = :img WHERE id = :id";
         $stmt = $conn->prepare($sql);
         $stmt->execute([
+            ':vname' => $data['variant_name'],
             ':price' => $data['price'],
             ':stock' => $data['stock_quantity'],
             ':img'   => $data['image'],

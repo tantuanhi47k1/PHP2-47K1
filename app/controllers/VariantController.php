@@ -48,6 +48,7 @@ class VariantController extends Controller {
 
             $variantData = [
                 'product_id'     => $productId,
+                'variant_name'   => $_POST['variant_name'] ?? null,
                 'price'          => $_POST['price'] ?? 0,
                 'sku'            => 'SKU-' . strtoupper(uniqid()),
                 'stock_quantity' => $_POST['stock'] ?? 0,
@@ -115,6 +116,7 @@ class VariantController extends Controller {
             }
 
             $updateData = [
+                'variant_name'     => $_POST['variant_name'] ?? $oldVariant['variant_name'],
                 'price'            => $_POST['price'],
                 'stock_quantity'   => $_POST['stock'],
                 'image'            => $imagePath,
