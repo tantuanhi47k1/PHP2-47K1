@@ -65,7 +65,7 @@
         <div class="row align-items-center py-2">
             <div class="col-md-6 text-center text-md-start mb-2 mb-md-0">
                 <p class="small text-secondary mb-0">
-                    &copy; {{ date('Y') }} <strong>TechHub Shop</strong>. All rights reserved.
+                    &copy; <?php echo e(date('Y')); ?> <strong>TechHub Shop</strong>. All rights reserved.
                 </p>
             </div>
             <div class="col-md-6 text-center text-md-end">
@@ -103,4 +103,4 @@
         border-color: #0d6efd;
         transform: translateY(-3px);
     }
-</style>
+</style><?php /**PATH D:\laragon\www\php2_tantuan47k1\app\views/layout/components/client/footer.blade.php ENDPATH**/ ?>

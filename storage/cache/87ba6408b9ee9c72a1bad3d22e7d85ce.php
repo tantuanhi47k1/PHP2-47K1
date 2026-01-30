@@ -1,8 +1,8 @@
-@extends('layout.clientLayout')
 
-@section('title', 'TechHub - Thế Giới Công Nghệ')
 
-@section('content')
+<?php $__env->startSection('title', 'TechHub - Thế Giới Công Nghệ'); ?>
+
+<?php $__env->startSection('content'); ?>
 
     <style>
         .hero-section {
@@ -228,37 +228,38 @@
         </div>
 
         <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-4">
-            @foreach ($products as $item)
-                @if (isset($item['status']) && $item['status'] == 1)
+            <?php $__currentLoopData = $products; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $item): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                <?php if(isset($item['status']) && $item['status'] == 1): ?>
                     <div class="col">
                         <div class="card h-100 shadow-sm product-card border-0">
                             <div class="product-img-frame bg-light rounded-top-4">
-                                <a href="/product/detail/{{ $item['id'] }}">
-                                    <img src="/{{ $item['image'] ?? 'image/product/default.png' }}"
-                                        alt="{{ $item['name'] }}"
+                                <a href="/product/detail/<?php echo e($item['id']); ?>">
+                                    <img src="/<?php echo e($item['image'] ?? 'image/product/default.png'); ?>"
+                                        alt="<?php echo e($item['name']); ?>"
                                         onerror="this.src='https://placehold.co/300x300?text=TechHub'">
                                 </a>
                             </div>
                             <div class="card-body p-4 d-flex flex-column">
                                 <h6 class="mb-2 text-truncate text-center">
-                                    <a href="/product/detail/{{ $item['id'] }}"
-                                        class="text-decoration-none text-dark fw-bold" title="{{ $item['name'] }}">
-                                        {{ $item['name'] }}
+                                    <a href="/product/detail/<?php echo e($item['id']); ?>"
+                                        class="text-decoration-none text-dark fw-bold" title="<?php echo e($item['name']); ?>">
+                                        <?php echo e($item['name']); ?>
+
                                     </a>
                                 </h6>
                                 <div class="text-primary fw-bold fs-5 mb-4 text-center">
-                                    {{ number_format($item['variant_price'] ?? $item['base_price'], 0, ',', '.') }}đ
+                                    <?php echo e(number_format($item['variant_price'] ?? $item['base_price'], 0, ',', '.')); ?>đ
                                 </div>
 
                                 <div class="mt-auto">
                                     <form action="/cart/add" method="POST">
-                                        <input type="hidden" name="id" value="{{ $item['id'] }}">
+                                        <input type="hidden" name="id" value="<?php echo e($item['id']); ?>">
                                         <input type="hidden" name="quantity" value="1">
                                         <div class="d-flex gap-2">
                                             <button type="submit" class="btn-cart-quick" title="Thêm vào giỏ hàng">
                                                 <i class="bi bi-bag-plus fs-5"></i>
                                             </button>
-                                            <a href="/product/detail/{{ $item['id'] }}"
+                                            <a href="/product/detail/<?php echo e($item['id']); ?>"
                                                 class="btn-buy-now text-decoration-none">
                                                 Xem Ngay
                                             </a>
@@ -268,8 +269,8 @@
                             </div>
                         </div>
                     </div>
-                @endif
-            @endforeach
+                <?php endif; ?>
+            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
         </div>
     </div>
 
@@ -293,4 +294,6 @@
         </div>
     </section>
 
-@endsection
+<?php $__env->stopSection(); ?>
+
+<?php echo $__env->make('layout.clientLayout', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?><?php /**PATH D:\laragon\www\php2_tantuan47k1\app\views/client/home/index.blade.php ENDPATH**/ ?>

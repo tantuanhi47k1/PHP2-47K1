@@ -75,30 +75,31 @@
                         <a class="nav-link text-dark p-2" href="/cart">
                             <i class="bi bi-handbag fs-4"></i>
                             <span class="position-absolute badge rounded-pill bg-danger badge-cart border border-2 border-white">
-                                {{ isset($_SESSION['cart']) ? count($_SESSION['cart']) : 0 }}
+                                <?php echo e(isset($_SESSION['cart']) ? count($_SESSION['cart']) : 0); ?>
+
                             </span>
                         </a>
                     </li>
 
                     <li class="border-end mx-2 h-50 d-none d-lg-block" style="min-height: 24px; border-color: #eee !important;"></li>
 
-                    @if(isset($_SESSION['user_id']))
+                    <?php if(isset($_SESSION['user_id'])): ?>
                         <li class="nav-item dropdown ms-2">
                             <a class="nav-link dropdown-toggle text-dark d-flex align-items-center ps-0" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                <img src="https://ui-avatars.com/api/?name={{ urlencode($_SESSION['user_name']) }}&background=0d6efd&color=fff&size=128" 
+                                <img src="https://ui-avatars.com/api/?name=<?php echo e(urlencode($_SESSION['user_name'])); ?>&background=0d6efd&color=fff&size=128" 
                                      class="rounded-circle border border-2 border-white shadow-sm me-2" width="38" height="38" alt="Avatar">
-                                <span class="fw-bold d-none d-lg-inline-block">{{ $_SESSION['user_name'] }}</span>
+                                <span class="fw-bold d-none d-lg-inline-block"><?php echo e($_SESSION['user_name']); ?></span>
                             </a>
                             
                             <ul class="dropdown-menu dropdown-menu-end shadow-lg animate slideIn">
-                                @if(isset($_SESSION['user_role']) && $_SESSION['user_role'] == 1)
+                                <?php if(isset($_SESSION['user_role']) && $_SESSION['user_role'] == 1): ?>
                                     <li>
                                         <a class="dropdown-item text-primary fw-bold" href="/admin/index">
                                             <i class="bi bi-speedometer2 me-2"></i> Trang quản trị
                                         </a>
                                     </li>
                                     <li><hr class="dropdown-divider my-2"></li>
-                                @endif
+                                <?php endif; ?>
                                 
                                 <li><a class="dropdown-item" href="/profile"><i class="bi bi-person-gear me-2 text-muted"></i> Hồ sơ cá nhân</a></li>
                                 <li><a class="dropdown-item" href="/orders"><i class="bi bi-box-seam me-2 text-muted"></i> Đơn mua của tôi</a></li>
@@ -110,15 +111,15 @@
                                 </li>
                             </ul>
                         </li>
-                    @else
+                    <?php else: ?>
                         <li class="nav-item ms-lg-3 d-flex align-items-center gap-2">
                             <a class="btn btn-outline-primary btn-auth rounded-pill px-4 py-2" href="/auth/login">Đăng nhập</a>
                             <a class="btn btn-primary btn-auth rounded-pill px-4 py-2 text-white shadow-sm" href="/auth/register">Đăng ký</a>
                         </li>
-                    @endif
+                    <?php endif; ?>
 
                 </ul>
             </div>
         </div>
     </nav>
-</header>
+</header><?php /**PATH D:\laragon\www\php2_tantuan47k1\app\views/layout/components/client/header.blade.php ENDPATH**/ ?>
