@@ -103,4 +103,4 @@
         border-color: #0d6efd;
         transform: translateY(-3px);
     }
-</style><?php /**PATH G:\laragon\www\PHP2-47K1\app\views/layout/components/client/footer.blade.php ENDPATH**/ ?>
+</style><?php /**PATH D:\laragon\www\php2_tantuan47k1\app\views/layout/components/client/footer.blade.php ENDPATH**/ ?>

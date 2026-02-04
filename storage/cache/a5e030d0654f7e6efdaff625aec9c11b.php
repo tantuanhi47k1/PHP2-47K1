@@ -75,4 +75,4 @@
         <a href="/" class="text-decoration-none text-muted small fw-medium"><i class="bi bi-arrow-left me-1"></i> Quay về trang chủ</a>
     </div>
 <?php $__env->stopSection(); ?>
-<?php echo $__env->make('layout.authLayout', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?><?php /**PATH G:\laragon\www\PHP2-47K1\app\views/client/auth/login.blade.php ENDPATH**/ ?>
+<?php echo $__env->make('layout.authLayout', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?><?php /**PATH D:\laragon\www\php2_tantuan47k1\app\views/client/auth/login.blade.php ENDPATH**/ ?>

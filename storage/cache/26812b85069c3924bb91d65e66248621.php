@@ -1,8 +1,8 @@
-@extends('layout.clientLayout')
 
-@section('title', $product['name'])
 
-@section('content')
+<?php $__env->startSection('title', $product['name']); ?>
+
+<?php $__env->startSection('content'); ?>
 <style>
     :root { 
         --primary-color: #4f46e5; 
@@ -147,10 +147,10 @@
         <div class="col-lg-5">
             <div class="sticky-top" style="top: 100px; z-index: 10;">
                 <div class="product-img-holder shadow-sm">
-                    <img src="/{{ $product['image'] ?? 'image/product/default.png' }}" 
+                    <img src="/<?php echo e($product['image'] ?? 'image/product/default.png'); ?>" 
                          class="product-detail-img" 
                          id="main-product-image"
-                         alt="{{ $product['name'] }}">
+                         alt="<?php echo e($product['name']); ?>">
                 </div>
             </div>
         </div>
@@ -161,57 +161,63 @@
                     <ol class="breadcrumb">
                         <li class="breadcrumb-item"><a href="/" class="text-decoration-none text-muted small">Trang chủ</a></li>
                         <li class="breadcrumb-item"><a href="/product" class="text-decoration-none text-muted small">Sản phẩm</a></li>
-                        <li class="breadcrumb-item active fw-bold text-primary small">{{ $product['name'] }}</li>
+                        <li class="breadcrumb-item active fw-bold text-primary small"><?php echo e($product['name']); ?></li>
                     </ol>
                 </nav>
 
                 <div class="d-flex align-items-center gap-2 mb-2">
                     <span class="badge bg-primary bg-opacity-10 text-primary rounded-pill px-3 py-2" style="font-size: 0.7rem; letter-spacing: 0.5px;">CAM KẾT CHÍNH HÃNG</span>
-                    <span class="text-muted small fw-medium">ID: #{{ $product['id'] }}</span>
+                    <span class="text-muted small fw-medium">ID: #<?php echo e($product['id']); ?></span>
                 </div>
 
-                <h1 class="product-name">{{ $product['name'] }}</h1>
+                <h1 class="product-name"><?php echo e($product['name']); ?></h1>
                 
                 <div class="price-display">
-                    <span id="display-price">{{ number_format($product['variant_price'] ?? $product['base_price'], 0, ',', '.') }}đ</span>
+                    <span id="display-price"><?php echo e(number_format($product['variant_price'] ?? $product['base_price'], 0, ',', '.')); ?>đ</span>
                 </div>
 
                 <div class="p-3 mb-4 bg-light rounded-4 border-start border-4 border-primary">
                     <p class="text-muted mb-0 small" style="line-height: 1.6;">
-                        {{ $product['short_description'] ?? 'Chào mừng bạn đến với TechHub Shop. Sản phẩm này được bảo hành chính hãng và hỗ trợ trả góp 0%.' }}
+                        <?php echo e($product['short_description'] ?? 'Chào mừng bạn đến với TechHub Shop. Sản phẩm này được bảo hành chính hãng và hỗ trợ trả góp 0%.'); ?>
+
                     </p>
                 </div>
 
                 <form id="add-to-cart-form">
+                    
                     <input type="hidden" id="selected-variant-id" value="">
 
-                    @if(!empty($variants))
+                    <?php if(!empty($variants)): ?>
                     <div class="mb-4">
                         <label class="form-label small fw-bold text-dark mb-3">LỰA CHỌN PHIÊN BẢN</label>
                         <div class="variant-selector d-flex flex-wrap">
-                            @foreach($variants as $index => $v)
+                            <?php $__currentLoopData = $variants; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $index => $v): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                                 <input type="radio" name="variant_option" 
-                                       id="variant_{{ $v['id'] }}" 
-                                       value="{{ $v['id'] }}"
-                                       data-price="{{ $v['price'] }}"
-                                       data-image="/{{ $v['image'] }}"
-                                       data-price-formatted="{{ number_format($v['price'], 0, ',', '.') }}đ"
-                                       data-name="{{ $v['variant_name'] ?? str_replace('SKU-', '', $v['sku']) }}"
-                                       {{ $index == 0 ? 'checked' : '' }}>
+                                       id="variant_<?php echo e($v['id']); ?>" 
+                                       value="<?php echo e($v['id']); ?>"
+                                       data-price="<?php echo e($v['price']); ?>"
+                                       data-image="/<?php echo e($v['image']); ?>"
+                                       data-price-formatted="<?php echo e(number_format($v['price'], 0, ',', '.')); ?>đ"
+                                       
+                                       data-name="<?php echo e($v['variant_name'] ?? str_replace('SKU-', '', $v['sku'])); ?>"
+                                       <?php echo e($index == 0 ? 'checked' : ''); ?>>
                                 
-                                <label class="variant-label shadow-sm" for="variant_{{ $v['id'] }}">
-                                    @if(!empty($v['variant_name']))
-                                        {{ $v['variant_name'] }}
-                                    @elseif(!empty($v['sku']))
-                                        {{ str_replace('SKU-', '', $v['sku']) }}
-                                    @else
-                                        Bản #{{ $index + 1 }}
-                                    @endif
+                                <label class="variant-label shadow-sm" for="variant_<?php echo e($v['id']); ?>">
+                                    <?php if(!empty($v['variant_name'])): ?>
+                                        <?php echo e($v['variant_name']); ?>
+
+                                    <?php elseif(!empty($v['sku'])): ?>
+                                        <?php echo e(str_replace('SKU-', '', $v['sku'])); ?>
+
+                                    <?php else: ?>
+                                        Bản #<?php echo e($index + 1); ?>
+
+                                    <?php endif; ?>
                                 </label>
-                            @endforeach
+                            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                         </div>
                     </div>
-                    @endif
+                    <?php endif; ?>
 
                     <div class="d-flex align-items-center gap-3 mb-5">
                         <div class="qty-group d-flex align-items-center shadow-sm">
@@ -282,7 +288,8 @@
                     </div>
                     <div class="card-body p-4">
                         <div class="product-description" style="line-height: 1.8; color: #475569;">
-                            {!! $product['description'] ?? '<p class="text-muted">Đang cập nhật nội dung chi tiết cho sản phẩm này...</p>' !!}
+                            <?php echo $product['description'] ?? '<p class="text-muted">Đang cập nhật nội dung chi tiết cho sản phẩm này...</p>'; ?>
+
                         </div>
                     </div>
                 </div>
@@ -298,11 +305,11 @@
                             <tbody>
                                 <tr>
                                     <td class="text-muted py-2">Thương hiệu</td>
-                                    <td class="fw-bold py-2 text-end text-primary">{{ $product['brand_name'] ?? 'Đang cập nhật' }}</td>
+                                    <td class="fw-bold py-2 text-end text-primary"><?php echo e($product['brand_name'] ?? 'Đang cập nhật'); ?></td>
                                 </tr>
                                 <tr>
                                     <td class="text-muted py-2">Danh mục</td>
-                                    <td class="fw-bold py-2 text-end">{{ $product['category_name'] ?? 'Thiết bị điện tử' }}</td>
+                                    <td class="fw-bold py-2 text-end"><?php echo e($product['category_name'] ?? 'Thiết bị điện tử'); ?></td>
                                 </tr>
                                 <tr>
                                     <td class="text-muted py-2">Tình trạng</td>
@@ -332,17 +339,21 @@
 
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>
+    // Khởi tạo các biến UI
     const variantRadios = document.querySelectorAll('input[name="variant_option"]');
     const priceDisplay = document.getElementById('display-price');
     const variantIdInput = document.getElementById('selected-variant-id');
     const mainImg = document.getElementById('main-product-image');
 
+    // 1. Cập nhật giao diện khi chọn biến thể
     function updateUI() {
         const selected = document.querySelector('input[name="variant_option"]:checked');
         if (selected) {
+            // Cập nhật giá
             priceDisplay.innerText = selected.getAttribute('data-price-formatted');
             variantIdInput.value = selected.value;
             
+            // Cập nhật ảnh
             const newImgSrc = selected.getAttribute('data-image');
             if (newImgSrc && newImgSrc !== '/' && newImgSrc !== window.location.origin + '/') {
                 mainImg.style.opacity = '0.4';
@@ -354,38 +365,48 @@
         }
     }
 
+    // Gắn sự kiện change cho radio buttons
     variantRadios.forEach(radio => radio.addEventListener('change', updateUI));
     document.addEventListener('DOMContentLoaded', updateUI);
 
+    // 2. Logic tăng giảm số lượng
     function changeQty(amt) {
         const qtyInput = document.getElementById('quantity');
         let val = parseInt(qtyInput.value) + amt;
         qtyInput.value = val < 1 ? 1 : val;
     }
 
+    // 3. XỬ LÝ NÚT THÊM VÀO GIỎ HÀNG (LocalStorage)
     document.querySelector('.ajax-add-cart-detail').addEventListener('click', function(e) {
-        e.preventDefault();
+        e.preventDefault(); // Chặn reload trang
 
+        // Lấy số lượng
         const quantity = parseInt(document.getElementById('quantity').value);
         let price, variantId, variantName, image;
 
+        // Kiểm tra xem có biến thể nào được chọn không
         const selectedVariant = document.querySelector('input[name="variant_option"]:checked');
         
         if (selectedVariant) {
+            // Trường hợp: Sản phẩm CÓ biến thể
             variantId = selectedVariant.value;
             variantName = selectedVariant.getAttribute('data-name');
+            // Lấy giá trị số (float) từ data-price
             price = parseFloat(selectedVariant.getAttribute('data-price'));
             image = selectedVariant.getAttribute('data-image');
         } else {
+            // Trường hợp: Sản phẩm KHÔNG có biến thể (Sản phẩm đơn)
             variantId = null;
             variantName = '';
-            price = {{ $product['base_price'] }}; 
-            image = "/{{ $product['image'] }}";
+            // Lấy giá gốc và ảnh gốc từ PHP Server
+            price = <?php echo e($product['base_price']); ?>; 
+            image = "/<?php echo e($product['image']); ?>";
         }
 
+        // Tạo object sản phẩm để lưu vào LocalStorage
         const productItem = {
-            id: {{ $product['id'] }},
-            name: "{{ $product['name'] }}",
+            id: <?php echo e($product['id']); ?>,
+            name: "<?php echo e($product['name']); ?>",
             price: price,
             image: image,
             variant_id: variantId,
@@ -393,8 +414,10 @@
             quantity: quantity
         };
 
+        // GỌI HÀM TỪ FILE cart.js
         addToCart(productItem);
 
+        // Hiển thị thông báo thành công
         Swal.fire({
             icon: 'success',
             title: '<span style="font-family: sans-serif; font-size: 1rem;">Đã thêm vào giỏ hàng!</span>',
@@ -405,4 +428,5 @@
         });
     });
 </script>
-@endsection
+<?php $__env->stopSection(); ?>
+<?php echo $__env->make('layout.clientLayout', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?><?php /**PATH D:\laragon\www\php2_tantuan47k1\app\views/client/product/detail.blade.php ENDPATH**/ ?>

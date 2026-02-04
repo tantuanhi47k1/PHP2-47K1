@@ -1,8 +1,8 @@
-@extends('layout.clientLayout')
 
-@section('title', 'Giỏ hàng của bạn')
 
-@section('content')
+<?php $__env->startSection('title', 'Giỏ hàng của bạn'); ?>
+
+<?php $__env->startSection('content'); ?>
 
 <style>
     .cart-container { background-color: #f8f9fa; min-height: 80vh; }
@@ -231,4 +231,5 @@
     document.addEventListener('DOMContentLoaded', renderCartPage);
 </script>
 
-@endsection
+<?php $__env->stopSection(); ?>
+<?php echo $__env->make('layout.clientLayout', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?><?php /**PATH D:\laragon\www\php2_tantuan47k1\app\views/client/cart/index.blade.php ENDPATH**/ ?>
