@@ -37,20 +37,25 @@
             object-fit: cover;
             border-radius: 5px;
             border: 1px solid #ddd;
+            transition: all 0.2s;
         }
 
         .image-container {
             position: relative;
             display: inline-block;
+            margin-bottom: 15px;
         }
 
-        .btn-remove-img {
-            position: absolute;
-            top: -5px;
-            right: -5px;
-            padding: 0 5px;
-            border-radius: 50%;
-            font-size: 12px;
+        .thumb-selector {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-top: 5px;
+            cursor: pointer;
+        }
+        
+        .image-container:hover .img-edit-preview {
+            border-color: var(--primary-color);
         }
     </style>
 
@@ -68,6 +73,10 @@
                         <div><?= $mess ?></div>
                     </div>
                 @endif
+                
+                <div id="ajax-alert" style="display:none;" class="alert alert-success align-items-center">
+                    <i class="bi bi-check-circle-fill me-2"></i> <span id="ajax-msg"></span>
+                </div>
 
                 <form action="/product/update/<?= $product['id'] ?>" method="POST" enctype="multipart/form-data">
                     <div class="card p-4">
@@ -98,26 +107,38 @@
                             <div class="col-md-5">
                                 <div class="mb-4">
                                     <label class="form-label">Album hình ảnh</label>
+                                    <div class="alert alert-info small py-2">
+                                        <i class="bi bi-info-circle"></i> Click vào nút tròn dưới ảnh để chọn làm ảnh đại diện.
+                                    </div>
+                                    
                                     <div class="row g-2 mb-3">
                                         @if (!empty($images))
                                             @foreach ($images as $img)
-                                                <div class="col-4 image-container">
+                                                <div class="col-4 image-container text-center">
                                                     <img src="/<?= $img['image_path'] ?>" class="img-edit-preview">
-                                                    @if ($img['is_thumbnail'])
-                                                        <span
-                                                            class="badge bg-success position-absolute bottom-0 start-0 m-1"
-                                                            style="font-size: 10px;">Đại diện</span>
-                                                    @endif
+                                                    
+                                                    <div class="thumb-selector" onclick="selectThumbnail(this)">
+                                                        <input class="form-check-input set-thumb-btn me-1" 
+                                                               type="radio" 
+                                                               name="thumbnail_selector" 
+                                                               id="img_<?= $img['id'] ?>"
+                                                               value="<?= $img['id'] ?>"
+                                                               data-product-id="<?= $product['id'] ?>"
+                                                               <?= $img['is_thumbnail'] ? 'checked' : '' ?>
+                                                               style="cursor: pointer;">
+                                                        <label class="form-check-label small" for="img_<?= $img['id'] ?>" style="cursor: pointer;">
+                                                            Đại diện
+                                                        </label>
+                                                    </div>
                                                 </div>
                                             @endforeach
                                         @else
-                                            <div class="col-12"><small class="text-muted fst-italic">Chưa có ảnh
-                                                    nào.</small></div>
+                                            <div class="col-12"><small class="text-muted fst-italic">Chưa có ảnh nào.</small></div>
                                         @endif
                                     </div>
+                                    
                                     <label class="form-label small text-muted">Thêm ảnh mới (chọn nhiều)</label>
-                                    <input type="file" name="images[]" class="form-control form-control-sm" multiple
-                                        accept="image/*">
+                                    <input type="file" name="images[]" class="form-control form-control-sm" multiple accept="image/*">
                                 </div>
 
                                 <div class="mb-3">
@@ -148,13 +169,9 @@
                                 <div class="mb-4">
                                     <label class="form-label">Trạng thái</label>
                                     <select name="status" class="form-select">
-                                        <?php
-                                        $currentStatus = isset($product['status']) ? $product['status'] : 1;
-                                        ?>
-                                        <option value="1" <?= $currentStatus == 1 ? 'selected' : '' ?>>Đang bán
-                                        </option>
-                                        <option value="0"
-                                            <?= (string) $currentStatus === '0' ? 'selected' : '' ?>>Tạm ẩn</option>
+                                        <?php $currentStatus = isset($product['status']) ? $product['status'] : 1; ?>
+                                        <option value="1" <?= $currentStatus == 1 ? 'selected' : '' ?>>Đang bán</option>
+                                        <option value="0" <?= (string) $currentStatus === '0' ? 'selected' : '' ?>>Tạm ẩn</option>
                                     </select>
                                 </div>
 
@@ -168,4 +185,49 @@
             </div>
         </div>
     </div>
+
+    <script>
+        document.querySelectorAll('.set-thumb-btn').forEach(radio => {
+            radio.addEventListener('change', function() {
+                const imageId = this.value;
+                const productId = this.getAttribute('data-product-id');
+                const msgBox = document.getElementById('ajax-alert');
+                const msgText = document.getElementById('ajax-msg');
+
+                const formData = new FormData();
+                formData.append('product_id', productId);
+
+                fetch('/product/setThumbnail/' + imageId, {
+                    method: 'POST',
+                    body: formData
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if(data.status === 'success') {
+                        msgBox.style.display = 'flex';
+                        msgBox.className = 'alert alert-success d-flex align-items-center';
+                        msgText.innerText = 'Đã cập nhật ảnh đại diện thành công!';
+
+                        setTimeout(() => {
+                            msgBox.style.display = 'none';
+                        }, 3000);
+                    } else {
+                        alert('Lỗi: ' + (data.message || 'Không thể cập nhật'));
+                    }
+                })
+                .catch(err => {
+                    console.error(err);
+                    alert('Đã xảy ra lỗi kết nối!');
+                });
+            });
+        });
+
+        function selectThumbnail(div) {
+            const radio = div.querySelector('input[type="radio"]');
+            if(radio && !radio.checked) {
+                radio.checked = true;
+                radio.dispatchEvent(new Event('change')); 
+            }
+        }
+    </script>
 @endsection

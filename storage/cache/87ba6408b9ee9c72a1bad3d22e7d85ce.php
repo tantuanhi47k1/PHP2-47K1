@@ -186,34 +186,37 @@
         </div>
     </div>
 
+    
     <div class="container mb-5 py-4">
         <h4 class="fw-bold mb-5 text-center text-dark">Danh Mục Nổi Bật</h4>
-        <div class="row row-cols-2 row-cols-md-4 g-4 justify-content-center text-center">
-            <div class="col">
-                <a href="/category/1" class="text-decoration-none category-item">
-                    <div class="category-icon shadow-sm"><i class="bi bi-headphones"></i></div>
-                    <span class="fw-bold text-dark fs-5">Tai Nghe</span>
-                </a>
+        
+        <?php if(isset($categories) && !empty($categories)): ?>
+            <div class="row row-cols-2 row-cols-md-4 g-4 justify-content-center text-center">
+                <?php $__currentLoopData = $categories; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $cat): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                    <?php
+                        // Logic chọn icon dựa trên tên danh mục (Vì DB chưa có cột icon)
+                        $icon = 'bi-grid'; // Icon mặc định
+                        $name = mb_strtolower($cat['name'], 'UTF-8');
+                        
+                        if(strpos($name, 'tai nghe') !== false) $icon = 'bi-headphones';
+                        elseif(strpos($name, 'laptop') !== false) $icon = 'bi-laptop';
+                        elseif(strpos($name, 'điện thoại') !== false) $icon = 'bi-phone';
+                        elseif(strpos($name, 'đồng hồ') !== false) $icon = 'bi-watch';
+                        elseif(strpos($name, 'chuột') !== false) $icon = 'bi-mouse';
+                        elseif(strpos($name, 'bàn phím') !== false) $icon = 'bi-keyboard';
+                    ?>
+
+                    <div class="col">
+                        <a href="/category/<?php echo e($cat['id']); ?>" class="text-decoration-none category-item">
+                            <div class="category-icon shadow-sm"><i class="bi <?php echo e($icon); ?>"></i></div>
+                            <span class="fw-bold text-dark fs-5"><?php echo e($cat['name']); ?></span>
+                        </a>
+                    </div>
+                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
             </div>
-            <div class="col">
-                <a href="/category/2" class="text-decoration-none category-item">
-                    <div class="category-icon shadow-sm"><i class="bi bi-laptop"></i></div>
-                    <span class="fw-bold text-dark fs-5">Laptop</span>
-                </a>
-            </div>
-            <div class="col">
-                <a href="/category/3" class="text-decoration-none category-item">
-                    <div class="category-icon shadow-sm"><i class="bi bi-phone"></i></div>
-                    <span class="fw-bold text-dark fs-5">Điện Thoại</span>
-                </a>
-            </div>
-            <div class="col">
-                <a href="/category/4" class="text-decoration-none category-item">
-                    <div class="category-icon shadow-sm"><i class="bi bi-watch"></i></div>
-                    <span class="fw-bold text-dark fs-5">Đồng Hồ</span>
-                </a>
-            </div>
-        </div>
+        <?php else: ?>
+            <div class="text-center text-muted">Đang cập nhật danh mục...</div>
+        <?php endif; ?>
     </div>
 
     <div class="container mb-5" id="featured">
@@ -251,20 +254,21 @@
                                 </div>
 
                                 <div class="mt-auto">
-                                    <form action="/cart/add" method="POST">
-                                        <input type="hidden" name="id" value="<?php echo e($item['id']); ?>">
-                                        <input type="hidden" name="quantity" value="1">
-                                        <div class="d-flex gap-2">
-                                            <button type="button" class="btn-cart-quick ajax-add-to-cart" 
-                                                    data-id="<?php echo e($item['id']); ?>" title="Thêm vào giỏ hàng">
-                                                <i class="bi bi-bag-plus fs-5"></i>
-                                            </button>
-                                            <a href="/product/detail/<?php echo e($item['id']); ?>"
-                                                class="btn-buy-now text-decoration-none">
-                                                Xem Ngay
-                                            </a>
-                                        </div>
-                                    </form>
+                                    
+                                    <div class="d-flex gap-2">
+                                        <button type="button" class="btn-cart-quick js-add-to-cart" 
+                                                data-id="<?php echo e($item['id']); ?>" 
+                                                data-name="<?php echo e($item['name']); ?>"
+                                                data-price="<?php echo e($item['base_price']); ?>"
+                                                data-image="/<?php echo e($item['image'] ?? 'image/product/default.png'); ?>"
+                                                title="Thêm vào giỏ hàng">
+                                            <i class="bi bi-bag-plus fs-5"></i>
+                                        </button>
+                                        <a href="/product/detail/<?php echo e($item['id']); ?>"
+                                            class="btn-buy-now text-decoration-none">
+                                            Xem Ngay
+                                        </a>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -296,40 +300,33 @@
 
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
-    document.querySelectorAll('.ajax-add-to-cart').forEach(button => {
-        button.addEventListener('click', function() {
-            const productId = this.getAttribute('data-id');
+    // SỬA LẠI: DÙNG HÀM addToCart() CỦA LOCALSTORAGE (cart.js)
+    document.querySelectorAll('.js-add-to-cart').forEach(button => {
+        button.addEventListener('click', function(e) {
+            e.preventDefault();
             
-            fetch('/cart/add', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded',
-                },
-                body: `id=${productId}&quantity=1`
-            })
-            .then(response => {
-                Swal.fire({
-                    icon: 'success',
-                    title: 'Đã thêm vào giỏ hàng!',
-                    showConfirmButton: false,
-                    timer: 1500,
-                    toast: true,
-                    position: 'top-end'
-                });
+            // Lấy dữ liệu từ data attributes
+            const product = {
+                id: this.getAttribute('data-id'),
+                name: this.getAttribute('data-name'),
+                price: parseFloat(this.getAttribute('data-price')),
+                image: this.getAttribute('data-image'),
+                variant_id: null, // Ở trang chủ mặc định thêm bản gốc
+                variant_name: '',
+                quantity: 1
+            };
+            
+            // Gọi hàm từ cart.js
+            addToCart(product);
 
-                const cartBadge = document.querySelector('.badge-cart');
-                if(cartBadge) {
-                    let currentCount = parseInt(cartBadge.innerText) || 0;
-                    cartBadge.innerText = currentCount + 1;
-                }
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Thất bại',
-                    text: 'Không thể thêm sản phẩm vào giỏ.',
-                });
+            // Thông báo
+            Swal.fire({
+                icon: 'success',
+                title: 'Đã thêm vào giỏ hàng!',
+                showConfirmButton: false,
+                timer: 1200,
+                toast: true,
+                position: 'top-end'
             });
         });
     });

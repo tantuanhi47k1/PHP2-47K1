@@ -238,4 +238,31 @@ class ProductController extends Controller {
         header("Location: /product/manage");
         exit;
     }
+
+    public function setThumbnail($imageId) {
+        $this->requireAdmin();
+
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+             echo json_encode(['status' => 'error', 'message' => 'Invalid request']);
+             exit;
+        }
+
+        $productId = $_POST['product_id'] ?? null;
+        
+        if (!$productId) {
+            echo json_encode(['status' => 'error', 'message' => 'Missing Product ID']);
+            exit;
+        }
+
+        $imageModel = $this->model('ProductImageModel');
+
+        $result = $imageModel->setThumbnail($productId, $imageId);
+
+        if ($result) {
+            echo json_encode(['status' => 'success']);
+        } else {
+            echo json_encode(['status' => 'error', 'message' => 'Database update failed']);
+        }
+        exit;
+    }
 }

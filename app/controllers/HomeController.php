@@ -7,10 +7,14 @@ class HomeController extends Controller {
         }
 
         $productModel = $this->model('ProductModel');
+        $categoryModel = $this->model('CategoryModel');
+
         $products = $productModel->all(); 
+        $categories = $categoryModel->all();
 
         $this->view('client/home/index', [
-            'products' => $products
+            'products' => $products,
+            'categories' => $categories
         ]);
     }
 }
