@@ -186,7 +186,6 @@
         </div>
     </div>
 
-    {{-- PHẦN DANH MỤC ĐÃ ĐƯỢC SỬA LẠI DYNAMIC --}}
     <div class="container mb-5 py-4">
         <h4 class="fw-bold mb-5 text-center text-dark">Danh Mục Nổi Bật</h4>
         
@@ -194,8 +193,7 @@
             <div class="row row-cols-2 row-cols-md-4 g-4 justify-content-center text-center">
                 @foreach($categories as $cat)
                     @php
-                        // Logic chọn icon dựa trên tên danh mục (Vì DB chưa có cột icon)
-                        $icon = 'bi-grid'; // Icon mặc định
+                        $icon = 'bi-grid';
                         $name = mb_strtolower($cat['name'], 'UTF-8');
                         
                         if(strpos($name, 'tai nghe') !== false) $icon = 'bi-headphones';
@@ -253,7 +251,6 @@
                                 </div>
 
                                 <div class="mt-auto">
-                                    {{-- Nút này giờ sẽ được xử lý bằng JS LocalStorage --}}
                                     <div class="d-flex gap-2">
                                         <button type="button" class="btn-cart-quick js-add-to-cart" 
                                                 data-id="{{ $item['id'] }}" 
