@@ -29,6 +29,8 @@ class UserModel extends Model
             $data['password'] = null;
         }
 
+        $fullName = $data['full_name'] ?? $data['fullname'] ?? '';
+
         $sql = "INSERT INTO `$this->table` 
                 (`full_name`, `email`, `password`, `phone`, `address`, `avatar`, `status`, `google_id`, `auth_provider`) 
                 VALUES 
@@ -38,7 +40,7 @@ class UserModel extends Model
         $stmt = $conn->prepare($sql);
 
         $result = $stmt->execute([
-            ':full_name'    => $data['full_name'], 
+            ':full_name'    => $fullName, 
             ':email'        => $data['email'],
             ':password'     => $data['password'],
             ':phone'        => $data['phone'] ?? null,
@@ -57,35 +59,47 @@ class UserModel extends Model
 
     public function update($id, $data)
     {
-        $params = [
-            ':full_name' => $data['full_name'],
-            ':email'     => $data['email'],
-            ':phone'     => $data['phone'] ?? null,
-            ':address'   => $data['address'] ?? null,
-            ':avatar'    => $data['avatar'] ?? 'image/avatar/default.png',
-            ':status'    => $data['status'] ?? 1,
-            ':id'        => $id
-        ];
-
-        $passwordSql = "";
-        if (!empty($data['password'])) {
-            $params[':password'] = password_hash($data['password'], PASSWORD_DEFAULT);
-            $passwordSql = ", `password` = :password";
+        if (isset($data['fullname'])) {
+            $data['full_name'] = $data['fullname'];
+            unset($data['fullname']);
         }
 
-        $sql = "UPDATE `$this->table` SET 
-                `full_name` = :full_name, 
-                `email` = :email, 
-                `phone` = :phone, 
-                `address` = :address, 
-                `avatar` = :avatar,
-                `status` = :status
-                $passwordSql
-                WHERE id = :id";
+        $allowedFields = ['full_name', 'email', 'phone', 'address', 'avatar', 'status', 'password'];
+        
+        $sets = [];
+        $params = [':id' => $id];
+
+        foreach ($allowedFields as $field) {
+            if (isset($data[$field])) {
+                if ($field === 'password') {
+                    $sets[] = "`password` = :password";
+                    $params[':password'] = password_hash($data[$field], PASSWORD_DEFAULT);
+                } else {
+                    $sets[] = "`$field` = :$field";
+                    $params[":$field"] = $data[$field];
+                }
+            }
+        }
+
+        if (empty($sets)) {
+            return true;
+        }
+
+        $sql = "UPDATE `$this->table` SET " . implode(', ', $sets) . " WHERE id = :id";
         
         $conn = $this->connect();
         $stmt = $conn->prepare($sql);
         return $stmt->execute($params);
+    }
+
+    public function updatePassword($id, $newPassword) {
+        $sql = "UPDATE `$this->table` SET `password` = :password WHERE id = :id";
+        $conn = $this->connect();
+        $stmt = $conn->prepare($sql);
+        return $stmt->execute([
+            ':password' => password_hash($newPassword, PASSWORD_DEFAULT),
+            ':id' => $id
+        ]);
     }
 
     public function delete($id)
@@ -95,8 +109,6 @@ class UserModel extends Model
         $stmt = $conn->prepare($sql);
         return $stmt->execute([':id' => $id]);
     }
-
-    // tìm email
 
     public function findByEmail($email)
     {
@@ -117,7 +129,6 @@ class UserModel extends Model
         return $result['count'] > 0;
     }
 
-    // tìm gg id
     public function findByGoogleId($google_id)
     {
         $sql = "SELECT * FROM `$this->table` WHERE google_id = :google_id";
@@ -127,7 +138,6 @@ class UserModel extends Model
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }
 
-    // update gg id
     public function updateGoogleId($id, $google_id)
     {
         $sql = "UPDATE `$this->table` SET google_id = :google_id, auth_provider = 'google' WHERE id = :id";
@@ -135,8 +145,6 @@ class UserModel extends Model
         $stmt = $conn->prepare($sql);
         return $stmt->execute([':google_id' => $google_id, ':id' => $id]);
     }
-
-    // quên mk
 
     public function updateResetToken($email, $token) {
         $expiry = date('Y-m-d H:i:s', strtotime('+15 minutes'));
