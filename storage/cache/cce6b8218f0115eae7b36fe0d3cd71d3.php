@@ -200,11 +200,13 @@
                                                             <div class="attr-value-badge shadow-sm">
                                                                 <?php echo e($val['value']); ?>
 
-                                                                <a href="/attribute/deleteValue/<?php echo e($val['id']); ?>"
-                                                                    class="delete-val-btn"
-                                                                    onclick="return confirm('Xóa giá trị [<?php echo e($val['value']); ?>]?');">
-                                                                    <i class="bi bi-x-circle-fill"></i>
-                                                                </a>
+                                                                <?php if(strtolower($val['value']) !== 'none'): ?>
+                                                                    <a href="/attribute/deleteValue/<?php echo e($val['id']); ?>"
+                                                                        class="delete-val-btn"
+                                                                        onclick="return confirm('Xóa giá trị [<?php echo e($val['value']); ?>]?');">
+                                                                        <i class="bi bi-x-circle-fill"></i>
+                                                                    </a>
+                                                                <?php endif; ?>
                                                             </div>
                                                         <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                                                     </div>
@@ -243,5 +245,4 @@
         </div>
     </div>
 <?php $__env->stopSection(); ?>
-
-<?php echo $__env->make('layout.adminLayout', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?><?php /**PATH G:\laragon\www\PHP2-47K1\app\views/admin/attribute/index.blade.php ENDPATH**/ ?>
+<?php echo $__env->make('layout.adminLayout', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?><?php /**PATH D:\laragon\www\php2_tantuan47k1\app\views/admin/attribute/index.blade.php ENDPATH**/ ?>

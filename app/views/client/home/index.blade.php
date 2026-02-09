@@ -89,6 +89,16 @@
             transition: 0.5s;
         }
 
+        /* Hiệu ứng nút tim */
+        .btn-favorite {
+            transition: all 0.2s;
+            opacity: 0.8;
+        }
+        .btn-favorite:hover {
+            opacity: 1;
+            transform: scale(1.1);
+        }
+
         .btn-cart-quick {
             background: #f1f5f9;
             color: #334155;
@@ -232,13 +242,25 @@
                 @if (isset($item['status']) && $item['status'] == 1)
                     <div class="col">
                         <div class="card h-100 shadow-sm product-card border-0">
-                            <div class="product-img-frame bg-light rounded-top-4">
+
+                            <div class="product-img-frame bg-light rounded-top-4 position-relative">
                                 <a href="/product/detail/{{ $item['id'] }}">
                                     <img src="/{{ $item['image'] ?? 'image/product/default.png' }}"
                                         alt="{{ $item['name'] }}"
                                         onerror="this.src='https://placehold.co/300x300?text=TechHub'">
                                 </a>
+
+                                @php
+                                    $isLiked = isset($likedProductIds) && in_array($item['id'], $likedProductIds);
+                                @endphp
+                                <button class="btn btn-light rounded-circle position-absolute top-0 end-0 m-3 shadow-sm btn-favorite" 
+                                        data-id="{{ $item['id'] }}"
+                                        style="width: 35px; height: 35px; display: flex; align-items: center; justify-content: center; z-index: 10;">
+                                    <i class="bi {{ $isLiked ? 'bi-heart-fill text-danger' : 'bi-heart' }} fs-6"></i>
+                                </button>
+
                             </div>
+
                             <div class="card-body p-4 d-flex flex-column">
                                 <h6 class="mb-2 text-truncate text-center">
                                     <a href="/product/detail/{{ $item['id'] }}"
@@ -296,26 +318,19 @@
 
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
-    // SỬA LẠI: DÙNG HÀM addToCart() CỦA LOCALSTORAGE (cart.js)
     document.querySelectorAll('.js-add-to-cart').forEach(button => {
         button.addEventListener('click', function(e) {
             e.preventDefault();
-            
-            // Lấy dữ liệu từ data attributes
             const product = {
                 id: this.getAttribute('data-id'),
                 name: this.getAttribute('data-name'),
                 price: parseFloat(this.getAttribute('data-price')),
                 image: this.getAttribute('data-image'),
-                variant_id: null, // Ở trang chủ mặc định thêm bản gốc
+                variant_id: null, 
                 variant_name: '',
                 quantity: 1
             };
-            
-            // Gọi hàm từ cart.js
             addToCart(product);
-
-            // Thông báo
             Swal.fire({
                 icon: 'success',
                 title: 'Đã thêm vào giỏ hàng!',
@@ -324,6 +339,60 @@
                 toast: true,
                 position: 'top-end'
             });
+        });
+    });
+
+    document.querySelectorAll('.btn-favorite').forEach(btn => {
+        btn.addEventListener('click', function(e) {
+            e.preventDefault(); 
+            
+            const productId = this.getAttribute('data-id');
+            const icon = this.querySelector('i');
+
+            this.style.transform = 'scale(0.8)';
+            setTimeout(() => this.style.transform = 'scale(1)', 200);
+
+            const formData = new FormData();
+            formData.append('product_id', productId);
+
+            fetch('/favorite/toggle', {
+                method: 'POST',
+                body: formData
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.status === 'login_required') {
+                    Swal.fire({
+                        title: 'Chưa đăng nhập!',
+                        text: "Bạn cần đăng nhập để lưu sản phẩm yêu thích.",
+                        icon: 'warning',
+                        showCancelButton: true,
+                        confirmButtonColor: '#3085d6',
+                        cancelButtonColor: '#d33',
+                        confirmButtonText: 'Đăng nhập ngay',
+                        cancelButtonText: 'Để sau'
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            window.location.href = '/auth/login';
+                        }
+                    });
+                } else if (data.status === 'success') {
+                    if (data.action === 'added') {
+                        icon.classList.remove('bi-heart');
+                        icon.classList.add('bi-heart-fill', 'text-danger');
+
+                        const Toast = Swal.mixin({
+                            toast: true, position: 'top-end', showConfirmButton: false, timer: 1500,
+                        });
+                        Toast.fire({ icon: 'success', title: 'Đã thêm vào yêu thích' });
+
+                    } else {
+                        icon.classList.remove('bi-heart-fill', 'text-danger');
+                        icon.classList.add('bi-heart');
+                    }
+                }
+            })
+            .catch(err => console.error(err));
         });
     });
     </script>

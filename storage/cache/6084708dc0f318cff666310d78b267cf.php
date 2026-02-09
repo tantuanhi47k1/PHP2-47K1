@@ -186,4 +186,4 @@
         }
     </script>
 </body>
-</html><?php /**PATH G:\laragon\www\PHP2-47K1\app\views/layout/adminLayout.blade.php ENDPATH**/ ?>
+</html><?php /**PATH D:\laragon\www\php2_tantuan47k1\app\views/layout/adminLayout.blade.php ENDPATH**/ ?>

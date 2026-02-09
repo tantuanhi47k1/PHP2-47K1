@@ -1,4 +1,4 @@
-const CART_KEY = 'techhub_cart';
+const CART_KEY = 'cart';
 
 function getCart() {
     const cart = localStorage.getItem(CART_KEY);
@@ -18,8 +18,9 @@ function addToCart(product) {
     );
 
     if (existingItem) {
-        existingItem.quantity += parseInt(product.quantity);
+        existingItem.quantity = parseInt(existingItem.quantity) + parseInt(product.quantity);
     } else {
+        product.quantity = parseInt(product.quantity);
         cart.push(product);
     }
 
@@ -29,15 +30,15 @@ function addToCart(product) {
 function updateCartBadge() {
     const cart = getCart();
 
-    const totalQty = cart.length;
+    const totalItems = cart.length; 
 
     const badges = document.querySelectorAll('.badge-cart');
     badges.forEach(el => {
-        el.innerText = totalQty;
+        el.innerText = totalItems;
 
-        if (totalQty > 0) {
+        if (totalItems > 0) {
             el.style.display = 'inline-block';
-            el.innerText = totalQty;
+            el.classList.remove('d-none'); 
         } else {
             el.style.display = 'none';
         }

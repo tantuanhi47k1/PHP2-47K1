@@ -71,6 +71,12 @@
                         </a>
                     </li>
 
+                    <li class="nav-item me-3">
+                        <a class="nav-link text-danger p-2" href="/favorite" title="Danh sách yêu thích">
+                            <i class="bi bi-heart fs-5"></i>
+                        </a>
+                    </li>
+
                     <li class="nav-item me-4 position-relative">
                         <a class="nav-link text-dark p-2" href="/cart">
                             <i class="bi bi-handbag fs-4"></i>
@@ -102,6 +108,9 @@
                                 
                                 <li><a class="dropdown-item" href="/profile"><i class="bi bi-person-gear me-2 text-muted"></i> Hồ sơ cá nhân</a></li>
                                 <li><a class="dropdown-item" href="/orders"><i class="bi bi-box-seam me-2 text-muted"></i> Đơn mua của tôi</a></li>
+                                
+                                <li><a class="dropdown-item" href="/favorite"><i class="bi bi-heart me-2 text-muted"></i> Sản phẩm yêu thích</a></li>
+                                
                                 <li><hr class="dropdown-divider my-2"></li>
                                 <li>
                                     <a class="dropdown-item text-danger fw-semibold" href="/auth/logout">

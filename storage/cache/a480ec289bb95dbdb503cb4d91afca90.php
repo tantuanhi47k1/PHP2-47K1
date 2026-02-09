@@ -191,4 +191,4 @@ $admin_role = $_SESSION['admin_role'] ?? 1;
             <i class="bi bi-box-arrow-right text-danger"></i> Đăng xuất
         </a>
     </div>
-</aside><?php /**PATH G:\laragon\www\PHP2-47K1\app\views/layout/components/admin/sidebar.blade.php ENDPATH**/ ?>
+</aside><?php /**PATH D:\laragon\www\php2_tantuan47k1\app\views/layout/components/admin/sidebar.blade.php ENDPATH**/ ?>

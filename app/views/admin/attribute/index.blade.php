@@ -199,11 +199,13 @@
                                                         @foreach ($attr['values'] as $val)
                                                             <div class="attr-value-badge shadow-sm">
                                                                 {{ $val['value'] }}
-                                                                <a href="/attribute/deleteValue/{{ $val['id'] }}"
-                                                                    class="delete-val-btn"
-                                                                    onclick="return confirm('Xóa giá trị [{{ $val['value'] }}]?');">
-                                                                    <i class="bi bi-x-circle-fill"></i>
-                                                                </a>
+                                                                @if(strtolower($val['value']) !== 'none')
+                                                                    <a href="/attribute/deleteValue/{{ $val['id'] }}"
+                                                                        class="delete-val-btn"
+                                                                        onclick="return confirm('Xóa giá trị [{{ $val['value'] }}]?');">
+                                                                        <i class="bi bi-x-circle-fill"></i>
+                                                                    </a>
+                                                                @endif
                                                             </div>
                                                         @endforeach
                                                     </div>

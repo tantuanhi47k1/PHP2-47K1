@@ -5,20 +5,15 @@ class CheckoutController extends Controller {
     public function index() {
         if (session_status() === PHP_SESSION_NONE) session_start();
 
-        $cart = $_SESSION['cart'] ?? [];
-        if (empty($cart)) {
-            header("Location: /auth/login");
-            exit;
-        }
+        $currentUser = null;
 
-        $totalPrice = 0;
-        foreach ($cart as $item) {
-            $totalPrice += $item['price'] * $item['quantity'];
+        if (isset($_SESSION['user_id'])) {
+            $userModel = $this->model('UserModel');
+            $currentUser = $userModel->find($_SESSION['user_id']); 
         }
 
         $this->view('client/checkout/index', [
-            'cart' => $cart,
-            'totalPrice' => $totalPrice
+            'user' => $currentUser
         ]);
     }
 
@@ -30,16 +25,20 @@ class CheckoutController extends Controller {
             exit;
         }
 
-        $cart = $_SESSION['cart'] ?? [];
-        if (empty($cart)) {
+        $cartJson = $_POST['cart_data'] ?? '[]';
+        $cart = json_decode($cartJson, true);
+
+        if (empty($cart) || !is_array($cart)) {
             header("Location: /product");
             exit;
         }
 
         $errors = [];
         $fullname = trim($_POST['fullname'] ?? '');
-        $phone = trim($_POST['phone'] ?? '');
-        $address = trim($_POST['address'] ?? '');
+        $phone    = trim($_POST['phone'] ?? '');
+        $email    = trim($_POST['email'] ?? '');
+        $address  = trim($_POST['address'] ?? ''); 
+        $note     = trim($_POST['note'] ?? '');
         $payment_method = $_POST['payment_method'] ?? 'cod';
 
         if (empty($fullname)) $errors[] = "Vui lòng nhập họ tên người nhận.";
@@ -47,60 +46,69 @@ class CheckoutController extends Controller {
         if (empty($address)) $errors[] = "Vui lòng nhập địa chỉ giao hàng.";
 
         if (!empty($errors)) {
-            $totalPrice = 0;
-            foreach ($cart as $item) {
-                $totalPrice += $item['price'] * $item['quantity'];
+            $currentUser = null;
+            if (isset($_SESSION['user_id'])) {
+                $userModel = $this->model('UserModel');
+                $currentUser = $userModel->find($_SESSION['user_id']); 
             }
+
             $this->view('client/checkout/index', [
                 'errors' => $errors,
-                'old' => $_POST,
-                'cart' => $cart,
-                'totalPrice' => $totalPrice
+                'old'    => $_POST,
+                'user'   => $currentUser
             ]);
             return;
         }
-
-        $orderModel = $this->model('OrderModel');
-        $orderDetailModel = $this->model('OrderDetailModel');
 
         $finalTotal = 0;
         foreach ($cart as $item) {
             $finalTotal += $item['price'] * $item['quantity'];
         }
 
+        $orderModel = $this->model('OrderModel');
+        $orderDetailModel = $this->model('OrderDetailModel');
+
         $orderData = [
-            'user_id' => $_SESSION['user_id'] ?? null,
-            'fullname' => $fullname,
-            'phone' => $phone,
-            'address' => $address,
-            'note' => $_POST['note'] ?? '',
-            'total_money' => $finalTotal,
+            'user_id'        => $_SESSION['user_id'] ?? null,
+            'fullname'       => $fullname,
+            'phone'          => $phone,
+            'email'          => $email,
+            'address'        => $address,
+            'note'           => $note,
+            'total_money'    => $finalTotal,
             'payment_method' => $payment_method,
-            'created_at' => date('Y-m-d H:i:s'),
-            'status' => 1
+            'created_at'     => date('Y-m-d H:i:s'),
+            'status'         => 1
         ];
 
-        $orderId = $orderModel->create($orderData);
+        $orderId = $orderModel->create($orderData); 
 
         if ($orderId) {
-            foreach ($cart as $productId => $item) {
+            foreach ($cart as $item) {
                 $detailData = [
-                    'order_id' => $orderId,
-                    'product_id' => $productId,
+                    'order_id'     => $orderId,
+                    'product_id'   => $item['id'],
                     'product_name' => $item['name'],
-                    'price' => $item['price'],
-                    'quantity' => $item['quantity'],
-                    'total_price' => $item['price'] * $item['quantity']
+                    'price'        => $item['price'],
+                    'quantity'     => $item['quantity'],
+                    'total_price'  => $item['price'] * $item['quantity']
                 ];
                 $orderDetailModel->create($detailData);
             }
 
-            unset($_SESSION['cart']);
-            
-            header("Location: /?msg=order_success");
+            header("Location: /checkout/success");
             exit;
+
         } else {
-            echo "Lỗi hệ thống, không thể tạo đơn hàng!";
+            $this->view('client/checkout/index', [
+                'errors' => ['Lỗi hệ thống: Không thể tạo đơn hàng.'],
+                'old'    => $_POST
+            ]);
         }
+    }
+
+    public function success() {
+        if (session_status() === PHP_SESSION_NONE) session_start();
+        $this->view('client/checkout/success');
     }
 }

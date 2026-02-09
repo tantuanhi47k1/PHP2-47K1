@@ -19,6 +19,26 @@ class AttributeModel extends Model {
         return $attributes;
     }
 
+    public function getAttributesByCategoryId($categoryId) {
+        $conn = $this->connect();
+        $sql = "SELECT a.* FROM attributes a
+                JOIN category_attributes ca ON a.id = ca.attribute_id
+                WHERE ca.category_id = ?";
+        
+        $stmt = $conn->prepare($sql);
+        $stmt->execute([$categoryId]);
+        $attributes = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        foreach ($attributes as &$attr) {
+            $sqlVal = "SELECT * FROM attribute_values WHERE attribute_id = ? ORDER BY id ASC";
+            $stmtVal = $conn->prepare($sqlVal);
+            $stmtVal->execute([$attr['id']]);
+            $attr['values'] = $stmtVal->fetchAll(PDO::FETCH_ASSOC);
+        }
+
+        return $attributes;
+    }
+
     public function findAttribute($id) {
         $conn = $this->connect();
         $stmt = $conn->prepare("SELECT * FROM attributes WHERE id = ?");

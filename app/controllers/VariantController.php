@@ -1,7 +1,17 @@
 <?php
 class VariantController extends Controller {
-    
+
+    private function requireAdmin() {
+        if (session_status() === PHP_SESSION_NONE) session_start();
+        if (!isset($_SESSION['admin_id'])) {
+            header("Location: /auth/adminLogin");
+            exit;
+        }
+    }
+
     public function index($productId = null) {
+        $this->requireAdmin();
+
         if (!$productId) {
             header("Location: /product/manage");
             exit;
@@ -21,7 +31,7 @@ class VariantController extends Controller {
 
         $variants = $variantModel->getByProductId($productId);
 
-        $attributes = $attributeModel->allWithValues();
+        $attributes = $attributeModel->getAttributesByCategoryId($product['category_id']);
 
         $this->view('admin/variant/index', [
             'product'    => $product,
@@ -31,6 +41,8 @@ class VariantController extends Controller {
     }
 
     public function store() {
+        $this->requireAdmin();
+
         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $variantModel = $this->model('VariantModel');
             $productId = $_POST['product_id'];
@@ -60,7 +72,9 @@ class VariantController extends Controller {
 
             if ($variantId && !empty($_POST['attribute_values'])) {
                 foreach ($_POST['attribute_values'] as $valueId) {
-                    $variantModel->addAttributeValue($variantId, $valueId);
+                    if(!empty($valueId)) {
+                        $variantModel->addAttributeValue($variantId, $valueId);
+                    }
                 }
             }
 
@@ -71,6 +85,8 @@ class VariantController extends Controller {
     }
 
     public function edit($id) {
+        $this->requireAdmin();
+
         $variantModel = $this->model('VariantModel');
         $productModel = $this->model('ProductModel');
         $attributeModel = $this->model('AttributeModel');
@@ -83,7 +99,9 @@ class VariantController extends Controller {
         }
 
         $product = $productModel->find($variant['product_id']);
-        $attributes = $attributeModel->allWithValues();
+
+        $attributes = $attributeModel->getAttributesByCategoryId($product['category_id']);
+        
         $selectedIds = $variantModel->getSelectedValueIds($id);
 
         $this->view('admin/variant/edit', [
@@ -95,6 +113,8 @@ class VariantController extends Controller {
     }
 
     public function update($id) {
+        $this->requireAdmin();
+
         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $variantModel = $this->model('VariantModel');
             $oldVariant = $variantModel->find($id);
@@ -132,6 +152,8 @@ class VariantController extends Controller {
     }
 
     public function updateAll() {
+        $this->requireAdmin();
+
         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $variantModel = $this->model('VariantModel');
             $prices = $_POST['prices'] ?? [];
@@ -149,6 +171,8 @@ class VariantController extends Controller {
     }
 
     public function delete($id, $productId) {
+        $this->requireAdmin();
+        
         $variantModel = $this->model('VariantModel');
         $variantModel->deleteVariant($id);
         
