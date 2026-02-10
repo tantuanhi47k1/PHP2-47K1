@@ -1,8 +1,8 @@
-@extends('layout.clientLayout')
 
-@section('title', 'Cửa Hàng')
 
-@section('content')
+<?php $__env->startSection('title', 'Cửa Hàng'); ?>
+
+<?php $__env->startSection('content'); ?>
 
 <style>
     .product-img-frame { position: relative; width: 100%; padding-top: 100%; overflow: hidden; background-color: #fff; border-bottom: 1px solid #f0f0f0; }
@@ -29,14 +29,14 @@
             <div class="sidebar-card shadow-sm">
                 <div class="p-3">
                     <form action="/product" method="GET">
-                        @if(!empty($currentCategory))
-                            <input type="hidden" name="category" value="{{ $currentCategory }}">
-                        @endif
-                        @if(!empty($currentPriceRange))
-                            <input type="hidden" name="price_range" value="{{ $currentPriceRange }}">
-                        @endif
+                        <?php if(!empty($currentCategory)): ?>
+                            <input type="hidden" name="category" value="<?php echo e($currentCategory); ?>">
+                        <?php endif; ?>
+                        <?php if(!empty($currentPriceRange)): ?>
+                            <input type="hidden" name="price_range" value="<?php echo e($currentPriceRange); ?>">
+                        <?php endif; ?>
                         <div class="input-group">
-                            <input type="text" name="keyword" class="form-control border-end-0" placeholder="Tìm kiếm..." value="{{ $keyword ?? '' }}">
+                            <input type="text" name="keyword" class="form-control border-end-0" placeholder="Tìm kiếm..." value="<?php echo e($keyword ?? ''); ?>">
                             <button class="btn btn-outline-secondary border-start-0 bg-white" type="submit">
                                 <i class="bi bi-search"></i>
                             </button>
@@ -50,18 +50,18 @@
                     <i class="bi bi-list-ul me-2 text-primary"></i> Danh mục
                 </div>
                 <div class="list-group list-group-flush category-list">
-                    <a href="/product" class="list-group-item list-group-item-action {{ empty($currentCategory) ? 'active' : '' }}">
+                    <a href="/product" class="list-group-item list-group-item-action <?php echo e(empty($currentCategory) ? 'active' : ''); ?>">
                         <span>Tất cả</span>
                     </a>
 
-                    @if(isset($categories) && is_array($categories))
-                        @foreach($categories as $cat)
-                            <a href="/product?category={{ $cat['id'] }}" class="list-group-item list-group-item-action {{ (isset($currentCategory) && $currentCategory == $cat['id']) ? 'active' : '' }}">
-                                <span>{{ $cat['name'] }}</span>
-                                <span class="badge bg-light text-secondary rounded-pill">{{ $cat['product_count'] ?? 0 }}</span>
+                    <?php if(isset($categories) && is_array($categories)): ?>
+                        <?php $__currentLoopData = $categories; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $cat): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                            <a href="/product?category=<?php echo e($cat['id']); ?>" class="list-group-item list-group-item-action <?php echo e((isset($currentCategory) && $currentCategory == $cat['id']) ? 'active' : ''); ?>">
+                                <span><?php echo e($cat['name']); ?></span>
+                                <span class="badge bg-light text-secondary rounded-pill"><?php echo e($cat['product_count'] ?? 0); ?></span>
                             </a>
-                        @endforeach
-                    @endif
+                        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                    <?php endif; ?>
                 </div>
             </div>
 
@@ -71,40 +71,40 @@
                 </div>
                 <div class="p-3">
                     <form action="/product" method="GET">
-                        @if(!empty($keyword))
-                            <input type="hidden" name="keyword" value="{{ $keyword }}">
-                        @endif
-                        @if(!empty($currentCategory))
-                            <input type="hidden" name="category" value="{{ $currentCategory }}">
-                        @endif
+                        <?php if(!empty($keyword)): ?>
+                            <input type="hidden" name="keyword" value="<?php echo e($keyword); ?>">
+                        <?php endif; ?>
+                        <?php if(!empty($currentCategory)): ?>
+                            <input type="hidden" name="category" value="<?php echo e($currentCategory); ?>">
+                        <?php endif; ?>
 
                         <div class="mb-2 form-check">
                             <input class="form-check-input" type="radio" name="price_range" value="" id="priceAll" 
-                                {{ empty($currentPriceRange) ? 'checked' : '' }} onchange="this.form.submit()">
+                                <?php echo e(empty($currentPriceRange) ? 'checked' : ''); ?> onchange="this.form.submit()">
                             <label class="form-check-label" for="priceAll">Tất cả mức giá</label>
                         </div>
 
                         <div class="mb-2 form-check">
                             <input class="form-check-input" type="radio" name="price_range" value="1" id="price1" 
-                                {{ (isset($currentPriceRange) && $currentPriceRange == '1') ? 'checked' : '' }} onchange="this.form.submit()">
+                                <?php echo e((isset($currentPriceRange) && $currentPriceRange == '1') ? 'checked' : ''); ?> onchange="this.form.submit()">
                             <label class="form-check-label" for="price1">Dưới 3 triệu</label>
                         </div>
 
                         <div class="mb-2 form-check">
                             <input class="form-check-input" type="radio" name="price_range" value="2" id="price2" 
-                                {{ (isset($currentPriceRange) && $currentPriceRange == '2') ? 'checked' : '' }} onchange="this.form.submit()">
+                                <?php echo e((isset($currentPriceRange) && $currentPriceRange == '2') ? 'checked' : ''); ?> onchange="this.form.submit()">
                             <label class="form-check-label" for="price2">Từ 3 - 10 triệu</label>
                         </div>
 
                         <div class="mb-2 form-check">
                             <input class="form-check-input" type="radio" name="price_range" value="3" id="price3" 
-                                {{ (isset($currentPriceRange) && $currentPriceRange == '3') ? 'checked' : '' }} onchange="this.form.submit()">
+                                <?php echo e((isset($currentPriceRange) && $currentPriceRange == '3') ? 'checked' : ''); ?> onchange="this.form.submit()">
                             <label class="form-check-label" for="price3">Từ 10 - 50 triệu</label>
                         </div>
 
                         <div class="mb-3 form-check">
                             <input class="form-check-input" type="radio" name="price_range" value="4" id="price4" 
-                                {{ (isset($currentPriceRange) && $currentPriceRange == '4') ? 'checked' : '' }} onchange="this.form.submit()">
+                                <?php echo e((isset($currentPriceRange) && $currentPriceRange == '4') ? 'checked' : ''); ?> onchange="this.form.submit()">
                             <label class="form-check-label" for="price4">Trên 50 triệu</label>
                         </div>
                         
@@ -124,13 +124,13 @@
             <div class="d-flex justify-content-between align-items-center mb-4 p-3 bg-light rounded-3">
                 <div>
                     <h4 class="fw-bold mb-0 text-primary">
-                        @if(!empty($keyword))
-                            Kết quả tìm kiếm: "{{ $keyword }}"
-                        @else
+                        <?php if(!empty($keyword)): ?>
+                            Kết quả tìm kiếm: "<?php echo e($keyword); ?>"
+                        <?php else: ?>
                             Tất cả sản phẩm
-                        @endif
+                        <?php endif; ?>
                     </h4>
-                    <small class="text-muted">Hiển thị {{ count($products) }} / {{ $totalProducts ?? 0 }} kết quả</small>
+                    <small class="text-muted">Hiển thị <?php echo e(count($products)); ?> / <?php echo e($totalProducts ?? 0); ?> kết quả</small>
                 </div>
                 <div class="d-flex align-items-center">
                     <span class="me-2 text-muted small d-none d-md-block">Sắp xếp:</span>
@@ -143,49 +143,50 @@
             </div>
 
             <div class="row row-cols-2 row-cols-md-3 row-cols-lg-3 g-3">
-                @if(!empty($products) && count($products) > 0)
-                    @foreach ($products as $item)
+                <?php if(!empty($products) && count($products) > 0): ?>
+                    <?php $__currentLoopData = $products; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $item): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                         <div class="col">
                             <div class="card h-100 shadow-sm product-card rounded-3 overflow-hidden">
                                 <div class="position-relative product-img-frame">
-                                    <a href="/product/detail/{{ $item['id'] }}">
-                                        @php 
+                                    <a href="/product/detail/<?php echo e($item['id']); ?>">
+                                        <?php 
                                             $imgSrc = 'https://placehold.co/300x300?text=No+Image';
                                             if (!empty($item['image'])) {
                                                 $imgSrc = (strpos($item['image'], 'http') === 0) ? $item['image'] : '/' . $item['image'];
                                             }
-                                        @endphp
-                                        <img src="{{ $imgSrc }}" alt="{{ $item['name'] }}" onerror="this.src='https://placehold.co/300x300?text=Error'">
+                                        ?>
+                                        <img src="<?php echo e($imgSrc); ?>" alt="<?php echo e($item['name']); ?>" onerror="this.src='https://placehold.co/300x300?text=Error'">
                                     </a>
                                 </div>
 
                                 <div class="card-body d-flex flex-column p-3">
                                     <h6 class="card-title text-truncate mb-2" style="font-size: 0.95rem;">
-                                        <a href="/product/detail/{{ $item['id'] }}" class="text-decoration-none text-dark fw-bold" title="{{ $item['name'] }}">
-                                            {{ $item['name'] }}
+                                        <a href="/product/detail/<?php echo e($item['id']); ?>" class="text-decoration-none text-dark fw-bold" title="<?php echo e($item['name']); ?>">
+                                            <?php echo e($item['name']); ?>
+
                                         </a>
                                     </h6>
 
                                     <div class="mb-3 text-primary">
-                                        @if(isset($item['variant_price']) && $item['variant_price'] > 0)
+                                        <?php if(isset($item['variant_price']) && $item['variant_price'] > 0): ?>
                                             <small class="text-muted text-dark" style="font-size: 0.75rem">Từ:</small> 
-                                            <span class="fw-bold">{{ number_format($item['variant_price'], 0, ',', '.') }}đ</span>
-                                        @elseif(isset($item['base_price']))
-                                            <span class="fw-bold">{{ number_format($item['base_price'], 0, ',', '.') }}đ</span>
-                                        @else
+                                            <span class="fw-bold"><?php echo e(number_format($item['variant_price'], 0, ',', '.')); ?>đ</span>
+                                        <?php elseif(isset($item['base_price'])): ?>
+                                            <span class="fw-bold"><?php echo e(number_format($item['base_price'], 0, ',', '.')); ?>đ</span>
+                                        <?php else: ?>
                                             <span class="text-muted small">Liên hệ</span>
-                                        @endif
+                                        <?php endif; ?>
                                     </div>
 
                                     <div class="mt-auto d-flex gap-2">
                                         <button class="btn btn-outline-primary flex-grow-1 btn-sm rounded-pill fw-bold hover-shadow" 
-                                                onclick="addToCart({id: {{ $item['id'] }}, name: '{{ $item['name'] }}', price: {{ $item['base_price'] }}, image: '{{ $imgSrc }}', quantity: 1})">
+                                                onclick="addToCart({id: <?php echo e($item['id']); ?>, name: '<?php echo e($item['name']); ?>', price: <?php echo e($item['base_price']); ?>, image: '<?php echo e($imgSrc); ?>', quantity: 1})">
                                             Thêm vào giỏ
                                         </button>
                                         
                                         <button class="btn btn-wishlist btn-sm rounded-circle d-flex align-items-center justify-content-center" 
                                                 style="width: 32px; height: 32px;"
-                                                onclick="toggleWishlist(this, {{ $item['id'] }})" 
+                                                onclick="toggleWishlist(this, <?php echo e($item['id']); ?>)" 
                                                 title="Yêu thích">
                                             <i class="bi bi-heart"></i>
                                         </button>
@@ -193,37 +194,37 @@
                                 </div>
                             </div>
                         </div>
-                    @endforeach
-                @else
+                    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                <?php else: ?>
                     <div class="col-12 text-center py-5">
                         <i class="bi bi-search text-muted opacity-25" style="font-size: 3rem;"></i>
                         <p class="text-muted mt-3">Không tìm thấy sản phẩm nào phù hợp.</p>
                         <a href="/product" class="btn btn-primary rounded-pill px-4">Xem tất cả sản phẩm</a>
                     </div>
-                @endif
+                <?php endif; ?>
             </div>
 
-            @if(isset($totalPages) && $totalPages > 1)
+            <?php if(isset($totalPages) && $totalPages > 1): ?>
             <div class="d-flex justify-content-center mt-5">
                 <nav aria-label="Page navigation">
                     <ul class="pagination">
-                        <li class="page-item {{ ($currentPage <= 1) ? 'disabled' : '' }}">
-                            <a class="page-link" href="?page={{ $currentPage - 1 }}&category={{ $currentCategory ?? '' }}&keyword={{ $keyword ?? '' }}&price_range={{ $currentPriceRange ?? '' }}">&laquo;</a>
+                        <li class="page-item <?php echo e(($currentPage <= 1) ? 'disabled' : ''); ?>">
+                            <a class="page-link" href="?page=<?php echo e($currentPage - 1); ?>&category=<?php echo e($currentCategory ?? ''); ?>&keyword=<?php echo e($keyword ?? ''); ?>&price_range=<?php echo e($currentPriceRange ?? ''); ?>">&laquo;</a>
                         </li>
                         
-                        @for($i = 1; $i <= $totalPages; $i++)
-                            <li class="page-item {{ ($currentPage == $i) ? 'active' : '' }}">
-                                <a class="page-link" href="?page={{ $i }}&category={{ $currentCategory ?? '' }}&keyword={{ $keyword ?? '' }}&price_range={{ $currentPriceRange ?? '' }}">{{ $i }}</a>
+                        <?php for($i = 1; $i <= $totalPages; $i++): ?>
+                            <li class="page-item <?php echo e(($currentPage == $i) ? 'active' : ''); ?>">
+                                <a class="page-link" href="?page=<?php echo e($i); ?>&category=<?php echo e($currentCategory ?? ''); ?>&keyword=<?php echo e($keyword ?? ''); ?>&price_range=<?php echo e($currentPriceRange ?? ''); ?>"><?php echo e($i); ?></a>
                             </li>
-                        @endfor
+                        <?php endfor; ?>
                         
-                        <li class="page-item {{ ($currentPage >= $totalPages) ? 'disabled' : '' }}">
-                            <a class="page-link" href="?page={{ $currentPage + 1 }}&category={{ $currentCategory ?? '' }}&keyword={{ $keyword ?? '' }}&price_range={{ $currentPriceRange ?? '' }}">&raquo;</a>
+                        <li class="page-item <?php echo e(($currentPage >= $totalPages) ? 'disabled' : ''); ?>">
+                            <a class="page-link" href="?page=<?php echo e($currentPage + 1); ?>&category=<?php echo e($currentCategory ?? ''); ?>&keyword=<?php echo e($keyword ?? ''); ?>&price_range=<?php echo e($currentPriceRange ?? ''); ?>">&raquo;</a>
                         </li>
                     </ul>
                 </nav>
             </div>
-            @endif
+            <?php endif; ?>
         </div>
 
     </div>
@@ -245,4 +246,5 @@
         }
     }
 </script>
-@endsection
+<?php $__env->stopSection(); ?>
+<?php echo $__env->make('layout.clientLayout', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?><?php /**PATH D:\laragon\www\php2_tantuan47k1\app\views/client/product/index.blade.php ENDPATH**/ ?>

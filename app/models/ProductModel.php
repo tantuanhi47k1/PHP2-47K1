@@ -3,23 +3,76 @@ class ProductModel extends Model
 {
     private $table = 'products';
 
-    public function all()
+    public function getProducts($keyword = '', $categoryId = null, $minPrice = null, $maxPrice = null, $page = 1, $limit = 9)
     {
+        $offset = ($page - 1) * $limit;
+        
         $sql = "SELECT p.*, 
                        c.name as category_name, 
                        b.name as brand_name,
                        (SELECT image_path FROM product_images WHERE product_id = p.id AND is_thumbnail = 1 LIMIT 1) as image,
-                       (SELECT MIN(price) FROM variants WHERE product_id = p.id) as variant_price,
-                       (SELECT COUNT(*) FROM variants WHERE product_id = p.id) as variant_count
+                       (SELECT MIN(price) FROM variants WHERE product_id = p.id) as variant_price
                 FROM $this->table p
                 LEFT JOIN categories c ON p.category_id = c.id
                 LEFT JOIN brands b ON p.brand_id = b.id
-                ORDER BY p.created_at DESC";
+                WHERE 1=1 AND p.status = 1";
+
+        $params = [];
+
+        if (!empty($keyword)) {
+            $sql .= " AND p.name LIKE :keyword";
+            $params[':keyword'] = "%$keyword%";
+        }
+        if (!empty($categoryId)) {
+            $sql .= " AND p.category_id = :cat_id";
+            $params[':cat_id'] = $categoryId;
+        }
+
+        if ($minPrice !== null) {
+            $sql .= " AND p.base_price >= :min_price";
+            $params[':min_price'] = $minPrice;
+        }
+        if ($maxPrice !== null) {
+            $sql .= " AND p.base_price <= :max_price";
+            $params[':max_price'] = $maxPrice;
+        }
+
+        $sql .= " ORDER BY p.created_at DESC LIMIT $limit OFFSET $offset";
 
         $conn = $this->connect();
         $stmt = $conn->prepare($sql);
-        $stmt->execute();
+        $stmt->execute($params);
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    public function countTotal($keyword = '', $categoryId = null, $minPrice = null, $maxPrice = null)
+    {
+        $sql = "SELECT COUNT(*) as total FROM $this->table p WHERE 1=1 AND p.status = 1";
+        $params = [];
+
+        if (!empty($keyword)) {
+            $sql .= " AND p.name LIKE :keyword";
+            $params[':keyword'] = "%$keyword%";
+        }
+        if (!empty($categoryId)) {
+            $sql .= " AND p.category_id = :cat_id";
+            $params[':cat_id'] = $categoryId;
+        }
+
+        if ($minPrice !== null) {
+            $sql .= " AND p.base_price >= :min_price";
+            $params[':min_price'] = $minPrice;
+        }
+        if ($maxPrice !== null) {
+            $sql .= " AND p.base_price <= :max_price";
+            $params[':max_price'] = $maxPrice;
+        }
+
+        $conn = $this->connect();
+        $stmt = $conn->prepare($sql);
+        $stmt->execute($params);
+        $result = $stmt->fetch(PDO::FETCH_ASSOC);
+        return $result['total'];
     }
 
     public function find($id)
@@ -58,6 +111,24 @@ class ProductModel extends Model
         $stmt->execute([':id' => $productId]);
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
+
+    // --- ĐÃ SỬA HÀM NÀY ĐỂ LẤY ẢNH ---
+    public function all()
+    {
+        // Thêm sub-query (SELECT image_path ...) để lấy ảnh thumbnail
+        $sql = "SELECT p.*, 
+                       c.name as category_name,
+                       (SELECT image_path FROM product_images WHERE product_id = p.id AND is_thumbnail = 1 LIMIT 1) as image
+                FROM $this->table p
+                LEFT JOIN categories c ON p.category_id = c.id
+                ORDER BY p.created_at DESC";
+
+        $conn = $this->connect();
+        $stmt = $conn->prepare($sql);
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+    // ---------------------------------
 
     public function create($data)
     {

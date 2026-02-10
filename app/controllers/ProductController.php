@@ -4,9 +4,53 @@ class ProductController extends Controller {
 
     public function index() {
         $productModel = $this->model('ProductModel');
-        $products = $productModel->all(); 
+        $categoryModel = $this->model('CategoryModel');
 
-        $this->view('client/product/index', ['products' => $products]);
+        $keyword = $_GET['keyword'] ?? '';
+        $categoryId = $_GET['category'] ?? null;
+        $priceRange = $_GET['price_range'] ?? null;
+        $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
+        $limit = 9;
+
+        if ($page < 1) $page = 1;
+
+        $minPrice = null;
+        $maxPrice = null;
+
+        if ($priceRange) {
+            switch ($priceRange) {
+                case '1': 
+                    $maxPrice = 3000000;
+                    break;
+                case '2': 
+                    $minPrice = 3000000;
+                    $maxPrice = 10000000;
+                    break;
+                case '3': 
+                    $minPrice = 10000000;
+                    $maxPrice = 50000000;
+                    break;
+                case '4': 
+                    $minPrice = 50000000;
+                    break;
+            }
+        }
+
+        $categories = $categoryModel->getAllWithProductCount();
+        $products = $productModel->getProducts($keyword, $categoryId, $minPrice, $maxPrice, $page, $limit);
+        $totalProducts = $productModel->countTotal($keyword, $categoryId, $minPrice, $maxPrice);
+        $totalPages = ceil($totalProducts / $limit);
+
+        $this->view('client/product/index', [
+            'products' => $products,
+            'categories' => $categories,
+            'totalProducts' => $totalProducts,
+            'totalPages' => $totalPages,
+            'currentPage' => $page,
+            'keyword' => $keyword,
+            'currentCategory' => $categoryId,
+            'currentPriceRange' => $priceRange
+        ]);
     }
 
     public function detail($id) {

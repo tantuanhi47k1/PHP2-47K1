@@ -1,6 +1,6 @@
-@extends('layout.clientLayout')
 
-@section('content')
+
+<?php $__env->startSection('content'); ?>
 <div class="container py-5 text-center">
     <div class="row justify-content-center">
         <div class="col-md-8 col-lg-6">
@@ -39,4 +39,5 @@
         });
     });
 </script>
-@endsection
+<?php $__env->stopSection(); ?>
+<?php echo $__env->make('layout.clientLayout', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?><?php /**PATH D:\laragon\www\php2_tantuan47k1\app\views/client/checkout/success.blade.php ENDPATH**/ ?>

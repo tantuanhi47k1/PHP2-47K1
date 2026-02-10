@@ -1,8 +1,8 @@
-@extends('layout.clientLayout')
 
-@section('title', 'TechHub - Thế Giới Công Nghệ')
 
-@section('content')
+<?php $__env->startSection('title', 'TechHub - Thế Giới Công Nghệ'); ?>
+
+<?php $__env->startSection('content'); ?>
 
     <style>
         .hero-section {
@@ -199,10 +199,10 @@
     <div class="container mb-5 py-4">
         <h4 class="fw-bold mb-5 text-center text-dark">Danh Mục Nổi Bật</h4>
         
-        @if(isset($categories) && !empty($categories))
+        <?php if(isset($categories) && !empty($categories)): ?>
             <div class="row row-cols-2 row-cols-md-4 g-4 justify-content-center text-center">
-                @foreach($categories as $cat)
-                    @php
+                <?php $__currentLoopData = $categories; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $cat): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                    <?php
                         $icon = 'bi-grid';
                         $name = mb_strtolower($cat['name'], 'UTF-8');
                         
@@ -212,19 +212,19 @@
                         elseif(strpos($name, 'đồng hồ') !== false) $icon = 'bi-watch';
                         elseif(strpos($name, 'chuột') !== false) $icon = 'bi-mouse';
                         elseif(strpos($name, 'bàn phím') !== false) $icon = 'bi-keyboard';
-                    @endphp
+                    ?>
 
                     <div class="col">
-                        <a href="/category/{{ $cat['id'] }}" class="text-decoration-none category-item">
-                            <div class="category-icon shadow-sm"><i class="bi {{ $icon }}"></i></div>
-                            <span class="fw-bold text-dark fs-5">{{ $cat['name'] }}</span>
+                        <a href="/category/<?php echo e($cat['id']); ?>" class="text-decoration-none category-item">
+                            <div class="category-icon shadow-sm"><i class="bi <?php echo e($icon); ?>"></i></div>
+                            <span class="fw-bold text-dark fs-5"><?php echo e($cat['name']); ?></span>
                         </a>
                     </div>
-                @endforeach
+                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
             </div>
-        @else
+        <?php else: ?>
             <div class="text-center text-muted">Đang cập nhật danh mục...</div>
-        @endif
+        <?php endif; ?>
     </div>
 
     <div class="container mb-5" id="featured">
@@ -238,51 +238,52 @@
         </div>
 
         <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-4">
-            @foreach ($products as $item)
-                @if (isset($item['status']) && $item['status'] == 1)
+            <?php $__currentLoopData = $products; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $item): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                <?php if(isset($item['status']) && $item['status'] == 1): ?>
                     <div class="col">
                         <div class="card h-100 shadow-sm product-card border-0">
 
                             <div class="product-img-frame bg-light rounded-top-4 position-relative">
-                                <a href="/product/detail/{{ $item['id'] }}">
-                                    <img src="/{{ $item['image'] ?? 'image/product/default.png' }}"
-                                        alt="{{ $item['name'] }}"
+                                <a href="/product/detail/<?php echo e($item['id']); ?>">
+                                    <img src="/<?php echo e($item['image'] ?? 'image/product/default.png'); ?>"
+                                        alt="<?php echo e($item['name']); ?>"
                                         onerror="this.src='https://placehold.co/300x300?text=TechHub'">
                                 </a>
 
-                                @php
+                                <?php
                                     $isLiked = isset($likedProductIds) && in_array($item['id'], $likedProductIds);
-                                @endphp
+                                ?>
                                 <button class="btn btn-light rounded-circle position-absolute top-0 end-0 m-3 shadow-sm btn-favorite" 
-                                        data-id="{{ $item['id'] }}"
+                                        data-id="<?php echo e($item['id']); ?>"
                                         style="width: 35px; height: 35px; display: flex; align-items: center; justify-content: center; z-index: 10;">
-                                    <i class="bi {{ $isLiked ? 'bi-heart-fill text-danger' : 'bi-heart' }} fs-6"></i>
+                                    <i class="bi <?php echo e($isLiked ? 'bi-heart-fill text-danger' : 'bi-heart'); ?> fs-6"></i>
                                 </button>
 
                             </div>
 
                             <div class="card-body p-4 d-flex flex-column">
                                 <h6 class="mb-2 text-truncate text-center">
-                                    <a href="/product/detail/{{ $item['id'] }}"
-                                        class="text-decoration-none text-dark fw-bold" title="{{ $item['name'] }}">
-                                        {{ $item['name'] }}
+                                    <a href="/product/detail/<?php echo e($item['id']); ?>"
+                                        class="text-decoration-none text-dark fw-bold" title="<?php echo e($item['name']); ?>">
+                                        <?php echo e($item['name']); ?>
+
                                     </a>
                                 </h6>
                                 <div class="text-primary fw-bold fs-5 mb-4 text-center">
-                                    {{ number_format($item['variant_price'] ?? $item['base_price'], 0, ',', '.') }}đ
+                                    <?php echo e(number_format($item['variant_price'] ?? $item['base_price'], 0, ',', '.')); ?>đ
                                 </div>
 
                                 <div class="mt-auto">
                                     <div class="d-flex gap-2">
                                         <button type="button" class="btn-cart-quick js-add-to-cart" 
-                                                data-id="{{ $item['id'] }}" 
-                                                data-name="{{ $item['name'] }}"
-                                                data-price="{{ $item['base_price'] }}"
-                                                data-image="/{{ $item['image'] ?? 'image/product/default.png' }}"
+                                                data-id="<?php echo e($item['id']); ?>" 
+                                                data-name="<?php echo e($item['name']); ?>"
+                                                data-price="<?php echo e($item['base_price']); ?>"
+                                                data-image="/<?php echo e($item['image'] ?? 'image/product/default.png'); ?>"
                                                 title="Thêm vào giỏ hàng">
                                             <i class="bi bi-bag-plus fs-5"></i>
                                         </button>
-                                        <a href="/product/detail/{{ $item['id'] }}"
+                                        <a href="/product/detail/<?php echo e($item['id']); ?>"
                                             class="btn-buy-now text-decoration-none">
                                             Xem Ngay
                                         </a>
@@ -291,8 +292,8 @@
                             </div>
                         </div>
                     </div>
-                @endif
-            @endforeach
+                <?php endif; ?>
+            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
         </div>
     </div>
 
@@ -397,4 +398,5 @@
     });
     </script>
 
-@endsection
+<?php $__env->stopSection(); ?>
+<?php echo $__env->make('layout.clientLayout', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?><?php /**PATH D:\laragon\www\php2_tantuan47k1\app\views/client/home/index.blade.php ENDPATH**/ ?>
