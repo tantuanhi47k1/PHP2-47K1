@@ -1,5 +1,5 @@
-@extends('layout.adminLayout')
-@section('content')
+
+<?php $__env->startSection('content'); ?>
     <style>
         :root {
             --primary-color: #009981;
@@ -67,12 +67,12 @@
                     <a href="/product/manage" class="btn btn-outline-secondary btn-sm"><i class="bi bi-arrow-left"></i> Quay lại</a>
                 </div>
 
-                @if (isset($mess))
+                <?php if(isset($mess)): ?>
                     <div class="alert alert-success d-flex align-items-center" role="alert">
                         <i class="bi bi-check-circle-fill me-2"></i>
                         <div><?= $mess ?></div>
                     </div>
-                @endif
+                <?php endif; ?>
                 
                 <div id="ajax-alert" style="display:none;" class="alert alert-success align-items-center">
                     <i class="bi bi-check-circle-fill me-2"></i> <span id="ajax-msg"></span>
@@ -112,8 +112,8 @@
                                     </div>
                                     
                                     <div class="row g-2 mb-3">
-                                        @if (!empty($images))
-                                            @foreach ($images as $img)
+                                        <?php if(!empty($images)): ?>
+                                            <?php $__currentLoopData = $images; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $img): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                                                 <div class="col-4 image-container text-center">
                                                     <img src="/<?= $img['image_path'] ?>" class="img-edit-preview">
                                                     
@@ -131,10 +131,10 @@
                                                         </label>
                                                     </div>
                                                 </div>
-                                            @endforeach
-                                        @else
+                                            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                                        <?php else: ?>
                                             <div class="col-12"><small class="text-muted fst-italic">Chưa có ảnh nào.</small></div>
-                                        @endif
+                                        <?php endif; ?>
                                     </div>
                                     
                                     <label class="form-label small text-muted">Thêm ảnh mới (chọn nhiều)</label>
@@ -144,12 +144,12 @@
                                 <div class="mb-3">
                                     <label class="form-label">Danh mục <span class="text-danger">*</span></label>
                                     <select name="category_id" class="form-select" required>
-                                        @foreach ($categories as $c)
+                                        <?php $__currentLoopData = $categories; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $c): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                                             <option value="<?= $c['id'] ?>"
                                                 <?= $c['id'] == $product['category_id'] ? 'selected' : '' ?>>
                                                 <?= htmlspecialchars($c['name']) ?>
                                             </option>
-                                        @endforeach
+                                        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                                     </select>
                                 </div>
 
@@ -157,12 +157,12 @@
                                     <label class="form-label">Thương hiệu</label>
                                     <select name="brand_id" class="form-select">
                                         <option value="">-- Chọn thương hiệu --</option>
-                                        @foreach ($brands as $b)
+                                        <?php $__currentLoopData = $brands; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $b): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                                             <option value="<?= $b['id'] ?>"
                                                 <?= $product['brand_id'] == $b['id'] ? 'selected' : '' ?>>
                                                 <?= $b['name'] ?>
                                             </option>
-                                        @endforeach
+                                        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                                     </select>
                                 </div>
 
@@ -230,4 +230,5 @@
             }
         }
     </script>
-@endsection
+<?php $__env->stopSection(); ?>
+<?php echo $__env->make('layout.adminLayout', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?><?php /**PATH D:\laragon\www\php2_tantuan47k1\app\views/admin/product/edit.blade.php ENDPATH**/ ?>

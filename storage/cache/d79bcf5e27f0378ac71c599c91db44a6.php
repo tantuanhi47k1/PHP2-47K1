@@ -1,6 +1,6 @@
-@extends('layout.adminLayout')
 
-@section('content')
+
+<?php $__env->startSection('content'); ?>
 <style>
     .dashboard-wrapper { background-color: #f8f9fa; min-height: 100vh; }
     .stat-card { border: none; border-radius: 16px; transition: transform 0.2s ease, box-shadow 0.2s ease; }
@@ -29,7 +29,7 @@
                     </div>
                     <div>
                         <small class="text-muted fw-bold text-uppercase" style="font-size: 0.7rem;">Sản phẩm</small>
-                        <h3 class="mb-0 fw-bold">{{ $totalProducts }}</h3>
+                        <h3 class="mb-0 fw-bold"><?php echo e($totalProducts); ?></h3>
                     </div>
                 </div>
             </div>
@@ -43,7 +43,7 @@
                     </div>
                     <div>
                         <small class="text-muted fw-bold text-uppercase" style="font-size: 0.7rem;">Đơn chờ duyệt</small>
-                        <h3 class="mb-0 fw-bold">{{ $newOrders }}</h3>
+                        <h3 class="mb-0 fw-bold"><?php echo e($newOrders); ?></h3>
                     </div>
                 </div>
             </div>
@@ -57,7 +57,7 @@
                     </div>
                     <div>
                         <small class="text-muted fw-bold text-uppercase" style="font-size: 0.7rem;">Doanh thu tháng</small>
-                        <h4 class="mb-0 fw-bold text-danger">{{ number_format($monthlyRevenue, 0, ',', '.') }}đ</h4>
+                        <h4 class="mb-0 fw-bold text-danger"><?php echo e(number_format($monthlyRevenue, 0, ',', '.')); ?>đ</h4>
                     </div>
                 </div>
             </div>
@@ -71,7 +71,7 @@
                     </div>
                     <div>
                         <small class="text-muted fw-bold text-uppercase" style="font-size: 0.7rem;">Khách hàng</small>
-                        <h3 class="mb-0 fw-bold">{{ $totalCustomers }}</h3>
+                        <h3 class="mb-0 fw-bold"><?php echo e($totalCustomers); ?></h3>
                     </div>
                 </div>
             </div>
@@ -106,21 +106,21 @@
                             </tr>
                         </thead>
                         <tbody>
-                            @foreach($recentOrders as $order)
+                            <?php $__currentLoopData = $recentOrders; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $order): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                             <tr>
-                                <td class="ps-4 fw-bold">#{{ $order['id'] }}</td>
-                                <td>{{ $order['fullname'] }}</td>
-                                <td>{{ date('d/m/Y H:i', strtotime($order['created_at'])) }}</td>
-                                <td class="fw-bold text-danger">{{ number_format($order['total_money'], 0, ',', '.') }}đ</td>
+                                <td class="ps-4 fw-bold">#<?php echo e($order['id']); ?></td>
+                                <td><?php echo e($order['fullname']); ?></td>
+                                <td><?php echo e(date('d/m/Y H:i', strtotime($order['created_at']))); ?></td>
+                                <td class="fw-bold text-danger"><?php echo e(number_format($order['total_money'], 0, ',', '.')); ?>đ</td>
                                 <td>
-                                    @if($order['status'] == 1) <span class="badge bg-warning text-dark px-3">Chờ duyệt</span>
-                                    @elseif($order['status'] == 2) <span class="badge bg-info px-3">Đang giao</span>
-                                    @elseif($order['status'] == 3) <span class="badge bg-success px-3">Đã giao</span>
-                                    @else <span class="badge bg-danger px-3">Đã hủy</span>
-                                    @endif
+                                    <?php if($order['status'] == 1): ?> <span class="badge bg-warning text-dark px-3">Chờ duyệt</span>
+                                    <?php elseif($order['status'] == 2): ?> <span class="badge bg-info px-3">Đang giao</span>
+                                    <?php elseif($order['status'] == 3): ?> <span class="badge bg-success px-3">Đã giao</span>
+                                    <?php else: ?> <span class="badge bg-danger px-3">Đã hủy</span>
+                                    <?php endif; ?>
                                 </td>
                             </tr>
-                            @endforeach
+                            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                         </tbody>
                     </table>
                 </div>
@@ -134,18 +134,18 @@
                 </div>
                 <div class="card-body p-0">
                     <ul class="list-group list-group-flush">
-                        @foreach($lowStockProducts as $product)
+                        <?php $__currentLoopData = $lowStockProducts; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $product): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                         <li class="list-group-item d-flex justify-content-between align-items-center py-3 border-0">
                             <div class="d-flex align-items-center">
-                                <img src="/{{ $product['image'] ?? 'public/images/default.jpg' }}" class="rounded me-3" style="width: 40px; height: 40px; object-fit: cover;">
+                                <img src="/<?php echo e($product['image'] ?? 'public/images/default.jpg'); ?>" class="rounded me-3" style="width: 40px; height: 40px; object-fit: cover;">
                                 <div>
-                                    <h6 class="mb-0 fw-bold small text-truncate" style="max-width: 180px;">{{ $product['name'] }}</h6>
-                                    <small class="text-danger fw-bold">Còn lại: {{ $product['stock'] }}</small>
+                                    <h6 class="mb-0 fw-bold small text-truncate" style="max-width: 180px;"><?php echo e($product['name']); ?></h6>
+                                    <small class="text-danger fw-bold">Còn lại: <?php echo e($product['stock']); ?></small>
                                 </div>
                             </div>
-                            <a href="/product/edit/{{ $product['id'] }}" class="btn btn-sm btn-light"><i class="bi bi-pencil"></i></a>
+                            <a href="/product/edit/<?php echo e($product['id']); ?>" class="btn btn-sm btn-light"><i class="bi bi-pencil"></i></a>
                         </li>
-                        @endforeach
+                        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                     </ul>
                 </div>
             </div>
@@ -157,8 +157,8 @@
     document.addEventListener("DOMContentLoaded", function() {
         const ctx = document.getElementById('revenueChart').getContext('2d');
 
-        const chartLabels = {!! json_encode($chartData['dates']) !!};
-        const chartData = {!! json_encode($chartData['revenues']) !!};
+        const chartLabels = <?php echo json_encode($chartData['dates']); ?>;
+        const chartData = <?php echo json_encode($chartData['revenues']); ?>;
 
         new Chart(ctx, {
             type: 'line',
@@ -197,4 +197,5 @@
         });
     });
 </script>
-@endsection
+<?php $__env->stopSection(); ?>
+<?php echo $__env->make('layout.adminLayout', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?><?php /**PATH D:\laragon\www\php2_tantuan47k1\app\views/admin/dashboard.blade.php ENDPATH**/ ?>
