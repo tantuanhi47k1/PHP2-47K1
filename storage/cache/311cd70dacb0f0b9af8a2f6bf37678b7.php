@@ -116,7 +116,7 @@
             </div>
 
             <div class="rounded-3 overflow-hidden shadow-sm d-none d-lg-block">
-                <img src="https://img.freepik.com/free-vector/modern-sale-banner-template-with-fluid-shapes_1361-1389.jpg" class="w-100" alt="Banner">
+                <img src="https://olymstore.net/storage/30.12.2023/Olymstore%20001663%20(1).jpg" class="w-100" alt="Banner">
             </div>
         </div>
 
