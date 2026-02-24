@@ -1,9 +1,18 @@
 <?php
 
 class CheckoutController extends Controller {
+    private function requireLogin() {
+        if (session_status() === PHP_SESSION_NONE) session_start();
+        
+        if (!isset($_SESSION['user_id'])) {
+            $_SESSION['error'] = "Vui lòng đăng nhập để tiến hành thanh toán!";
+            header("Location: /auth/login");
+            exit;
+        }
+    }
 
     public function index() {
-        if (session_status() === PHP_SESSION_NONE) session_start();
+        $this->requireLogin();
 
         $currentUser = null;
 
@@ -18,7 +27,7 @@ class CheckoutController extends Controller {
     }
 
     public function process() {
-        if (session_status() === PHP_SESSION_NONE) session_start();
+        $this->requireLogin();
 
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
             header("Location: /checkout");
@@ -69,7 +78,7 @@ class CheckoutController extends Controller {
         $orderDetailModel = $this->model('OrderDetailModel');
 
         $orderData = [
-            'user_id'        => $_SESSION['user_id'] ?? null,
+            'user_id'        => $_SESSION['user_id'],
             'fullname'       => $fullname,
             'phone'          => $phone,
             'email'          => $email,

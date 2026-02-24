@@ -1,8 +1,8 @@
-@extends('layout.clientLayout')
 
-@section('title', 'Giỏ hàng của bạn')
 
-@section('content')
+<?php $__env->startSection('title', 'Giỏ hàng của bạn'); ?>
+
+<?php $__env->startSection('content'); ?>
 
 <style>
     .cart-container { background-color: #f8f9fa; min-height: 80vh; }
@@ -82,15 +82,15 @@
                         </div>
 
                         <div class="d-grid mb-3">
-                            @if(isset($_SESSION['user_id']))
+                            <?php if(isset($_SESSION['user_id'])): ?>
                                 <a href="/checkout" class="btn btn-primary btn-lg rounded-pill fw-bold shadow py-3">
                                     TIẾN HÀNH THANH TOÁN
                                 </a>
-                            @else
+                            <?php else: ?>
                                 <a href="#" onclick="requireLogin(event)" class="btn btn-primary btn-lg rounded-pill fw-bold shadow py-3">
                                     TIẾN HÀNH THANH TOÁN
                                 </a>
-                            @endif
+                            <?php endif; ?>
                         </div>
 
                         <div class="d-flex align-items-center justify-content-center text-muted small gap-2">
@@ -255,4 +255,5 @@
     document.addEventListener('DOMContentLoaded', renderCartPage);
 </script>
 
-@endsection
+<?php $__env->stopSection(); ?>
+<?php echo $__env->make('layout.clientLayout', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?><?php /**PATH G:\laragon\www\PHP2-47K1\app\views/client/cart/index.blade.php ENDPATH**/ ?>
