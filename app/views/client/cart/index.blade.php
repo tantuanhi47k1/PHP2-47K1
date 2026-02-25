@@ -21,6 +21,17 @@
     .btn-remove { color: #adb5bd; transition: 0.2s; font-size: 0.9rem; }
     .btn-remove:hover { color: #dc3545; text-decoration: underline; }
 
+    .coupon-input { font-size: 1rem !important; padding: 0.35rem 0.75rem; border-radius: 6px; border: 1px solid #dee2e6; box-shadow: none !important; }
+    .coupon-input:focus { border-color: #6c757d; }
+    .coupon-btn { font-size: 1rem !important; padding: 0.35rem 1rem; border-radius: 6px; white-space: nowrap; }
+
+    .coupon-ticket { background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 99%, #fecfef 100%); border-radius: 12px; position: relative; overflow: hidden; transition: transform 0.2s; }
+    .coupon-ticket:hover { transform: translateY(-3px); box-shadow: 0 5px 15px rgba(255, 154, 158, 0.4) !important; }
+    .coupon-ticket::before, .coupon-ticket::after { content: ''; position: absolute; top: 50%; width: 20px; height: 20px; background-color: #f8f9fa; border-radius: 50%; transform: translateY(-50%); }
+    .coupon-ticket::before { left: -10px; }
+    .coupon-ticket::after { right: -10px; }
+    .coupon-code-box { border: 1px dashed rgba(255,255,255,0.8); background: rgba(255,255,255,0.2); border-radius: 6px; }
+
     .d-none { display: none !important; }
 </style>
 
@@ -37,7 +48,7 @@
         <div id="cart-has-items" class="d-none">
             <div class="row g-4">
                 <div class="col-lg-8">
-                    <div class="card border-0 shadow-sm rounded-4 overflow-hidden">
+                    <div class="card border-0 shadow-sm rounded-4 overflow-hidden mb-4">
                         <div class="card-header bg-white py-3 border-bottom">
                             <div class="row fw-bold text-secondary small text-uppercase">
                                 <div class="col-6">Sản phẩm</div>
@@ -50,7 +61,35 @@
                             </div>
                     </div>
 
-                    <div class="d-flex justify-content-between mt-4">
+                    @if(isset($availableCoupons) && count($availableCoupons) > 0)
+                    <div class="mb-4">
+                        <h5 class="fw-bold text-dark mb-3"><i class="bi bi-ticket-perforated text-danger me-2"></i>Voucher dành cho bạn</h5>
+                        <div class="row g-3">
+                            @foreach($availableCoupons as $cp)
+                            <div class="col-md-6">
+                                <div class="coupon-ticket shadow-sm p-3 h-100 d-flex flex-column justify-content-center">
+                                    <div class="text-center mb-2">
+                                        <h6 class="fw-bold text-white mb-1">
+                                            @if($cp['discount_type'] == 'percent')
+                                                Giảm {{ $cp['discount_value'] }}%
+                                            @else
+                                                Giảm {{ number_format($cp['discount_value'], 0, ',', '.') }}đ
+                                            @endif
+                                        </h6>
+                                        <small class="text-white opacity-75 d-block" style="font-size: 0.8rem;">Đơn tối thiểu {{ number_format($cp['min_order_value'], 0, ',', '.') }}đ</small>
+                                    </div>
+                                    
+                                    <div class="coupon-code-box p-2 mt-auto d-flex justify-content-between align-items-center">
+                                        <span class="fw-bold text-white fs-6 font-monospace mb-0 ps-2">{{ $cp['code'] }}</span>
+                                        <button class="btn btn-light btn-sm fw-bold text-danger btn-copy-coupon rounded-3 px-3" data-code="{{ $cp['code'] }}">Copy</button>
+                                    </div>
+                                </div>
+                            </div>
+                            @endforeach
+                        </div>
+                    </div>
+                    @endif
+                    <div class="d-flex justify-content-between mt-2">
                         <a href="/" class="btn btn-outline-secondary rounded-pill px-4 fw-bold">
                             <i class="bi bi-arrow-left me-2"></i> Tiếp tục mua sắm
                         </a>
@@ -65,15 +104,37 @@
                             <span class="text-muted">Tổng tiền hàng:</span>
                             <span class="fw-bold" id="subtotal-price">0đ</span>
                         </div>
+                        
                         <div class="d-flex justify-content-between mb-3">
-                            <span class="text-muted">Giảm giá:</span>
-                            <span class="text-success">-0đ</span>
+                            <span class="text-muted">Giảm giá: 
+                                @if(isset($coupon)) 
+                                    <br><small class="badge bg-success bg-opacity-10 text-success border border-success mt-1">{{ $coupon['code'] }}</small> 
+                                @endif
+                            </span>
+                            <span class="text-success fw-bold" id="discount-amount">-{{ number_format($discountAmount ?? 0, 0, ',', '.') }}đ</span>
                         </div>
+
                         <div class="d-flex justify-content-between mb-4">
                             <span class="text-muted">Vận chuyển:</span>
                             <span class="text-success fw-bold">Miễn phí</span>
                         </div>
                         
+                        <hr class="border-secondary border-opacity-10 my-4">
+                        
+                        <div class="mb-4">
+                            <label class="form-label fw-bold small text-muted text-uppercase mb-2">Mã giảm giá</label>
+                            <form action="/cart/applyCoupon" method="POST" class="d-flex gap-2 m-0">
+                                <input type="text" name="coupon_code" id="coupon_input_field" class="form-control form-control-sm text-uppercase coupon-input" placeholder="Nhập mã..." 
+                                       value="{{ isset($coupon) ? $coupon['code'] : '' }}" 
+                                       {{ isset($coupon) ? 'readonly' : '' }}>
+                                @if(isset($coupon))
+                                    <a href="/cart/removeCoupon" class="btn btn-danger btn-sm coupon-btn d-flex align-items-center justify-content-center" title="Gỡ mã"><i class="bi bi-x-lg"></i></a>
+                                @else
+                                    <button type="submit" class="btn btn-dark btn-sm fw-bold coupon-btn">Áp dụng</button>
+                                @endif
+                            </form>
+                        </div>
+
                         <hr class="border-secondary border-opacity-10 my-4">
 
                         <div class="d-flex justify-content-between align-items-center mb-4">
@@ -121,6 +182,8 @@
         return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(amount);
     };
 
+    const serverDiscountAmount = {{ $discountAmount ?? 0 }};
+
     function renderCartPage() {
         const cart = getCart();
         const cartList = document.getElementById('cart-list');
@@ -159,7 +222,7 @@
                             <a href="/product/detail/${item.id}">
                                 <img src="${item.image}" 
                                      alt="${item.name}" 
-                                     class="rounded-3 border" 
+                                     class="rounded-3 border bg-white" 
                                      style="width: 70px; height: 70px; object-fit: cover;">
                             </a>
                             <div class="ms-3">
@@ -192,7 +255,11 @@
             });
 
             subtotalSpan.innerText = formatCurrency(totalPrice);
-            finalTotalSpan.innerText = formatCurrency(totalPrice);
+
+            let finalPrice = totalPrice - serverDiscountAmount;
+            if (finalPrice < 0) finalPrice = 0;
+            
+            finalTotalSpan.innerText = formatCurrency(finalPrice);
         }
     }
 
@@ -203,7 +270,7 @@
             if (newQty > 0) {
                 cart[index].quantity = newQty;
                 saveCart(cart);
-                renderCartPage();
+                window.location.reload(); 
             }
         }
     }
@@ -223,13 +290,7 @@
                 let cart = getCart();
                 cart.splice(index, 1);
                 saveCart(cart);
-                renderCartPage();
-                
-                Swal.fire(
-                    'Đã xóa!',
-                    'Sản phẩm đã được xóa khỏi giỏ hàng.',
-                    'success'
-                )
+                window.location.reload();
             }
         })
     }
@@ -252,7 +313,67 @@
         });
     }
 
-    document.addEventListener('DOMContentLoaded', renderCartPage);
+    document.addEventListener('DOMContentLoaded', () => {
+        renderCartPage();
+
+        document.querySelectorAll('.btn-copy-coupon').forEach(button => {
+            button.addEventListener('click', function() {
+                const code = this.getAttribute('data-code');
+                const originalText = this.innerText;
+                const inputField = document.getElementById('coupon_input_field');
+
+                navigator.clipboard.writeText(code).then(() => {
+                    this.innerText = 'Đã Copy';
+                    this.classList.replace('text-danger', 'text-success');
+
+                    if(inputField && !inputField.hasAttribute('readonly')) {
+                        inputField.value = code;
+                    }
+
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Đã copy mã: ' + code,
+                        showConfirmButton: false,
+                        timer: 1500,
+                        toast: true,
+                        position: 'top-end'
+                    });
+
+                    setTimeout(() => {
+                        this.innerText = originalText;
+                        this.classList.replace('text-success', 'text-danger');
+                    }, 2000);
+                });
+            });
+        });
+    });
 </script>
+
+<?php if (isset($_SESSION['success'])): ?>
+    <script>
+        Swal.fire({
+            icon: 'success',
+            title: 'Thành công!',
+            text: '<?= $_SESSION['success'] ?>',
+            timer: 2500,
+            showConfirmButton: false,
+            toast: true,
+            position: 'top-end'
+        });
+    </script>
+    <?php unset($_SESSION['success']); ?>
+<?php endif; ?>
+
+<?php if (isset($_SESSION['error'])): ?>
+    <script>
+        Swal.fire({
+            icon: 'error',
+            title: 'Thông báo',
+            text: '<?= $_SESSION['error'] ?>',
+            confirmButtonColor: '#d33'
+        });
+    </script>
+    <?php unset($_SESSION['error']); ?>
+<?php endif; ?>
 
 @endsection
