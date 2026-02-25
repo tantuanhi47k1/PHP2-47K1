@@ -91,4 +91,36 @@ class VariantModel extends Model {
         $stmt = $conn->prepare("DELETE FROM variants WHERE id = ?");
         return $stmt->execute([$id]);
     }
+
+    public function decreaseStock($variantId, $quantity) {
+        $conn = $this->connect();
+        
+        $sql = "UPDATE variants 
+                SET stock_quantity = stock_quantity - :quantity 
+                WHERE id = :id AND stock_quantity >= :quantity";
+                
+        $stmt = $conn->prepare($sql);
+        $stmt->execute([
+            ':quantity' => (int)$quantity,
+            ':id'       => (int)$variantId
+        ]);
+        
+        return $stmt->rowCount() > 0;
+    }
+
+    public function increaseStock($variantId, $quantity) {
+        $conn = $this->connect();
+        
+        $sql = "UPDATE variants 
+                SET stock_quantity = stock_quantity + :quantity 
+                WHERE id = :id";
+                
+        $stmt = $conn->prepare($sql);
+        $stmt->execute([
+            ':quantity' => (int)$quantity,
+            ':id'       => (int)$variantId
+        ]);
+        
+        return $stmt->rowCount() > 0;
+    }
 }

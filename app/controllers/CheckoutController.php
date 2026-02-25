@@ -77,6 +77,8 @@ class CheckoutController extends Controller {
         $orderModel = $this->model('OrderModel');
         $orderDetailModel = $this->model('OrderDetailModel');
 
+        $variantModel = $this->model('VariantModel');
+
         $orderData = [
             'user_id'        => $_SESSION['user_id'],
             'fullname'       => $fullname,
@@ -103,6 +105,10 @@ class CheckoutController extends Controller {
                     'total_price'  => $item['price'] * $item['quantity']
                 ];
                 $orderDetailModel->create($detailData);
+
+                $vId = $item['variant_id'] ?? $item['id'];
+                
+                $variantModel->decreaseStock($vId, $item['quantity']);
             }
 
             header("Location: /checkout/success");
