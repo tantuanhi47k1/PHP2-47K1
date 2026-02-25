@@ -112,15 +112,17 @@ class ProductModel extends Model
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
-    // --- ĐÃ SỬA HÀM NÀY ĐỂ LẤY ẢNH ---
     public function all()
     {
-        // Thêm sub-query (SELECT image_path ...) để lấy ảnh thumbnail
         $sql = "SELECT p.*, 
                        c.name as category_name,
-                       (SELECT image_path FROM product_images WHERE product_id = p.id AND is_thumbnail = 1 LIMIT 1) as image
+                       b.name as brand_name,
+                       (SELECT image_path FROM product_images WHERE product_id = p.id AND is_thumbnail = 1 LIMIT 1) as image,
+                       (SELECT MIN(price) FROM variants WHERE product_id = p.id) as variant_price,
+                       (SELECT COUNT(*) FROM variants WHERE product_id = p.id) as variant_count
                 FROM $this->table p
                 LEFT JOIN categories c ON p.category_id = c.id
+                LEFT JOIN brands b ON p.brand_id = b.id
                 ORDER BY p.created_at DESC";
 
         $conn = $this->connect();
@@ -128,7 +130,6 @@ class ProductModel extends Model
         $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
-    // ---------------------------------
 
     public function create($data)
     {
