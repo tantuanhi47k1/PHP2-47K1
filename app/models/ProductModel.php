@@ -187,4 +187,27 @@ class ProductModel extends Model
         $stmt = $conn->prepare($sql);
         $stmt->execute([':id' => $id]);
     }
+
+    public function getRelatedProducts($categoryId, $currentProductId, $limit = 4)
+    {
+        $sql = "SELECT p.*, 
+                       (SELECT image_path FROM product_images WHERE product_id = p.id AND is_thumbnail = 1 LIMIT 1) as image,
+                       (SELECT MIN(price) FROM variants WHERE product_id = p.id) as variant_price
+                FROM $this->table p
+                WHERE p.category_id = :category_id 
+                  AND p.id <> :current_id 
+                  AND p.status = 1
+                ORDER BY RAND() 
+                LIMIT :limit";
+
+        $conn = $this->connect();
+        $stmt = $conn->prepare($sql);
+        
+        $stmt->bindValue(':category_id', $categoryId, PDO::PARAM_INT);
+        $stmt->bindValue(':current_id', $currentProductId, PDO::PARAM_INT);
+        $stmt->bindValue(':limit', $limit, PDO::PARAM_INT);
+        
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
 }
