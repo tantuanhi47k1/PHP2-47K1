@@ -64,11 +64,13 @@ class ProductController extends Controller {
 
         $variants = $productModel->getVariants($id);
         $images = $productModel->getImages($id);
+        $relatedProducts = $productModel->getRelatedProducts($product['category_id'], $id, 4);
 
         $this->view('client/product/detail', [
-            'product'  => $product,
-            'variants' => $variants,
-            'images'   => $images
+            'product'         => $product,
+            'variants'        => $variants,
+            'images'          => $images,
+            'relatedProducts' => $relatedProducts
         ]);
     }
 
