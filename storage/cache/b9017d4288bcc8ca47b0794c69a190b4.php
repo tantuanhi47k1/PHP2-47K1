@@ -24,4 +24,4 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="/js/cart.js"></script>
 </body>
-</html><?php /**PATH G:\laragon\www\PHP2-47K1\app\views/layout/clientLayout.blade.php ENDPATH**/ ?>
+</html><?php /**PATH D:\laragon\www\php2_tantuan47k1\app\views/layout/clientLayout.blade.php ENDPATH**/ ?>
