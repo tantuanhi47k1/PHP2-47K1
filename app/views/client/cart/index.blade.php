@@ -18,7 +18,7 @@
     input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
     
     .summary-card { position: sticky; top: 100px; border: none; box-shadow: 0 5px 20px rgba(0,0,0,0.05); border-radius: 16px; }
-    .btn-remove { color: #adb5bd; transition: 0.2s; font-size: 0.9rem; }
+    .btn-remove { color: #adb5bd; transition: 0.2s; font-size: 0.9rem; cursor: pointer; }
     .btn-remove:hover { color: #dc3545; text-decoration: underline; }
 
     .coupon-input { font-size: 1rem !important; padding: 0.35rem 0.75rem; border-radius: 6px; border: 1px solid #dee2e6; box-shadow: none !important; }
@@ -57,8 +57,7 @@
                             </div>
                         </div>
                         
-                        <div class="card-body p-0" id="cart-list">
-                            </div>
+                        <div class="card-body p-0" id="cart-list"></div>
                     </div>
 
                     @if(isset($availableCoupons) && count($availableCoupons) > 0)
@@ -143,15 +142,9 @@
                         </div>
 
                         <div class="d-grid mb-3">
-                            @if(isset($_SESSION['user_id']))
-                                <a href="/checkout" class="btn btn-primary btn-lg rounded-pill fw-bold shadow py-3">
-                                    TIẾN HÀNH THANH TOÁN
-                                </a>
-                            @else
-                                <a href="#" onclick="requireLogin(event)" class="btn btn-primary btn-lg rounded-pill fw-bold shadow py-3">
-                                    TIẾN HÀNH THANH TOÁN
-                                </a>
-                            @endif
+                            <a href="/checkout" class="btn btn-primary btn-lg rounded-pill fw-bold shadow py-3">
+                                TIẾN HÀNH THANH TOÁN
+                            </a>
                         </div>
 
                         <div class="d-flex align-items-center justify-content-center text-muted small gap-2">
@@ -182,6 +175,7 @@
         return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(amount);
     };
 
+    const serverCouponCode = '{{ $coupon['code'] ?? '' }}';
     const serverDiscountAmount = {{ $discountAmount ?? 0 }};
 
     function renderCartPage() {
@@ -193,6 +187,14 @@
         
         const subtotalSpan = document.getElementById('subtotal-price');
         const finalTotalSpan = document.getElementById('final-total-price');
+
+        if (serverCouponCode !== '') {
+            localStorage.setItem('coupon_code', serverCouponCode);
+            localStorage.setItem('discount_amount', serverDiscountAmount);
+        } else {
+            localStorage.removeItem('coupon_code');
+            localStorage.removeItem('discount_amount');
+        }
 
         const totalQty = cart.reduce((sum, item) => sum + parseInt(item.quantity), 0);
         countSpan.innerText = totalQty;
@@ -349,7 +351,7 @@
     });
 </script>
 
-<?php if (isset($_SESSION['success'])): ?>
+@if (isset($_SESSION['success']))
     <script>
         Swal.fire({
             icon: 'success',
@@ -362,9 +364,9 @@
         });
     </script>
     <?php unset($_SESSION['success']); ?>
-<?php endif; ?>
+@endif
 
-<?php if (isset($_SESSION['error'])): ?>
+@if (isset($_SESSION['error']))
     <script>
         Swal.fire({
             icon: 'error',
@@ -374,6 +376,6 @@
         });
     </script>
     <?php unset($_SESSION['error']); ?>
-<?php endif; ?>
+@endif
 
 @endsection

@@ -27,14 +27,18 @@ class CategoryController extends Controller
 
         $slug = $this->vn_to_str($_POST['name']);
 
+        $parentId = $_POST['parent_id'] ?? null;
+        $parentId = (empty($parentId) || $parentId == '0') ? null : $parentId;
+
         $data = [
             'name'      => $_POST['name'],
             'slug'      => $slug,
-            'parent_id' => !empty($_POST['parent_id']) ? $_POST['parent_id'] : null
+            'parent_id' => $parentId
         ];
 
         $this->model('CategoryModel')->create($data);
         header("Location: /category");
+        exit;
     }
 
     public function edit($id)
@@ -58,20 +62,25 @@ class CategoryController extends Controller
 
         $slug = $this->vn_to_str($_POST['name']);
 
+        $parentId = $_POST['parent_id'] ?? null;
+        $parentId = (empty($parentId) || $parentId == '0') ? null : $parentId;
+
         $data = [
             'name'      => $_POST['name'],
             'slug'      => $slug,
-            'parent_id' => !empty($_POST['parent_id']) ? $_POST['parent_id'] : null
+            'parent_id' => $parentId
         ];
 
         $this->model('CategoryModel')->update($id, $data);
         header("Location: /category");
+        exit;
     }
 
     public function delete($id)
     {
         $this->model('CategoryModel')->delete($id);
         header("Location: /category");
+        exit;
     }
 
     private function vn_to_str($str) {

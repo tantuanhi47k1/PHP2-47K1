@@ -1,9 +1,9 @@
 <?php
 
 class CheckoutController extends Controller {
+
     private function requireLogin() {
         if (session_status() === PHP_SESSION_NONE) session_start();
-        
         if (!isset($_SESSION['user_id'])) {
             $_SESSION['error'] = "Vui lòng đăng nhập để tiến hành thanh toán!";
             header("Location: /auth/login");
@@ -15,7 +15,6 @@ class CheckoutController extends Controller {
         $this->requireLogin();
 
         $currentUser = null;
-
         if (isset($_SESSION['user_id'])) {
             $userModel = $this->model('UserModel');
             $currentUser = $userModel->find($_SESSION['user_id']); 
@@ -36,6 +35,9 @@ class CheckoutController extends Controller {
 
         $cartJson = $_POST['cart_data'] ?? '[]';
         $cart = json_decode($cartJson, true);
+        
+        $couponCode = $_POST['coupon_code'] ?? '';
+        $discountAmount = (float)($_POST['discount_amount'] ?? 0);
 
         if (empty($cart) || !is_array($cart)) {
             header("Location: /product");
@@ -69,14 +71,15 @@ class CheckoutController extends Controller {
             return;
         }
 
-        $finalTotal = 0;
+        $subTotal = 0;
         foreach ($cart as $item) {
-            $finalTotal += $item['price'] * $item['quantity'];
+            $subTotal += $item['price'] * $item['quantity'];
         }
+
+        $finalTotal = max(0, $subTotal - $discountAmount);
 
         $orderModel = $this->model('OrderModel');
         $orderDetailModel = $this->model('OrderDetailModel');
-
         $variantModel = $this->model('VariantModel');
 
         $orderData = [
@@ -87,6 +90,7 @@ class CheckoutController extends Controller {
             'address'        => $address,
             'note'           => $note,
             'total_money'    => $finalTotal,
+            'coupon_code'    => $couponCode,
             'payment_method' => $payment_method,
             'created_at'     => date('Y-m-d H:i:s'),
             'status'         => 1
@@ -107,11 +111,15 @@ class CheckoutController extends Controller {
                 $orderDetailModel->create($detailData);
 
                 $vId = $item['variant_id'] ?? $item['id'];
-                
                 $variantModel->decreaseStock($vId, $item['quantity']);
             }
 
-            header("Location: /checkout/success");
+            echo "<script>
+                    localStorage.removeItem('cart');
+                    localStorage.removeItem('coupon_code');
+                    localStorage.removeItem('discount_amount');
+                    window.location.href = '/checkout/success';
+                  </script>";
             exit;
 
         } else {
